@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import aspect from '@tailwindcss/aspect-ratio';
 
 export default {
   content: [
@@ -12,7 +13,23 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      keyframes: {
+        moving: {
+          "0%": { transform: "translate(-50%, -50%)" },
+          "50%": { transform: "translate(-50%, -60%)" },
+          "100%": { transform: "translate(-50%, -50%)" },
+        },
+      },
+      animation: {
+        moving: "moving 5s ease-in-out infinite",
+      },
     },
+    screens: {
+      'pc': '980px',
+      'mobile': { max: '979px' },
+    }
   },
-  plugins: [],
+  plugins: [
+    aspect,
+  ],
 } satisfies Config;
