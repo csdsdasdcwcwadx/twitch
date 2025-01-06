@@ -1,9 +1,8 @@
-
-export default function Login () {
+export default function Check () {
     return (
         <main>
             <button>
-                login
+                check
             </button>
         </main>
     )
