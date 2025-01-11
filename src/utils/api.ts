@@ -6,7 +6,14 @@ const api = axios.create({
     withCredentials: true, // 允許攜帶 cookies
 });
 
-export const login = async () => {
-    const response = await api.get("");
+export const login = async (path = "") => {
+    const response = await api.get(path);
     return response.data;
 };
+
+export const setcheck = async (passcode: string) => {
+    const response = await api.post("/addcheck", {
+        passcode,
+    });
+    return response.data;
+}

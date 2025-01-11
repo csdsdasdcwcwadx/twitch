@@ -4,16 +4,18 @@ import { login } from "@/utils/api";
 
 function LoginButton () {
     useEffect(() => {
-        (async function() {
-            try {
-                const data = await login();
-                if (data.status) {
-                    window.location.href = data.href;
+        if (process.env.ENV !== "prod") {
+            (async function() {
+                try {
+                    const data = await login();
+                    if (data.status) {
+                        window.location.href = data.href;
+                    }
+                } catch (e: unknown) {
+                    console.log(e)
                 }
-            } catch (e: unknown) {
-                console.log(e)
-            }
-        })()
+            })()
+        }
     }, [])
 
     return (
