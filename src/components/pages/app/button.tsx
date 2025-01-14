@@ -1,22 +1,6 @@
 'use client';
-import { useEffect } from "react";
-import { login } from "@/utils/api";
 
 function LoginButton () {
-    useEffect(() => {
-        if (process.env.ENV !== "prod") {
-            (async function() {
-                try {
-                    const data = await login();
-                    if (data.status) {
-                        window.location.href = data.href;
-                    }
-                } catch (e: unknown) {
-                    console.log(e)
-                }
-            })()
-        }
-    }, [])
 
     return (
         <button
