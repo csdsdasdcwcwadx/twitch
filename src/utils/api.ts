@@ -24,7 +24,15 @@ export const setcheck = async (passcode: string) => {
     return response.data;
 };
 
-export const getchecks = async (userId: string) => {
+export const setUserCheck = async(checkId: string, isChecked: boolean) => {
+    const response = await api.post("/twitch/usercheck/sign", {
+        checkId,
+        isChecked,
+    });
+    return response.data;
+}
+
+export const getchecks = async () => {
     // const GET_USER_CHECKS = gql`
     //     mutation GetUserChecks($userId: String!) {
     //         getUserChecks(userID: $userId) {
@@ -44,15 +52,17 @@ export const getchecks = async (userId: string) => {
         query GetAllChecks {
             getChecks {
                 id
-                passcode
                 created_at
+                userChecks {
+                    user_id
+                    checked
+                }
             }
         }
     `;
 
     const response = await apollo.query({
         query: GET_USER_CHECKS,
-        variables: { userId },
     });
-    return response.data
+    return response.data;
 };
