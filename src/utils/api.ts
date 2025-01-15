@@ -18,7 +18,7 @@ export const login = async (path = "") => {
 };
 
 export const setcheck = async (passcode: string) => {
-    const response = await api.post("/addcheck", {
+    const response = await api.post("/twitch/check/addcheck", {
         passcode,
     });
     return response.data;
