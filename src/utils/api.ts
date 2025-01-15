@@ -18,14 +18,29 @@ export const login = async (path = "") => {
 };
 
 export const setcheck = async (passcode: string) => {
-    const response = await api.post("/addcheck", {
+    const response = await api.post("/twitch/check/addcheck", {
         passcode,
     });
     return response.data;
-}
+};
 
-export const pageCheck = async () => {
-    const GET_ALL_CHECKS = gql`
+export const getchecks = async (userId: string) => {
+    // const GET_USER_CHECKS = gql`
+    //     mutation GetUserChecks($userId: String!) {
+    //         getUserChecks(userID: $userId) {
+    //             user_id
+    //             check_id
+    //             checked
+    //             created_at
+    //         }
+    //     }
+    // `;
+
+    // const response = await apollo.mutate({
+    //     mutation: GET_USER_CHECKS,
+    //     variables: { userId },
+    // });
+    const GET_USER_CHECKS = gql`
         query GetAllChecks {
             getChecks {
                 id
@@ -34,8 +49,10 @@ export const pageCheck = async () => {
             }
         }
     `;
-    apollo
-        .query({ query: GET_ALL_CHECKS })
-        .then(response => console.log(response.data))
-        .catch(err => console.error(err));
-}
+
+    const response = await apollo.query({
+        query: GET_USER_CHECKS,
+        variables: { userId },
+    });
+    return response.data
+};

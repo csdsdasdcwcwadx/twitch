@@ -11,7 +11,7 @@ export default function PageRequest () {
             (async function() {
                 try {
                     const data = await login(pathname);
-                    if (data.status && data.href) {
+                    if (data.href) {
                         window.location.href = data.href;
                     }
                 } catch (e: unknown) {
