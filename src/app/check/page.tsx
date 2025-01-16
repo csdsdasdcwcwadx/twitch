@@ -1,14 +1,14 @@
 'use client';
 
 import { getchecks, setUserCheck } from "@/utils/api"
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getMonthCalendar } from "@/utils/util";
 
 const today = new Date();
 
 type Check = {
     id: string;
-    passcode: string;
+    streaming: boolean;
     created_at: string;
     userChecks: UserCheck[];
 }
@@ -25,15 +25,17 @@ type I_CheckPage = {
 }
 
 export default function Check () {
-    const [currData, setCurrData] = useState<I_CheckPage>({
+    const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
         getChecks: [],
     });
+    const [checkInput, setCheckInput] = useState<Check | null>(null);
+    const passcodeRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         (async function () {
             try {
                 const result = await getchecks();
-                setCurrData(result);
+                setCheckPageData(result);
             } catch(e) {
                 console.log(e)
             }
@@ -51,28 +53,28 @@ export default function Check () {
                                 <tr key={index}>
                                     {
                                         week.map((day, weekIndex) => {
-                                            const checks = currData.getChecks.find(check => {
+                                            const checks = checkPageData.getChecks.find(check => {
                                                 const currentDay = new Date(Number(check.created_at)).getDate();
                                                 return `${currentDay}` === day;
                                             })
                                             return (
-                                                <td key={`${weekIndex}${index}`} className="text-right cursor-pointer py-2 align-top h-20 relative">
+                                                <td key={`${weekIndex}${index}`} className={`text-right ${checks ? 'cursor-pointer ' : ''}py-2 align-top h-20 relative`}>
                                                     <div>{day}</div>
                                                     { 
-                                                        checks && <div onClick={async () => {
-                                                            await setUserCheck(checks.id, true);
-                                                        }} className="absolute text-xs right-0">直播</div> 
-                                                    }
-                                                    {
-                                                        checks && (checks.userChecks.length ? checks.userChecks.map((check, index) => {
-                                                            return (
+                                                        checks && (
+                                                            <>
+                                                                <div 
+                                                                    onClick={() => !checks.userChecks[0].checked && setCheckInput(checks)} 
+                                                                    className="absolute text-xs right-0">
+                                                                    { checks.streaming ? "直播中" : "直播結束" }
+                                                                </div>
                                                                 <div key={index} className="absolute text-xs right-0 top-12">
                                                                     {
-                                                                        check.checked ? '已簽到' : '尚未簽到'
+                                                                        checks.userChecks[0].checked ? '已簽到' : checks.streaming ?  '尚未簽到' : '未簽到'
                                                                     }
-                                                                </div>
-                                                            )
-                                                        }) : <div className="absolute text-xs right-0 top-12">尚未簽到</div>)
+                                                                </div> 
+                                                            </>
+                                                        )
                                                     }
                                                 </td>
                                             )
@@ -84,6 +86,21 @@ export default function Check () {
                     }
                 </tbody>
             </table>
+            {
+                checkInput && <div>
+                    <input type="text" className="border border-solid mr-3 border-black" ref={passcodeRef}/>
+                    <button className="mr-3" onClick={async () => {
+                        const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");
+                        alert(setCheckResult.message);
+                        if (setCheckResult.status) {
+                            const result = await getchecks();
+                            setCheckPageData(result);
+                            setCheckInput(null);
+                        };
+                    }}>簽到</button>
+                    <button onClick={() => setCheckInput(null)}>取消</button>
+                </div>
+            }
         </main>
     )
 }

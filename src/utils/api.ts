@@ -24,10 +24,19 @@ export const setcheck = async (passcode: string) => {
     return response.data;
 };
 
-export const setUserCheck = async(checkId: string, isChecked: boolean) => {
+export const setUserCheck = async(checkId: string, isChecked: boolean, passcode: string) => {
     const response = await api.post("/twitch/usercheck/sign", {
         checkId,
         isChecked,
+        passcode,
+    });
+    return response.data;
+}
+
+export const setCheckStatus = async(checkId: string, streaming: boolean) => {
+    const response = await api.post("/twitch/check/updatecheckstatus", {
+        checkId,
+        streaming,
     });
     return response.data;
 }
@@ -52,6 +61,7 @@ export const getchecks = async () => {
         query GetAllChecks {
             getChecks {
                 id
+                streaming
                 created_at
                 userChecks {
                     user_id
