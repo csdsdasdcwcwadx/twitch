@@ -58,21 +58,27 @@ export default function Check () {
                                                 return `${currentDay}` === day;
                                             })
                                             return (
-                                                <td key={`${weekIndex}${index}`} className={`text-right ${checks ? 'cursor-pointer ' : ''}py-2 align-top h-20 relative`}>
+                                                <td key={`${weekIndex}${index}`} className={`text-right ${checks ? 'cursor-pointer ' : ''}py-2 align-top h-20 relative`} onClick={() => {
+                                                    if (!checks) return;
+                                                    if (!checks.userChecks[0] || (checks.userChecks[0] && !checks.userChecks[0].checked)) {
+                                                        setCheckInput(checks);
+                                                    }
+                                                }}>
                                                     <div>{day}</div>
                                                     { 
                                                         checks && (
                                                             <>
                                                                 <div 
-                                                                    onClick={() => !checks.userChecks[0].checked && setCheckInput(checks)} 
                                                                     className="absolute text-xs right-0">
-                                                                    { checks.streaming ? "直播中" : "直播結束" }
+                                                                    { checks.streaming ? "開放簽到中" : "簽到結束" }
                                                                 </div>
-                                                                <div key={index} className="absolute text-xs right-0 top-12">
-                                                                    {
-                                                                        checks.userChecks[0].checked ? '已簽到' : checks.streaming ?  '尚未簽到' : '未簽到'
-                                                                    }
-                                                                </div> 
+                                                                {
+                                                                    checks.userChecks[0] && <div key={index} className="absolute text-xs right-0 top-12">
+                                                                        {
+                                                                            checks.userChecks[0].checked ? '已簽到' : checks.streaming ?  '尚未簽到' : '未簽到'
+                                                                        }
+                                                                    </div> 
+                                                                }
                                                             </>
                                                         )
                                                     }
