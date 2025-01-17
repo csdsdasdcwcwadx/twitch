@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@apollo/client": "^3.12.5",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/react": "^6.1.15",
+    "@headlessui/react": "^2.2.0",
     "axios": "^1.7.9",
     "graphql": "^16.10.0",
     "next": "15.1.3",
