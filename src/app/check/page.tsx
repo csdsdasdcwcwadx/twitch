@@ -1,10 +1,12 @@
 'use client';
 
 import { getchecks, setUserCheck } from "@/utils/api"
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getMonthCalendar } from "@/utils/util";
-
-const today = new Date();
+import { Input, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import { EventInput } from '@fullcalendar/core';
 
 type Check = {
     id: string;
@@ -42,71 +44,53 @@ export default function Check () {
         })()
     }, [])
 
+    const CalendarEventsData = useMemo(() => {
+        const returnData = checkPageData.getChecks.map((check) => {
+            const date = new Date(Number(check.created_at));
+            return {
+                title: check.streaming ? "開放簽到中" : "簽到結束",
+                start: date.toISOString().split("T")[0], // FullCalendar 接受 ISO 格式日期
+                extendedProps: check,
+            };
+        });
+
+        return returnData;
+    }, [checkPageData])
+
     return (
         <main>
-            <table width="500">
-                <caption>簽到表</caption>
-                <tbody>
-                    {
-                        getMonthCalendar(today.getFullYear(), today.getMonth() + 1).map((week, index) => {
-                            return (
-                                <tr key={index}>
-                                    {
-                                        week.map((day, weekIndex) => {
-                                            const checks = checkPageData.getChecks.find(check => {
-                                                const currentDay = new Date(Number(check.created_at)).getDate();
-                                                return `${currentDay}` === day;
-                                            })
-                                            return (
-                                                <td key={`${weekIndex}${index}`} className={`text-right ${checks ? 'cursor-pointer ' : ''}py-2 align-top h-20 relative`} onClick={() => {
-                                                    if (!checks) return;
-                                                    if (!checks.userChecks[0] || (checks.userChecks[0] && !checks.userChecks[0].checked)) {
-                                                        setCheckInput(checks);
-                                                    }
-                                                }}>
-                                                    <div>{day}</div>
-                                                    { 
-                                                        checks && (
-                                                            <>
-                                                                <div 
-                                                                    className="absolute text-xs right-0">
-                                                                    { checks.streaming ? "開放簽到中" : "簽到結束" }
-                                                                </div>
-                                                                {
-                                                                    checks.userChecks[0] && <div key={index} className="absolute text-xs right-0 top-12">
-                                                                        {
-                                                                            checks.userChecks[0].checked ? '已簽到' : checks.streaming ?  '尚未簽到' : '未簽到'
-                                                                        }
-                                                                    </div> 
-                                                                }
-                                                            </>
-                                                        )
-                                                    }
-                                                </td>
-                                            )
-                                        })
-                                    }
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
-            {
-                checkInput && <div>
-                    <input type="text" className="border border-solid mr-3 border-black" ref={passcodeRef}/>
-                    <button className="mr-3" onClick={async () => {
-                        const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");
-                        alert(setCheckResult.message);
-                        if (setCheckResult.status) {
-                            const result = await getchecks();
-                            setCheckPageData(result);
-                            setCheckInput(null);
-                        };
-                    }}>簽到</button>
-                    <button onClick={() => setCheckInput(null)}>取消</button>
+            <FullCalendar
+                plugins={[dayGridPlugin]}
+                initialView="dayGridMonth"
+                events={CalendarEventsData}
+                eventClick={(info) => {
+                    const checks = info.event.extendedProps as Check;
+                    if (!checks) return;
+                    if(checks.userChecks[0] && !checks.userChecks[0].checked) return;
+                    if (!checks.streaming) return;
+                    setCheckInput(checks); // 根據需要處理點擊事件
+                }}
+            />
+            <Dialog open={Boolean(checkInput)} onClose={() => setCheckInput(null)} className="relative z-50">
+                <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
+                    <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
+                        <DialogTitle className="font-bold text-center">請輸入簽到驗證</DialogTitle>
+                        <Input name="full_name" className="pl-1.5 border border-solid border-black outline-none rounded" ref={passcodeRef} type="text"/>
+                        <div className="text-center">
+                            <button className="mr-3" onClick={async () => {
+                                const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");
+                                alert(setCheckResult.message);
+                                if (setCheckResult.status) {
+                                    const result = await getchecks();
+                                    setCheckPageData(result);
+                                    setCheckInput(null);
+                                };
+                            }}>簽到</button>
+                            <button onClick={() => setCheckInput(null)}>取消</button>
+                        </div>
+                    </DialogPanel>
                 </div>
-            }
+            </Dialog>
         </main>
     )
 }
