@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
         destination: 'http://localhost:4000/:path*' // Proxy to Backend
       }
     ]
+  },
+  images: {
+    domains: ['static-cdn.jtvnw.net']
   }
 };
 

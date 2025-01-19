@@ -5,29 +5,13 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import { Input, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-
-type Check = {
-    id: string;
-    streaming: boolean;
-    passcode: string;
-    created_at: string;
-    userChecks: UserCheck[];
-}
-
-type UserCheck = {
-    user_id: string;
-    check_id: string;
-    checked: boolean;
-    created_at: string;
-}
-
-type I_CheckPage = {
-    getChecks: Check[];
-}
+import { I_CheckPage } from "@/utils/interface";
+import { Header } from "@/components/common/Header";
 
 export default function Back() {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
         getChecks: [],
+        getUsers: [],
     });
     const [openCheckDialog, setOpenCheckDialog] = useState(false);
     const passcodeRef = useRef<HTMLInputElement>(null);
@@ -44,7 +28,7 @@ export default function Back() {
     }, [])
 
     const checkItem = useMemo(() => {
-        return checkPageData.getChecks.find((check: Check) => check.streaming);
+        return checkPageData.getChecks.find((check) => check.streaming);
     }, [checkPageData])
 
     const CalendarEventsData = useMemo(() => {
@@ -81,57 +65,59 @@ export default function Back() {
     }, [checkPageData])
 
     return (
-        <div>
-            <div className="calendar-container w-9/12 m-auto">
-                <FullCalendar
-                    plugins={[dayGridPlugin, interactionPlugin]}
-                    initialView="dayGridMonth"
-                    events={CalendarEventsData}
-                    eventClick={(info) => {
-                        const { clickable } = info.event.extendedProps;
-                        if (clickable) setOpenCheckDialog(true);
-                    }}
-                    // dateClick={handleDateClick}
-                />
-            </div>
-            <Dialog open={openCheckDialog} onClose={() => setOpenCheckDialog(false)} className="relative z-50">
-                <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
-                    <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
-                        {
-                            !checkItem ? <>
-                                <DialogTitle className="font-bold text-center">請輸入設定的簽到驗證</DialogTitle>
-                                <Input name="full_name" className="pl-1.5 border border-solid border-black outline-none rounded" ref={passcodeRef} type="text"/>
-                                <div className="text-center">
-                                    <button className="mr-3" onClick={async () => {
-                                        const result = await setcheck(passcodeRef.current?.value || "");
-                                        if (passcodeRef.current) passcodeRef.current.value = "";
-                                        if (result.status) {
-                                            const checkResult = await getchecks();
-                                            setCheckPageData(checkResult);
-                                            setOpenCheckDialog(false);
-                                        }
-                                    }}>確認</button>
-                                    <button onClick={() => setOpenCheckDialog(false)}>取消</button>
-                                </div>
-                            </> : <>
-                                <DialogTitle className="font-bold text-center">結束簽到</DialogTitle>
-                                <div className="text-center">
-                                    <button className="mr-3" onClick={async () => {
-                                            const result = await setCheckStatus(checkItem.id, false);
+        <>
+            <Header userinfo={checkPageData.getUsers[0]}/>
+            <main>
+                <section className="calendar-container w-9/12 m-auto">
+                    <FullCalendar
+                        plugins={[dayGridPlugin, interactionPlugin]}
+                        initialView="dayGridMonth"
+                        events={CalendarEventsData}
+                        eventClick={(info) => {
+                            const { clickable } = info.event.extendedProps;
+                            if (clickable) setOpenCheckDialog(true);
+                        }}
+                    />
+                </section>
+                <Dialog open={openCheckDialog} onClose={() => setOpenCheckDialog(false)} className="relative z-50">
+                    <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
+                        <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
+                            {
+                                !checkItem ? <>
+                                    <DialogTitle className="font-bold text-center">請輸入設定的簽到驗證</DialogTitle>
+                                    <Input name="full_name" className="pl-1.5 border border-solid border-black outline-none rounded" ref={passcodeRef} type="text"/>
+                                    <div className="text-center">
+                                        <button className="mr-3" onClick={async () => {
+                                            const result = await setcheck(passcodeRef.current?.value || "");
+                                            if (passcodeRef.current) passcodeRef.current.value = "";
                                             if (result.status) {
                                                 const checkResult = await getchecks();
                                                 setCheckPageData(checkResult);
                                                 setOpenCheckDialog(false);
                                             }
-                                        }}>確認
-                                    </button>
-                                    <button onClick={() => setOpenCheckDialog(false)}>取消</button>
-                                </div>
-                            </>
-                        }
-                    </DialogPanel>
-                </div>
-            </Dialog>
-        </div>
+                                        }}>確認</button>
+                                        <button onClick={() => setOpenCheckDialog(false)}>取消</button>
+                                    </div>
+                                </> : <>
+                                    <DialogTitle className="font-bold text-center">結束簽到</DialogTitle>
+                                    <div className="text-center">
+                                        <button className="mr-3" onClick={async () => {
+                                                const result = await setCheckStatus(checkItem.id, false);
+                                                if (result.status) {
+                                                    const checkResult = await getchecks();
+                                                    setCheckPageData(checkResult);
+                                                    setOpenCheckDialog(false);
+                                                }
+                                            }}>確認
+                                        </button>
+                                        <button onClick={() => setOpenCheckDialog(false)}>取消</button>
+                                    </div>
+                                </>
+                            }
+                        </DialogPanel>
+                    </div>
+                </Dialog>
+            </main>
+        </>
     )
 }
