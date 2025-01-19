@@ -1,6 +1,7 @@
 import axios from "axios";
 import { domainEnv } from "./util";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { I_CheckPage } from "./interface";
 
 const api = axios.create({
     baseURL: domainEnv, // 確保後端的 API URL 從環境變量中獲取
@@ -31,7 +32,12 @@ export const setUserCheck = async(checkId: string, isChecked: boolean, passcode:
         passcode,
     });
     return response.data;
-}
+};
+
+export const logout = async () => {
+    const response = await api.get("/twitch/member/logout");
+    return response.data;
+};
 
 export const setCheckStatus = async(checkId: string, streaming: boolean) => {
     const response = await api.post("/twitch/check/updatecheckstatus", {
@@ -68,11 +74,20 @@ export const getchecks = async () => {
                     checked
                 }
             }
+            getUsers {
+                id
+                twitch_id
+                login
+                name
+                email
+                profile_image
+            }
         }
     `;
 
-    const response = await apollo.query({
+    const response = await apollo.query<I_CheckPage>({
         query: GET_USER_CHECKS,
+        fetchPolicy: "no-cache",
     });
     return response.data;
 };
