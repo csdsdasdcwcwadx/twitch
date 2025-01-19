@@ -2,11 +2,11 @@
 
 import { getchecks, setUserCheck } from "@/utils/api"
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getMonthCalendar } from "@/utils/util";
 import { Input, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { EventInput } from '@fullcalendar/core';
+// import { EventInput } from '@fullcalendar/core';
+import interactionPlugin from "@fullcalendar/interaction";
 
 type Check = {
     id: string;
@@ -47,10 +47,16 @@ export default function Check () {
     const CalendarEventsData = useMemo(() => {
         const returnData = checkPageData.getChecks.map((check) => {
             const date = new Date(Number(check.created_at));
+            const className = ['cursor-pointer'];
+            if (!check.streaming) {
+                className.push('bg-rose-700');
+                className.push('border-rose-700');
+            }
             return {
-                title: check.streaming ? "開放簽到中" : "簽到結束",
+                title: check.userChecks.length ? "已簽到" : check.streaming ? "開放簽到中" : "簽到結束",
                 start: date.toISOString().split("T")[0], // FullCalendar 接受 ISO 格式日期
                 extendedProps: check,
+                className: className.join(' '),
             };
         });
 
@@ -59,18 +65,20 @@ export default function Check () {
 
     return (
         <main>
-            <FullCalendar
-                plugins={[dayGridPlugin]}
-                initialView="dayGridMonth"
-                events={CalendarEventsData}
-                eventClick={(info) => {
-                    const checks = info.event.extendedProps as Check;
-                    if (!checks) return;
-                    if(checks.userChecks[0] && !checks.userChecks[0].checked) return;
-                    if (!checks.streaming) return;
-                    setCheckInput(checks); // 根據需要處理點擊事件
-                }}
-            />
+            <div className="calendar-container w-9/12 m-auto">
+                <FullCalendar
+                    plugins={[dayGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    events={CalendarEventsData}
+                    eventClick={(info) => {
+                        const checks = info.event.extendedProps as Check;
+                        if (!checks) return;
+                        if(checks.userChecks.length) return;
+                        if (!checks.streaming) return;
+                        setCheckInput(checks); // 根據需要處理點擊事件
+                    }}
+                />
+            </div>
             <Dialog open={Boolean(checkInput)} onClose={() => setCheckInput(null)} className="relative z-50">
                 <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
                     <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">

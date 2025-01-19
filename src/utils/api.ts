@@ -31,7 +31,12 @@ export const setUserCheck = async(checkId: string, isChecked: boolean, passcode:
         passcode,
     });
     return response.data;
-}
+};
+
+export const logout = async () => {
+    const response = await api.get("/twitch/member/logout");
+    return response.data;
+};
 
 export const setCheckStatus = async(checkId: string, streaming: boolean) => {
     const response = await api.post("/twitch/check/updatecheckstatus", {
@@ -73,6 +78,7 @@ export const getchecks = async () => {
 
     const response = await apollo.query({
         query: GET_USER_CHECKS,
+        fetchPolicy: "no-cache",
     });
     return response.data;
 };
