@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import twitchIcon from "@/icon/twitch.png";
 import { I_User } from "@/utils/interface";
@@ -15,17 +17,18 @@ const displayItems = [
 ]
 
 export function Header({ userinfo }: I_props) {
+
     return (
-        <header className="h-20 flex items-center justify-between mx-2.5">
+        <header className="h-20 flex items-center justify-between mx-2.5 mobile:justify-center">
             {
                 userinfo && (
                     <>
-                        <figure className="h-16 w-16 cursor-pointer transform">
+                        <figure className="h-16 w-16 cursor-pointer transform mobile:hidden">
                             <Image src={twitchIcon} alt="twitch"/>
                         </figure>
                         <div className="flex items-center mr-7">
                             <Menu>
-                                <figcaption className="mr-3">{userinfo.name}，您好</figcaption>
+                                <figcaption className="mr-3 mobile:hidden">{userinfo.name}，您好</figcaption>
                                 <MenuButton>
                                     <figure className="h-16 relative w-16 cursor-pointer">
                                         <Image src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} alt={userinfo.name} sizes="100" fill/>
