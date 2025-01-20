@@ -70,8 +70,8 @@ export const getchecks = async () => {
                 streaming
                 created_at
                 userChecks {
-                    user_id
                     checked
+                    created_at
                 }
             }
             getUsers {
@@ -91,3 +91,42 @@ export const getchecks = async () => {
     });
     return response.data;
 };
+
+export const getbacks = async () => {
+    const GET_USER_CHECKS = gql`
+        query GetAllChecks {
+            getChecks {
+                id
+                streaming
+                created_at
+                passcode
+                userChecks {
+                    user {
+                        id
+                        twitch_id
+                        login
+                        name
+                        email
+                        profile_image
+                    }
+                    checked
+                    created_at
+                }
+            }
+            getUsers {
+                id
+                twitch_id
+                login
+                name
+                email
+                profile_image
+            }
+        }
+    `;
+
+    const response = await apollo.query<I_CheckPage>({
+        query: GET_USER_CHECKS,
+        fetchPolicy: "no-cache",
+    });
+    return response.data;
+}

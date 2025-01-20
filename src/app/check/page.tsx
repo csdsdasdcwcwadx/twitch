@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Input, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-// import { EventInput } from '@fullcalendar/core';
 import interactionPlugin from "@fullcalendar/interaction";
 import { I_CheckPage, I_Check } from "@/utils/interface";
 import { Header } from "@/components/common/Header";
@@ -13,7 +12,7 @@ import { Header } from "@/components/common/Header";
 export default function Check () {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
         getChecks: [],
-        getUsers: [],
+        getUsers: null,
     });
     const [checkInput, setCheckInput] = useState<I_Check | null>(null);
     const passcodeRef = useRef<HTMLInputElement>(null);
@@ -50,7 +49,7 @@ export default function Check () {
 
     return (
         <>
-            <Header userinfo={checkPageData.getUsers[0]}/>
+            <Header userinfo={checkPageData.getUsers!}/>
             <main>
                 <section className="calendar-container w-9/12 m-auto mt-3">
                     <FullCalendar
