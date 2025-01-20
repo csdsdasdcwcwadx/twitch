@@ -1,5 +1,5 @@
 'use client';
-import { getchecks, setCheckStatus, setcheck } from "@/utils/api"
+import { setCheckStatus, setcheck, getbacks } from "@/utils/api"
 import { useEffect, useRef, useState, useMemo } from "react";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -11,7 +11,7 @@ import { Header } from "@/components/common/Header";
 export default function Back() {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
         getChecks: [],
-        getUsers: [],
+        getUsers: null,
     });
     const [openCheckDialog, setOpenCheckDialog] = useState(false);
     const passcodeRef = useRef<HTMLInputElement>(null);
@@ -19,7 +19,7 @@ export default function Back() {
     useEffect(() => {
         (async function () {
             try {
-                const result = await getchecks();
+                const result = await getbacks();
                 setCheckPageData(result);
             } catch(e) {
                 console.log(e)
@@ -66,7 +66,7 @@ export default function Back() {
 
     return (
         <>
-            <Header userinfo={checkPageData.getUsers[0]}/>
+            <Header userinfo={checkPageData.getUsers!}/>
             <main>
                 <section className="calendar-container w-9/12 m-auto">
                     <FullCalendar
@@ -91,7 +91,7 @@ export default function Back() {
                                             const result = await setcheck(passcodeRef.current?.value || "");
                                             if (passcodeRef.current) passcodeRef.current.value = "";
                                             if (result.status) {
-                                                const checkResult = await getchecks();
+                                                const checkResult = await getbacks();
                                                 setCheckPageData(checkResult);
                                                 setOpenCheckDialog(false);
                                             }
@@ -104,7 +104,7 @@ export default function Back() {
                                         <button className="mr-3" onClick={async () => {
                                                 const result = await setCheckStatus(checkItem.id, false);
                                                 if (result.status) {
-                                                    const checkResult = await getchecks();
+                                                    const checkResult = await getbacks();
                                                     setCheckPageData(checkResult);
                                                     setOpenCheckDialog(false);
                                                 }

@@ -6,7 +6,7 @@ export type I_Check = {
 }
 
 export type I_UserCheck = {
-    user_id: string;
+    users: I_User[];
     check_id: string;
     checked: boolean;
     created_at: string;
@@ -23,5 +23,5 @@ export type I_User = {
 
 export type I_CheckPage = {
     getChecks: I_Check[];
-    getUsers: I_User[];
+    getUsers: I_User | null;
 }
