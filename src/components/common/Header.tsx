@@ -28,7 +28,7 @@ export function Header({ userinfo }: I_props) {
                                 <figcaption className="mr-3">{userinfo.name}，您好</figcaption>
                                 <MenuButton>
                                     <figure className="h-16 relative w-16 cursor-pointer">
-                                        <Image src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} alt={userinfo.name}  sizes="100" fill/>
+                                        <Image src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} alt={userinfo.name} sizes="100" fill/>
                                     </figure>
                                 </MenuButton>
                                 <MenuItems anchor="bottom end" className="text-center bg-gray-700 mt-1 rounded-lg p-2 z-10">
@@ -37,8 +37,8 @@ export function Header({ userinfo }: I_props) {
                                             return (
                                                 <Fragment key={item.text}>
                                                     <MenuItem>
-                                                        <div 
-                                                            className="py-2.5 px-3.5 text-slate-200 cursor-pointer hover:bg-gray-500 rounded-lg"
+                                                        <li 
+                                                            className="list-none py-2.5 px-3.5 text-slate-200 cursor-pointer hover:bg-gray-500 rounded-lg"
                                                             onClick={async () => {
                                                                 switch(item.type) {
                                                                     case "pack":
@@ -53,7 +53,7 @@ export function Header({ userinfo }: I_props) {
                                                             }}
                                                         >
                                                             {item.text}
-                                                        </div>
+                                                        </li>
                                                     </MenuItem>
                                                     {
                                                         displayItems.length - 1 !== ind && <i className="my-2 h-px bg-white/5 border-b block"/>
