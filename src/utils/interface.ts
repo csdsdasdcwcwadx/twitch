@@ -6,7 +6,7 @@ export type I_Check = {
 }
 
 export type I_UserCheck = {
-    users: I_User[];
+    user: I_User;
     check_id: string;
     checked: boolean;
     created_at: string;

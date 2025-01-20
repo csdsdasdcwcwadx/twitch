@@ -101,7 +101,7 @@ export const getbacks = async () => {
                 created_at
                 passcode
                 userChecks {
-                    users {
+                    user {
                         id
                         twitch_id
                         login
