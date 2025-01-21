@@ -3,74 +3,143 @@
 import Image from "next/image";
 import twitchIcon from "@/icon/twitch.png";
 import { I_User } from "@/utils/interface";
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Fragment } from "react";
+import { Menu, MenuButton, MenuItem, MenuItems, Dialog, DialogPanel } from '@headlessui/react'
+import { Fragment, useEffect, useState } from "react";
 import { logout } from "@/utils/api";
 
 interface I_props {
     userinfo?: I_User
 }
 
+interface I_MobileDialogProps {
+    menuOpen: boolean;
+    setMenuOpen: Function;
+    userinfo?: I_User;
+}
+
 const displayItems = [
     {type: "pack", text: "前往背包", icon: ""},
     {type: "logout", text: "登出", icon: ""},
+    {type: "logout", text: "功能1", icon: ""},
+    {type: "logout", text: "功能2", icon: ""},
+
 ]
 
 export function Header({ userinfo }: I_props) {
+    const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <header className="h-20 flex items-center justify-between mx-2.5 mobile:justify-center">
-            {
-                userinfo && (
-                    <>
-                        <figure className="h-16 w-16 cursor-pointer transform mobile:hidden">
-                            <Image src={twitchIcon} alt="twitch"/>
-                        </figure>
-                        <div className="flex items-center mr-7">
-                            <Menu>
-                                <figcaption className="mr-3 mobile:hidden">{userinfo.name}，您好</figcaption>
-                                <MenuButton>
-                                    <figure className="h-16 relative w-16 cursor-pointer">
-                                        <Image src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} alt={userinfo.name} sizes="100" fill/>
-                                    </figure>
-                                </MenuButton>
-                                <MenuItems anchor="bottom end" className="text-center bg-gray-700 mt-1 rounded-lg p-2 z-10">
-                                    {
-                                        displayItems.map((item, ind) => {
-                                            return (
-                                                <Fragment key={item.text}>
-                                                    <MenuItem>
-                                                        <li 
-                                                            className="list-none py-2.5 px-3.5 text-slate-200 cursor-pointer hover:bg-gray-500 rounded-lg"
-                                                            onClick={async () => {
-                                                                switch(item.type) {
-                                                                    case "pack":
-                                                                        break;
-                                                                    case "logout":
-                                                                        const result = await logout();
-                                                                        if (result.status) {
-                                                                            window.location.href = result.href;
-                                                                        }
-                                                                        break;
-                                                                }
-                                                            }}
-                                                        >
-                                                            {item.text}
-                                                        </li>
-                                                    </MenuItem>
-                                                    {
-                                                        displayItems.length - 1 !== ind && <i className="my-2 h-px bg-white/5 border-b block"/>
-                                                    }
-                                                </Fragment>
-                                            )
-                                        })
-                                    }
-                                </MenuItems>
-                            </Menu>
-                        </div>
-                    </>
-                )
-            }
-        </header>
+        <>
+            <header className="h-20 flex items-center justify-between mx-2.5 mobile:justify-center">
+                {
+                    userinfo && (
+                        <>
+                            <figure className="h-16 w-16 cursor-pointer transform">
+                                <Image src={twitchIcon} alt="twitch" onClick={() => setMenuOpen(true)}/>
+                            </figure>
+                            <div className="flex items-center mr-7 mobile:hidden">
+                                <Menu>
+                                    <figcaption className="mr-3 mobile:hidden">{userinfo.name}，您好</figcaption>
+                                    <MenuButton>
+                                        <figure className="h-16 relative w-16 cursor-pointer">
+                                            <Image 
+                                                src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} 
+                                                alt={userinfo.name} 
+                                                sizes="100" 
+                                                fill
+                                            />
+                                        </figure>
+                                    </MenuButton>
+                                    <MenuItems anchor="bottom end" className="mobile:hidden text-center bg-coverground mt-1 rounded-lg p-2 z-10">
+                                        {
+                                            displayItems.map((item, ind) => {
+                                                return (
+                                                    <Fragment key={item.text}>
+                                                        <MenuItem>
+                                                            <li 
+                                                                className="list-none py-2.5 px-3.5 text-topcovercolor cursor-pointer hover:bg-hoverground rounded-lg"
+                                                                onClick={async () => {
+                                                                    switch(item.type) {
+                                                                        case "pack":
+                                                                            break;
+                                                                        case "logout":
+                                                                            const result = await logout();
+                                                                            if (result.status) {
+                                                                                window.location.href = result.href;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {item.text}
+                                                            </li>
+                                                        </MenuItem>
+                                                        {
+                                                            displayItems.length - 1 !== ind && <i className="my-2 h-px bg-topcovercolor border-b block"/>
+                                                        }
+                                                    </Fragment>
+                                                )
+                                            })
+                                        }
+                                    </MenuItems>
+                                </Menu>
+                            </div>
+                        </>
+                    )
+                }
+            </header>
+            <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo}/>
+        </>
     )
+}
+
+function MobileDialog({menuOpen, setMenuOpen, userinfo}: I_MobileDialogProps) {
+    return <Dialog open={menuOpen} onClose={() => setMenuOpen(false)} className="pc:hidden">
+        <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center bg-black bg-opacity-60 z-10 overflow-y-auto overflow-x-hidden">
+            <DialogPanel className={`w-screen w-[500px] absolute top-0 left-0 bg-coverground h-[50%] animate-expand`}>
+                {
+                    userinfo && (
+                        <div className="flex ml-5">
+                            <figure className="h-16 relative w-16 cursor-pointer">
+                                <Image 
+                                    src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} 
+                                    alt={userinfo.name} 
+                                    sizes="100" 
+                                    fill
+                                />
+                            </figure>
+                            <h2 className="text-topcovercolor p-5 text-2xl">{userinfo.name}，您好</h2>
+                        </div>
+                    )
+                }
+                <ul className="overflow-auto h-[70%] scrollbar">
+                {
+                    displayItems.map((item, index) => {
+                        return (
+                            <Fragment key={item.text}>
+                                <li className="list-none py-3 px-10 text-topcovercolor cursor-pointer hover:bg-hoverground" onClick={async () => {
+                                    switch(item.type) {
+                                        case "pack":
+                                            break;
+                                        case "logout":
+                                            const result = await logout();
+                                            if (result.status) {
+                                                window.location.href = result.href;
+                                            }
+                                            break;
+                                    }
+                                }}>
+                                    {item.text}
+                                </li>
+                                {
+                                    displayItems.length - 1 !== index && <i className="w-[95%] m-auto h-px border-topcovercolor border-b block"/>
+                                }
+                            </Fragment>
+                        )
+                    })
+                }
+                </ul>
+            </DialogPanel>
+        </div>
+    </Dialog>
 }

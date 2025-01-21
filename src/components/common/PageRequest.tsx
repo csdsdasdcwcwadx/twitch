@@ -21,9 +21,5 @@ export default function PageRequest () {
         }
     }, [pathname])
 
-    return (
-        <div>
-
-        </div>
-    )
+    return <></>
 }

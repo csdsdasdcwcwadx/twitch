@@ -47,6 +47,8 @@ export const setCheckStatus = async(checkId: string, streaming: boolean) => {
     return response.data;
 }
 
+// -----------------------------------------graphQL-----------------------------------------
+
 export const getchecks = async () => {
     // const GET_USER_CHECKS = gql`
     //     mutation GetUserChecks($userId: String!) {
