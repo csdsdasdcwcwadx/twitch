@@ -11,6 +11,12 @@ interface I_props {
     userinfo?: I_User
 }
 
+interface I_MobileDialogProps {
+    menuOpen: boolean;
+    setMenuOpen: Function;
+    userinfo?: I_User;
+}
+
 const displayItems = [
     {type: "pack", text: "前往背包", icon: ""},
     {type: "logout", text: "登出", icon: ""},
@@ -82,54 +88,58 @@ export function Header({ userinfo }: I_props) {
                     )
                 }
             </header>
-            <Dialog open={menuOpen} onClose={() => setMenuOpen(false)} className="pc:hidden">
-                <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center bg-black bg-opacity-60 z-10 overflow-y-auto overflow-x-hidden">
-                    <DialogPanel className={`w-screen w-[500px] absolute top-0 left-0 bg-coverground h-[50%] animate-expand`}>
-                        {
-                            userinfo && (
-                                <div className="flex ml-5">
-                                    <figure className="h-16 relative w-16 cursor-pointer">
-                                        <Image 
-                                            src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} 
-                                            alt={userinfo.name} 
-                                            sizes="100" 
-                                            fill
-                                        />
-                                    </figure>
-                                    <h2 className="text-topcovercolor p-5 text-2xl">{userinfo.name}，您好</h2>
-                                </div>
-                            )
-                        }
-                        <ul className="overflow-auto h-[70%] scrollbar">
-                        {
-                            displayItems.map((item, index) => {
-                                return (
-                                    <Fragment key={item.text}>
-                                        <li className="list-none py-3 px-10 text-topcovercolor cursor-pointer hover:bg-hoverground" onClick={async () => {
-                                            switch(item.type) {
-                                                case "pack":
-                                                    break;
-                                                case "logout":
-                                                    const result = await logout();
-                                                    if (result.status) {
-                                                        window.location.href = result.href;
-                                                    }
-                                                    break;
-                                            }
-                                        }}>
-                                            {item.text}
-                                        </li>
-                                        {
-                                            displayItems.length - 1 !== index && <i className="w-[95%] m-auto h-px border-topcovercolor border-b block"/>
-                                        }
-                                    </Fragment>
-                                )
-                            })
-                        }
-                        </ul>
-                    </DialogPanel>
-                </div>
-            </Dialog>
+            <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo}/>
         </>
     )
+}
+
+function MobileDialog({menuOpen, setMenuOpen, userinfo}: I_MobileDialogProps) {
+    return <Dialog open={menuOpen} onClose={() => setMenuOpen(false)} className="pc:hidden">
+        <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center bg-black bg-opacity-60 z-10 overflow-y-auto overflow-x-hidden">
+            <DialogPanel className={`w-screen w-[500px] absolute top-0 left-0 bg-coverground h-[50%] animate-expand`}>
+                {
+                    userinfo && (
+                        <div className="flex ml-5">
+                            <figure className="h-16 relative w-16 cursor-pointer">
+                                <Image 
+                                    src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} 
+                                    alt={userinfo.name} 
+                                    sizes="100" 
+                                    fill
+                                />
+                            </figure>
+                            <h2 className="text-topcovercolor p-5 text-2xl">{userinfo.name}，您好</h2>
+                        </div>
+                    )
+                }
+                <ul className="overflow-auto h-[70%] scrollbar">
+                {
+                    displayItems.map((item, index) => {
+                        return (
+                            <Fragment key={item.text}>
+                                <li className="list-none py-3 px-10 text-topcovercolor cursor-pointer hover:bg-hoverground" onClick={async () => {
+                                    switch(item.type) {
+                                        case "pack":
+                                            break;
+                                        case "logout":
+                                            const result = await logout();
+                                            if (result.status) {
+                                                window.location.href = result.href;
+                                            }
+                                            break;
+                                    }
+                                }}>
+                                    {item.text}
+                                </li>
+                                {
+                                    displayItems.length - 1 !== index && <i className="w-[95%] m-auto h-px border-topcovercolor border-b block"/>
+                                }
+                            </Fragment>
+                        )
+                    })
+                }
+                </ul>
+            </DialogPanel>
+        </div>
+    </Dialog>
 }

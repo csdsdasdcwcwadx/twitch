@@ -101,7 +101,7 @@ export default function Back() {
                     />
                 </section>
                 <Dialog open={openCheckDialog} onClose={() => setOpenCheckDialog(false)} className="relative z-50">
-                    <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-foreground bg-opacity-60">
+                    <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
                         <DialogPanel className="max-w-lg space-y-4 border bg-background p-12 w-[500px] relative mobile:w-[80%]">
                             <Image className="absolute top-[10px] right-[10px] cursor-pointer" src={closeIcon} alt="close" onClick={() => setOpenCheckDialog(false)}/>
                             {
@@ -133,7 +133,7 @@ export default function Back() {
                                 )
                             }
                             {
-                                <section className="">
+                                <section>
                                     <div className="flex relative">
                                         <Image src={searchIcon} alt="search" className="h-5 w-5 absolute left-3"/>
                                         <Input
