@@ -19,9 +19,14 @@ export default {
           "50%": { transform: "translate(-50%, -60%)" },
           "100%": { transform: "translate(-50%, -50%)" },
         },
+        expand: {
+          "0%": { top: "-50%" },
+          "100%": { top: "0" },
+        },
       },
       animation: {
         moving: "moving 5s ease-in-out infinite",
+        expand: "expand .8s ease-in-out",
       },
     },
     screens: {
