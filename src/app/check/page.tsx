@@ -63,6 +63,11 @@ export default function Check () {
                             if (!checks.streaming) return;
                             setCheckInput(checks); // 根據需要處理點擊事件
                         }}
+                        headerToolbar={{
+                            left: '',  // 移除左側按鈕
+                            center: 'title',  // 顯示標題
+                            right: '',  // 移除右側按鈕
+                        }}
                     />
                 </section>
                 <Dialog open={Boolean(checkInput)} onClose={() => setCheckInput(null)} className="relative z-50">

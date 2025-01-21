@@ -48,7 +48,3 @@ body {
     background: #4c69fc;
   }
 }
-
-.calendar-container .fc-header-toolbar {
-  @apply mobile:flex-col;
-}

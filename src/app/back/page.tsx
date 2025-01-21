@@ -93,6 +93,11 @@ export default function Back() {
                             setShowCheckInfo(show);
                             setDisplayCheckUser(userChecks);
                         }}
+                        headerToolbar={{
+                            left: '',  // 移除左側按鈕
+                            center: 'title',  // 顯示標題
+                            right: '',  // 移除右側按鈕
+                        }}
                     />
                 </section>
                 <Dialog open={openCheckDialog} onClose={() => setOpenCheckDialog(false)} className="relative z-50">
