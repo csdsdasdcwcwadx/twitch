@@ -12,6 +12,9 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        coverground: "var(--coverground)",
+        hoverground: "var(--hoverground)",
+        topcovercolor: "var(--topcovercolor)",
       },
       keyframes: {
         moving: {

@@ -5,12 +5,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --coverground: #374151;
+  --hoverground: #6B7280;
+  --topcovercolor: #E2E8F0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
+    --coverground: #374151;
+    --hoverground: #6B7280;
+    --topcovercolor: #E2E8F0;
   }
 }
 

@@ -96,16 +96,16 @@ export default function Back() {
                     />
                 </section>
                 <Dialog open={openCheckDialog} onClose={() => setOpenCheckDialog(false)} className="relative z-50">
-                    <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
-                        <DialogPanel className="max-w-lg space-y-4 border bg-white p-12 w-[500px] relative mobile:w-[80%]">
+                    <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-foreground bg-opacity-60">
+                        <DialogPanel className="max-w-lg space-y-4 border bg-background p-12 w-[500px] relative mobile:w-[80%]">
                             <Image className="absolute top-[10px] right-[10px] cursor-pointer" src={closeIcon} alt="close" onClick={() => setOpenCheckDialog(false)}/>
                             {
                                 showCheckInfo && (
                                     <>
                                         <DialogTitle className="font-bold text-center text-xl">{!checkItem ? '請輸入設定的簽到驗證' : '結束簽到'}</DialogTitle>
-                                        {!checkItem && <Input name="full_name" className="w-full pl-1.5 border border-solid border-black outline-none rounded" ref={passcodeRef} type="text"/> }
+                                        {!checkItem && <Input name="full_name" className="w-full pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/> }
                                         <div className="text-center">
-                                            <Button className="text-white rounded-md py-2.5 px-5 bg-gray-700" onClick={async () => {
+                                            <Button className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground" onClick={async () => {
                                                 if (!checkItem) {
                                                     const result = await setcheck(passcodeRef.current?.value || "");
                                                     if (passcodeRef.current) passcodeRef.current.value = "";

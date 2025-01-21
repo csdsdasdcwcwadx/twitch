@@ -67,9 +67,9 @@ export default function Check () {
                 </section>
                 <Dialog open={Boolean(checkInput)} onClose={() => setCheckInput(null)} className="relative z-50">
                     <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
-                        <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
+                        <DialogPanel className="max-w-lg space-y-4 border bg-background p-12">
                             <DialogTitle className="font-bold text-center">請輸入簽到驗證</DialogTitle>
-                            <Input name="full_name" className="pl-1.5 border border-solid border-black outline-none rounded" ref={passcodeRef} type="text"/>
+                            <Input name="full_name" className="pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/>
                             <div className="text-center">
                                 <button className="mr-3" onClick={async () => {
                                     const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");

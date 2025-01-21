@@ -44,14 +44,14 @@ export function Header({ userinfo }: I_props) {
                                             />
                                         </figure>
                                     </MenuButton>
-                                    <MenuItems anchor="bottom end" className="mobile:hidden text-center bg-gray-700 mt-1 rounded-lg p-2 z-10">
+                                    <MenuItems anchor="bottom end" className="mobile:hidden text-center bg-coverground mt-1 rounded-lg p-2 z-10">
                                         {
                                             displayItems.map((item, ind) => {
                                                 return (
                                                     <Fragment key={item.text}>
                                                         <MenuItem>
                                                             <li 
-                                                                className="list-none py-2.5 px-3.5 text-slate-200 cursor-pointer hover:bg-gray-500 rounded-lg"
+                                                                className="list-none py-2.5 px-3.5 text-topcovercolor cursor-pointer hover:bg-hoverground rounded-lg"
                                                                 onClick={async () => {
                                                                     switch(item.type) {
                                                                         case "pack":
@@ -69,7 +69,7 @@ export function Header({ userinfo }: I_props) {
                                                             </li>
                                                         </MenuItem>
                                                         {
-                                                            displayItems.length - 1 !== ind && <i className="my-2 h-px bg-white/5 border-b block"/>
+                                                            displayItems.length - 1 !== ind && <i className="my-2 h-px bg-topcovercolor border-b block"/>
                                                         }
                                                     </Fragment>
                                                 )
@@ -84,7 +84,7 @@ export function Header({ userinfo }: I_props) {
             </header>
             <Dialog open={menuOpen} onClose={() => setMenuOpen(false)} className="pc:hidden">
                 <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center bg-black bg-opacity-60 z-10 overflow-y-auto overflow-x-hidden">
-                    <DialogPanel className={`w-screen w-[500px] absolute top-0 left-0 bg-gray-700 h-[50%] animate-expand`}>
+                    <DialogPanel className={`w-screen w-[500px] absolute top-0 left-0 bg-coverground h-[50%] animate-expand`}>
                         {
                             userinfo && (
                                 <div className="flex ml-5">
@@ -96,7 +96,7 @@ export function Header({ userinfo }: I_props) {
                                             fill
                                         />
                                     </figure>
-                                    <h2 className="text-white p-5 text-2xl">{userinfo.name}，您好</h2>
+                                    <h2 className="text-topcovercolor p-5 text-2xl">{userinfo.name}，您好</h2>
                                 </div>
                             )
                         }
@@ -105,7 +105,7 @@ export function Header({ userinfo }: I_props) {
                             displayItems.map((item, index) => {
                                 return (
                                     <Fragment key={item.text}>
-                                        <li className="list-none py-3 px-10 text-slate-200 cursor-pointer hover:bg-gray-500" onClick={async () => {
+                                        <li className="list-none py-3 px-10 text-topcovercolor cursor-pointer hover:bg-hoverground" onClick={async () => {
                                             switch(item.type) {
                                                 case "pack":
                                                     break;
@@ -120,7 +120,7 @@ export function Header({ userinfo }: I_props) {
                                             {item.text}
                                         </li>
                                         {
-                                            displayItems.length - 1 !== index && <i className="w-[95%] m-auto h-px bg-white/5 border-b block"/>
+                                            displayItems.length - 1 !== index && <i className="w-[95%] m-auto h-px border-topcovercolor border-b block"/>
                                         }
                                     </Fragment>
                                 )
