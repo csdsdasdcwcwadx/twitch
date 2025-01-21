@@ -10,6 +10,7 @@ import { Header } from "@/components/common/Header";
 import Image from "next/image";
 import searchIcon from "@/icon/search.png";
 import closeIcon from "@/icon/close.png";
+import { twitchIconDomain } from "@/utils/util";
 
 export default function Back() {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
@@ -147,7 +148,7 @@ export default function Back() {
                                         displayCheckUser.length ? filterUserCheck.map((userCheck) => (
                                             <aside key={userCheck.user.id} className="py-2.5 px-3.5 hover:bg-slate-100 rounded flex items-center cursor-auto">
                                                 <figure className="relative w-9 h-9 mr-2">
-                                                    <Image src={`https://static-cdn.jtvnw.net${userCheck.user.profile_image}`} alt={userCheck.user.name} sizes="100" fill/>
+                                                    <Image src={`${twitchIconDomain}${userCheck.user.profile_image}`} alt={userCheck.user.name} sizes="100" fill/>
                                                 </figure>
                                                 <span>{userCheck.user.name}</span>
                                             </aside>

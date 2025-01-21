@@ -35,3 +35,5 @@ export function getMonthCalendar(year: number, month: number): string[][] {
 
     return calendar;
 }
+
+export const twitchIconDomain = "https://static-cdn.jtvnw.net"
