@@ -1,7 +1,7 @@
 import axios from "axios";
 import { domainEnv } from "./util";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
-import { I_CheckPage } from "./interface";
+import { I_CheckPage, I_Header } from "./interface";
 
 const api = axios.create({
     baseURL: domainEnv, // 確保後端的 API URL 從環境變量中獲取
@@ -48,6 +48,25 @@ export const setCheckStatus = async(checkId: string, streaming: boolean) => {
 }
 
 // -----------------------------------------graphQL-----------------------------------------
+
+export const getUsers = async () => {
+    const GET_USER_CHECKS = gql`
+        query GetAllChecks {
+            getUsers {
+                id
+                twitch_id
+                login
+                name
+                email
+                profile_image
+            }
+        }
+    `;
+    const response = await apollo.query<I_Header>({
+        query: GET_USER_CHECKS,
+    });
+    return response.data;
+}
 
 export const getchecks = async () => {
     // const GET_USER_CHECKS = gql`

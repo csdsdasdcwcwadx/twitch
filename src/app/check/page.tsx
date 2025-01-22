@@ -12,7 +12,6 @@ import { Header } from "@/components/common/Header";
 export default function Check () {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
         getChecks: [],
-        getUsers: null,
     });
     const [checkInput, setCheckInput] = useState<I_Check | null>(null);
     const passcodeRef = useRef<HTMLInputElement>(null);
@@ -49,7 +48,7 @@ export default function Check () {
 
     return (
         <>
-            <Header userinfo={checkPageData.getUsers!}/>
+            {/* <Header userinfo={checkPageData.getUsers!}/> */}
             <main>
                 <section className="calendar-container w-9/12 m-auto mt-3">
                     <FullCalendar

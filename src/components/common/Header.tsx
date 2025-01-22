@@ -5,12 +5,10 @@ import { useRouter } from 'next/navigation'
 import twitchIcon from "@/icon/twitch.png";
 import { I_User } from "@/utils/interface";
 import { Menu, MenuButton, MenuItem, MenuItems, Dialog, DialogPanel } from '@headlessui/react'
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { domainEnv, twitchIconDomain } from "@/utils/util";
-
-interface I_props {
-    userinfo?: I_User
-}
+import { getUsers } from "@/utils/api";
+import { usePathname } from "next/navigation";
 
 interface I_MobileDialogProps {
     menuOpen: boolean;
@@ -25,41 +23,59 @@ const displayItems = [
     {type: "logout", text: "功能2", icon: ""},
 ]
 
-export function Header({ userinfo }: I_props) {
+export function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [userinfo, setUserInfo] = useState<I_User | undefined>();
+    const pathname = usePathname();
 
-    return (
-        <>
-            <header className="h-20 flex items-center justify-between mx-2.5 mobile:justify-center">
-                {
-                    userinfo && (
-                        <>
-                            <figure className="h-16 w-16 cursor-pointer transform">
-                                <Image src={twitchIcon} alt="twitch" onClick={() => setMenuOpen(true)}/>
-                            </figure>
-                            <div className="flex items-center mr-7 mobile:hidden">
-                                <Menu>
-                                    <figcaption className="mr-3 mobile:hidden">{userinfo.name}，您好</figcaption>
-                                    <MenuButton>
-                                        <figure className="h-16 relative w-16 cursor-pointer">
-                                            <Image 
-                                                src={`${twitchIconDomain}${userinfo.profile_image}`} 
-                                                alt={userinfo.name} 
-                                                sizes="100" 
-                                                fill
-                                            />
-                                        </figure>
-                                    </MenuButton>
-                                    <MenuAllItems/>
-                                </Menu>
-                            </div>
-                        </>
-                    )
+    useEffect(() => {
+        (async function() {
+            if (pathname !== "/") {
+                try {
+                    const result = await getUsers();
+                    setUserInfo(result.getUsers);
+                } catch (e) {
+                    console.log(e)
                 }
-            </header>
-            <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo}/>
-        </>
-    )
+            }
+        })()
+    }, [])
+
+    if (pathname !== "/") {
+        return (
+            <>
+                <header className="h-20 flex items-center justify-between mx-2.5 mobile:justify-center">
+                    {
+                        userinfo && (
+                            <>
+                                <figure className="h-16 w-16 cursor-pointer transform">
+                                    <Image src={twitchIcon} alt="twitch" onClick={() => setMenuOpen(true)}/>
+                                </figure>
+                                <div className="flex items-center mr-7 mobile:hidden">
+                                    <Menu>
+                                        <figcaption className="mr-3 mobile:hidden">{userinfo.name}，您好</figcaption>
+                                        <MenuButton>
+                                            <figure className="h-16 relative w-16 cursor-pointer">
+                                                <Image 
+                                                    src={`${twitchIconDomain}${userinfo.profile_image}`} 
+                                                    alt={userinfo.name} 
+                                                    sizes="100" 
+                                                    fill
+                                                />
+                                            </figure>
+                                        </MenuButton>
+                                        <MenuAllItems/>
+                                    </Menu>
+                                </div>
+                            </>
+                        )
+                    }
+                </header>
+                <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo}/>
+            </>
+        )
+    }
+    return <></>
 }
 
 function MobileDialog({menuOpen, setMenuOpen, userinfo}: I_MobileDialogProps) {
