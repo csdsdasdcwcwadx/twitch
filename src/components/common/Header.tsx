@@ -13,7 +13,12 @@ import { usePathname } from "next/navigation";
 interface I_MobileDialogProps {
     menuOpen: boolean;
     setMenuOpen: (param: boolean) => void;
+    handleItemsClick: (item: { type: string, text: string, icon: string }) => void;
     userinfo?: I_User;
+}
+
+interface I_MenuAllItemsProps {
+    handleItemsClick: (item: { type: string, text: string, icon: string }) => void;
 }
 
 const displayItems = [
@@ -27,6 +32,18 @@ export function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [userinfo, setUserInfo] = useState<I_User | undefined>();
     const pathname = usePathname();
+    const router = useRouter();
+
+    const handleItemsClick = (item: { type: string, text: string, icon: string }) => {
+        switch(item.type) {
+            case "pack":
+                router.push('/pack');
+                break;
+            case "logout":
+                window.location.href = `${domainEnv}/twitch/member/logout`;
+                break;
+        }
+    }
 
     useEffect(() => {
         (async function() {
@@ -64,33 +81,21 @@ export function Header() {
                                                 />
                                             </figure>
                                         </MenuButton>
-                                        <MenuAllItems/>
+                                        <MenuAllItems handleItemsClick={handleItemsClick}/>
                                     </Menu>
                                 </div>
                             </>
                         )
                     }
                 </header>
-                <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo}/>
+                <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo} handleItemsClick={handleItemsClick}/>
             </>
         )
     }
     return <></>
 }
 
-function MobileDialog({menuOpen, setMenuOpen, userinfo}: I_MobileDialogProps) {
-    const router = useRouter();
-    const handleItemsClick = (item: { type: string, text: string, icon: string }) => {
-        switch(item.type) {
-            case "pack":
-                router.push('/pack');
-                break;
-            case "logout":
-                window.location.href = `${domainEnv}/twitch/member/logout`;
-                break;
-        }
-    }
-
+function MobileDialog({ menuOpen, setMenuOpen, userinfo, handleItemsClick }: I_MobileDialogProps) {
     return <Dialog open={menuOpen} onClose={() => setMenuOpen(false)} className="pc:hidden">
         <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center bg-black bg-opacity-60 z-10 overflow-y-auto overflow-x-hidden">
             <DialogPanel className={`w-screen w-[500px] absolute top-0 left-0 bg-coverground h-[50%] animate-expand`}>
@@ -130,19 +135,7 @@ function MobileDialog({menuOpen, setMenuOpen, userinfo}: I_MobileDialogProps) {
     </Dialog>
 }
 
-function MenuAllItems() {
-    const router = useRouter();
-    const handleItemsClick = (item: { type: string, text: string, icon: string }) => {
-        switch(item.type) {
-            case "pack":
-                router.push('/pack');
-                break;
-            case "logout":
-                window.location.href = `${domainEnv}/twitch/member/logout`;
-                break;
-        }
-    }
-    
+function MenuAllItems({ handleItemsClick }: I_MenuAllItemsProps) {
     return <MenuItems anchor="bottom end" className="mobile:hidden text-center bg-coverground mt-1 rounded-lg p-2 z-10 w-32">
         {
             displayItems.map((item, ind) => {
