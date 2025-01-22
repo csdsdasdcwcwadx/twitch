@@ -7,7 +7,6 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import { I_CheckPage, I_Check } from "@/utils/interface";
-import { Header } from "@/components/common/Header";
 
 export default function Check () {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({

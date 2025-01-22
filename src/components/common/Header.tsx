@@ -26,6 +26,9 @@ const displayItems = [
     {type: "logout", text: "登出", icon: ""},
     {type: "logout", text: "功能1", icon: ""},
     {type: "logout", text: "功能2", icon: ""},
+    {type: "logout", text: "功能3", icon: ""},
+    {type: "logout", text: "功能4", icon: ""},
+    {type: "logout", text: "功能5", icon: ""},
 ]
 
 export function Header() {
@@ -58,41 +61,41 @@ export function Header() {
         })()
     }, [])
 
-    if (pathname !== "/") {
-        return (
-            <>
-                <header className="h-20 flex items-center justify-between mx-2.5 mobile:justify-center">
-                    {
-                        userinfo && (
-                            <>
-                                <figure className="h-16 w-16 cursor-pointer transform">
-                                    <Image src={twitchIcon} alt="twitch" onClick={() => setMenuOpen(true)}/>
-                                </figure>
-                                <div className="flex items-center mr-7 mobile:hidden">
-                                    <Menu>
-                                        <figcaption className="mr-3 mobile:hidden">{userinfo.name}，您好</figcaption>
-                                        <MenuButton>
-                                            <figure className="h-16 relative w-16 cursor-pointer">
-                                                <Image 
-                                                    src={`${twitchIconDomain}${userinfo.profile_image}`} 
-                                                    alt={userinfo.name} 
-                                                    sizes="100" 
-                                                    fill
-                                                />
-                                            </figure>
-                                        </MenuButton>
-                                        <MenuAllItems handleItemsClick={handleItemsClick}/>
-                                    </Menu>
-                                </div>
-                            </>
-                        )
-                    }
-                </header>
-                <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo} handleItemsClick={handleItemsClick}/>
-            </>
-        )
-    }
-    return <></>
+    if (pathname === "/") return <></>
+
+    return (
+        <>
+            <header className="h-20 flex items-center justify-between mx-2.5 mobile:justify-center">
+                {
+                    userinfo && (
+                        <>
+                            <figure className="h-16 w-16 cursor-pointer transform mobile:hidden">
+                                <Image src={twitchIcon} alt="twitch"/>
+                            </figure>
+                            <div className="flex items-center pc:mr-7">
+                                <Menu>
+                                    <figcaption className="mr-3 mobile:hidden">{userinfo.name}，您好</figcaption>
+                                    <MenuButton>
+                                        <figure className="h-16 relative w-16 cursor-pointer" onClick={() => setMenuOpen(true)}>
+                                            <Image 
+                                                src={`${twitchIconDomain}${userinfo.profile_image}`} 
+                                                alt={userinfo.name} 
+                                                sizes="100" 
+                                                fill
+                                            />
+                                        </figure>
+                                    </MenuButton>
+                                    <MenuAllItems handleItemsClick={handleItemsClick}/>
+                                </Menu>
+                            </div>
+                        </>
+                    )
+                }
+            </header>
+            <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo} handleItemsClick={handleItemsClick}/>
+        </>
+    )
+    
 }
 
 function MobileDialog({ menuOpen, setMenuOpen, userinfo, handleItemsClick }: I_MobileDialogProps) {
@@ -103,12 +106,7 @@ function MobileDialog({ menuOpen, setMenuOpen, userinfo, handleItemsClick }: I_M
                     userinfo && (
                         <div className="flex ml-5">
                             <figure className="h-16 relative w-16 cursor-pointer">
-                                <Image 
-                                    src={`https://static-cdn.jtvnw.net${userinfo.profile_image}`} 
-                                    alt={userinfo.name} 
-                                    sizes="100" 
-                                    fill
-                                />
+                                <Image src={twitchIcon} alt="twitch" sizes="100" fill/>
                             </figure>
                             <h2 className="text-topcovercolor p-5 text-2xl">{userinfo.name}，您好</h2>
                         </div>

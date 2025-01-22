@@ -6,7 +6,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import { Input, Dialog, DialogPanel, DialogTitle, Button } from '@headlessui/react';
 import { I_CheckPage, I_UserCheck } from "@/utils/interface";
-import { Header } from "@/components/common/Header";
 import Image from "next/image";
 import searchIcon from "@/icon/search.png";
 import closeIcon from "@/icon/close.png";
