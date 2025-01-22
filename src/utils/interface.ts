@@ -13,15 +13,18 @@ export type I_UserCheck = {
 }
 
 export type I_User = {
-    id: string
-    twitch_id: string
-    login: string
-    name: string
-    email: string
-    profile_image: string
+    id: string;
+    twitch_id: string;
+    login: string;
+    name: string;
+    email: string;
+    profile_image: string;
 }
 
 export type I_CheckPage = {
     getChecks: I_Check[];
-    getUsers: I_User | null;
+}
+
+export type I_Header = {
+    getUsers: I_User;
 }

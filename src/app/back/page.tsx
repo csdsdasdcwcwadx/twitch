@@ -6,7 +6,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import { Input, Dialog, DialogPanel, DialogTitle, Button } from '@headlessui/react';
 import { I_CheckPage, I_UserCheck } from "@/utils/interface";
-import { Header } from "@/components/common/Header";
 import Image from "next/image";
 import searchIcon from "@/icon/search.png";
 import closeIcon from "@/icon/close.png";
@@ -15,7 +14,6 @@ import { twitchIconDomain } from "@/utils/util";
 export default function Back() {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
         getChecks: [],
-        getUsers: null,
     });
     const [openCheckDialog, setOpenCheckDialog] = useState(false);
     const [showCheckInfo, setShowCheckInfo] = useState(true);
@@ -79,61 +77,60 @@ export default function Back() {
     }, [displayCheckUser, query])
 
     return (
-        <>
-            <Header userinfo={checkPageData.getUsers!}/>
-            <main>
-                <section className="calendar-container w-9/12 m-auto">
-                    <FullCalendar
-                        plugins={[dayGridPlugin, interactionPlugin]}
-                        initialView="dayGridMonth"
-                        events={CalendarEventsData}
-                        eventClick={(info) => {
-                            const { show } = info.event.extendedProps;
-                            const userChecks = info.event.extendedProps.userChecks as I_UserCheck[];
-                            setOpenCheckDialog(true);
-                            setShowCheckInfo(show);
-                            setDisplayCheckUser(userChecks);
-                        }}
-                        headerToolbar={{
-                            left: '',  // 移除左側按鈕
-                            center: 'title',  // 顯示標題
-                            right: '',  // 移除右側按鈕
-                        }}
-                    />
-                </section>
-                <Dialog open={openCheckDialog} onClose={() => setOpenCheckDialog(false)} className="relative z-50">
-                    <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
-                        <DialogPanel className="max-w-lg space-y-4 border bg-background p-12 w-[500px] relative mobile:w-[80%]">
-                            <Image className="absolute top-[10px] right-[10px] cursor-pointer" src={closeIcon} alt="close" onClick={() => setOpenCheckDialog(false)}/>
-                            {
-                                showCheckInfo && (
-                                    <>
-                                        <DialogTitle className="font-bold text-center text-xl">{!checkItem ? '請輸入設定的簽到驗證' : '結束簽到'}</DialogTitle>
-                                        {!checkItem && <Input name="full_name" className="w-full pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/> }
-                                        <div className="text-center">
-                                            <Button className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground" onClick={async () => {
-                                                if (!checkItem) {
-                                                    const result = await setcheck(passcodeRef.current?.value || "");
-                                                    if (passcodeRef.current) passcodeRef.current.value = "";
-                                                    if (result.status) {
-                                                        const checkResult = await getbacks();
-                                                        setCheckPageData(checkResult);
-                                                        setOpenCheckDialog(false);
-                                                    }
-                                                } else {
-                                                    const result = await setCheckStatus(checkItem.id, false);
-                                                    if (result.status) {
-                                                        const checkResult = await getbacks();
-                                                        setCheckPageData(checkResult);
-                                                        setOpenCheckDialog(false);
-                                                    }
+        <main>
+            <section className="calendar-container w-9/12 m-auto">
+                <FullCalendar
+                    plugins={[dayGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    events={CalendarEventsData}
+                    eventClick={(info) => {
+                        const { show } = info.event.extendedProps;
+                        const userChecks = info.event.extendedProps.userChecks as I_UserCheck[];
+                        setOpenCheckDialog(true);
+                        setShowCheckInfo(show);
+                        setDisplayCheckUser(userChecks);
+                    }}
+                    headerToolbar={{
+                        left: '',  // 移除左側按鈕
+                        center: 'title',  // 顯示標題
+                        right: '',  // 移除右側按鈕
+                    }}
+                />
+            </section>
+            <Dialog open={openCheckDialog} onClose={() => setOpenCheckDialog(false)} className="relative z-50">
+                <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
+                    <DialogPanel className="max-w-lg border bg-background p-12 w-[500px] relative mobile:w-[80%]">
+                        <Image className="absolute top-[10px] right-[10px] cursor-pointer" src={closeIcon} alt="close" onClick={() => setOpenCheckDialog(false)}/>
+                        {
+                            showCheckInfo && (
+                                <>
+                                    { !checkItem && <DialogTitle className="font-bold text-center text-xl">請輸入設定的簽到驗證</DialogTitle> }
+                                    {!checkItem && <Input name="full_name" className="w-full pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/> }
+                                    <div className="text-center">
+                                        <Button className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground" onClick={async () => {
+                                            if (!checkItem) {
+                                                const result = await setcheck(passcodeRef.current?.value || "");
+                                                if (passcodeRef.current) passcodeRef.current.value = "";
+                                                if (result.status) {
+                                                    const checkResult = await getbacks();
+                                                    setCheckPageData(checkResult);
+                                                    setOpenCheckDialog(false);
                                                 }
-                                            }}>{!checkItem ? "設定簽到" : "確認結束簽到"}</Button>
-                                        </div>
-                                    </>
-                                )
-                            }
-                            {
+                                            } else {
+                                                const result = await setCheckStatus(checkItem.id, false);
+                                                if (result.status) {
+                                                    const checkResult = await getbacks();
+                                                    setCheckPageData(checkResult);
+                                                    setOpenCheckDialog(false);
+                                                }
+                                            }
+                                        }}>{!checkItem ? "設定簽到" : "結束簽到"}</Button>
+                                    </div>
+                                </>
+                            )
+                        }
+                        {
+                            checkItem && (
                                 <section>
                                     <div className="flex relative">
                                         <Image src={searchIcon} alt="search" className="h-5 w-5 absolute left-3"/>
@@ -156,11 +153,11 @@ export default function Back() {
                                     }
                                     </div>
                                 </section>
-                            }
-                        </DialogPanel>
-                    </div>
-                </Dialog>
-            </main>
-        </>
+                            )
+                        }
+                    </DialogPanel>
+                </div>
+            </Dialog>
+        </main>
     )
 }
