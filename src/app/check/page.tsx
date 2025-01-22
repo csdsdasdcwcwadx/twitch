@@ -47,49 +47,46 @@ export default function Check () {
     }, [checkPageData])
 
     return (
-        <>
-            {/* <Header userinfo={checkPageData.getUsers!}/> */}
-            <main>
-                <section className="calendar-container w-9/12 m-auto mt-3">
-                    <FullCalendar
-                        plugins={[dayGridPlugin, interactionPlugin]}
-                        initialView="dayGridMonth"
-                        events={CalendarEventsData}
-                        eventClick={(info) => {
-                            const checks = info.event.extendedProps as I_Check;
-                            if (!checks) return;
-                            if(checks.userChecks[0] && checks.userChecks[0].checked) return;
-                            if (!checks.streaming) return;
-                            setCheckInput(checks); // 根據需要處理點擊事件
-                        }}
-                        headerToolbar={{
-                            left: '',  // 移除左側按鈕
-                            center: 'title',  // 顯示標題
-                            right: '',  // 移除右側按鈕
-                        }}
-                    />
-                </section>
-                <Dialog open={Boolean(checkInput)} onClose={() => setCheckInput(null)} className="relative z-50">
-                    <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
-                        <DialogPanel className="max-w-lg space-y-4 border bg-background p-12">
-                            <DialogTitle className="font-bold text-center">請輸入簽到驗證</DialogTitle>
-                            <Input name="full_name" className="pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/>
-                            <div className="text-center">
-                                <button className="mr-3" onClick={async () => {
-                                    const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");
-                                    alert(setCheckResult.message);
-                                    if (setCheckResult.status) {
-                                        const result = await getchecks();
-                                        setCheckPageData(result);
-                                        setCheckInput(null);
-                                    };
-                                }}>簽到</button>
-                                <button onClick={() => setCheckInput(null)}>取消</button>
-                            </div>
-                        </DialogPanel>
-                    </div>
-                </Dialog>
-            </main>
-        </>
+        <main>
+            <section className="calendar-container w-9/12 m-auto mt-3">
+                <FullCalendar
+                    plugins={[dayGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    events={CalendarEventsData}
+                    eventClick={(info) => {
+                        const checks = info.event.extendedProps as I_Check;
+                        if (!checks) return;
+                        if(checks.userChecks[0] && checks.userChecks[0].checked) return;
+                        if (!checks.streaming) return;
+                        setCheckInput(checks); // 根據需要處理點擊事件
+                    }}
+                    headerToolbar={{
+                        left: '',  // 移除左側按鈕
+                        center: 'title',  // 顯示標題
+                        right: '',  // 移除右側按鈕
+                    }}
+                />
+            </section>
+            <Dialog open={Boolean(checkInput)} onClose={() => setCheckInput(null)} className="relative z-50">
+                <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
+                    <DialogPanel className="max-w-lg space-y-4 border bg-background p-12">
+                        <DialogTitle className="font-bold text-center">請輸入簽到驗證</DialogTitle>
+                        <Input name="full_name" className="pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/>
+                        <div className="text-center">
+                            <button className="mr-3" onClick={async () => {
+                                const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");
+                                alert(setCheckResult.message);
+                                if (setCheckResult.status) {
+                                    const result = await getchecks();
+                                    setCheckPageData(result);
+                                    setCheckInput(null);
+                                };
+                            }}>簽到</button>
+                            <button onClick={() => setCheckInput(null)}>取消</button>
+                        </div>
+                    </DialogPanel>
+                </div>
+            </Dialog>
+        </main>
     )
 }
