@@ -59,7 +59,7 @@ export function Header() {
                 }
             }
         })()
-    }, [])
+    }, [pathname])
 
     if (pathname === "/") return <></>
 

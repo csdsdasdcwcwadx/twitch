@@ -21,6 +21,22 @@ export type I_User = {
     profile_image: string;
 }
 
+export type I_Item = {
+    id: string;
+    name: string;
+    image: string;
+    type: string;
+    description: string;
+    userItems?: I_UserItem[];
+}
+
+export type I_UserItem = {
+    user: I_User;
+    item: string;
+    amount: number;
+    created_at: string;
+}
+
 export type I_CheckPage = {
     getChecks: I_Check[];
 }
