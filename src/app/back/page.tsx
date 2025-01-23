@@ -4,12 +4,13 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
-import { Input, Dialog, DialogPanel, DialogTitle, Button } from '@headlessui/react';
+import { Input, Button } from '@headlessui/react';
 import { I_CheckPage, I_UserCheck } from "@/utils/interface";
 import Image from "next/image";
 import searchIcon from "@/icon/search.png";
 import closeIcon from "@/icon/close.png";
 import { twitchIconDomain } from "@/utils/util";
+import CustomDialog from "@/components/common/CustomDialog";
 
 export default function Back() {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
@@ -97,67 +98,58 @@ export default function Back() {
                     }}
                 />
             </section>
-            <Dialog open={openCheckDialog} onClose={() => setOpenCheckDialog(false)} className="relative z-50">
-                <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
-                    <DialogPanel className="max-w-lg border bg-background p-12 w-[500px] relative mobile:w-[80%]">
-                        <Image className="absolute top-[10px] right-[10px] cursor-pointer" src={closeIcon} alt="close" onClick={() => setOpenCheckDialog(false)}/>
-                        {
-                            showCheckInfo && (
-                                <>
-                                    { !checkItem && <DialogTitle className="font-bold text-center text-xl">請輸入設定的簽到驗證</DialogTitle> }
-                                    {!checkItem && <Input name="full_name" className="w-full pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/> }
-                                    <div className="text-center">
-                                        <Button className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground" onClick={async () => {
-                                            if (!checkItem) {
-                                                const result = await setcheck(passcodeRef.current?.value || "");
-                                                if (passcodeRef.current) passcodeRef.current.value = "";
-                                                if (result.status) {
-                                                    const checkResult = await getbacks();
-                                                    setCheckPageData(checkResult);
-                                                    setOpenCheckDialog(false);
-                                                }
-                                            } else {
-                                                const result = await setCheckStatus(checkItem.id, false);
-                                                if (result.status) {
-                                                    const checkResult = await getbacks();
-                                                    setCheckPageData(checkResult);
-                                                    setOpenCheckDialog(false);
-                                                }
-                                            }
-                                        }}>{!checkItem ? "設定簽到" : "結束簽到"}</Button>
-                                    </div>
-                                </>
-                            )
-                        }
-                        {
-                            checkItem && (
-                                <section>
-                                    <div className="flex relative">
-                                        <Image src={searchIcon} alt="search" className="h-5 w-5 absolute left-3"/>
-                                        <Input
-                                            placeholder="搜尋簽到用戶"
-                                            onChange={(event) => setQuery(event.target.value)}
-                                            className="mb-2.5 ml-2.5 pl-7 border-b border-solid border-slate-500 outline-none w-11/12 pb-1"
-                                        />
-                                    </div>
-                                    <div className="max-h-60 overflow-auto">
-                                    {
-                                        displayCheckUser.length ? filterUserCheck.map((userCheck) => (
-                                            <aside key={userCheck.user.id} className="py-2.5 px-3.5 hover:bg-slate-100 rounded flex items-center cursor-auto">
-                                                <figure className="relative w-9 h-9 mr-2">
-                                                    <Image src={`${twitchIconDomain}${userCheck.user.profile_image}`} alt={userCheck.user.name} sizes="100" fill/>
-                                                </figure>
-                                                <span>{userCheck.user.name}</span>
-                                            </aside>
-                                        )) : <span className="block text-center mt-2">沒有簽到用戶</span>
+            <CustomDialog open={openCheckDialog} close={setOpenCheckDialog} title={!checkItem ? "請輸入設定的簽到驗證" : ""}>
+                <Image className="absolute top-[10px] right-[10px] cursor-pointer" src={closeIcon} alt="close" onClick={() => setOpenCheckDialog(false)}/>
+                {
+                    showCheckInfo && (
+                        <>
+                            {!checkItem && <Input name="full_name" className="w-full pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/> }
+                            <div className="text-center mt-3">
+                                <Button className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground" onClick={async () => {
+                                    if (!checkItem) {
+                                        const result = await setcheck(passcodeRef.current?.value || "");
+                                        if (passcodeRef.current) passcodeRef.current.value = "";
+                                        if (result.status) {
+                                            const checkResult = await getbacks();
+                                            setCheckPageData(checkResult);
+                                            setOpenCheckDialog(false);
+                                        }
+                                    } else {
+                                        const result = await setCheckStatus(checkItem.id, false);
+                                        if (result.status) {
+                                            const checkResult = await getbacks();
+                                            setCheckPageData(checkResult);
+                                            setOpenCheckDialog(false);
+                                        }
                                     }
-                                    </div>
-                                </section>
-                            )
-                        }
-                    </DialogPanel>
-                </div>
-            </Dialog>
+                                }}>{!checkItem ? "設定簽到" : "結束簽到"}</Button>
+                            </div>
+                        </>
+                    )
+                }
+                <section className="mt-5">
+                    <div className="flex relative">
+                        <Image src={searchIcon} alt="search" className="h-5 w-5 absolute left-3"/>
+                        <Input
+                            placeholder="搜尋簽到用戶"
+                            onChange={(event) => setQuery(event.target.value)}
+                            className="mb-2.5 ml-2.5 pl-7 border-b border-solid border-slate-500 outline-none w-11/12 pb-1"
+                        />
+                    </div>
+                    <div className="max-h-60 overflow-auto">
+                    {
+                        displayCheckUser.length ? filterUserCheck.map((userCheck) => (
+                            <aside key={userCheck.user.id} className="py-2.5 px-3.5 hover:bg-slate-100 rounded flex items-center cursor-auto">
+                                <figure className="relative w-9 h-9 mr-2">
+                                    <Image src={`${twitchIconDomain}${userCheck.user.profile_image}`} alt={userCheck.user.name} sizes="100" fill/>
+                                </figure>
+                                <span>{userCheck.user.name}</span>
+                            </aside>
+                        )) : <span className="block text-center mt-2">沒有簽到用戶</span>
+                    }
+                    </div>
+                </section>
+            </CustomDialog>
         </main>
     )
 }

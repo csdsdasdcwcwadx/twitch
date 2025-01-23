@@ -6,6 +6,7 @@ import { Input, Button } from "@headlessui/react";
 import { E_Item_Types } from "@/utils/util";
 import { I_Item } from "@/utils/interface";
 // import Image from "next/image";
+import CustomDialog from "@/components/common/CustomDialog";
 
 const items: I_Item[] = [
     { id: '1', name: "Sword", description: "A sharp blade.", image: "/sword.png", type: E_Item_Types.WEAPONS },
@@ -31,6 +32,7 @@ interface I_SideBarProps {
 
 interface I_SearchBarProps {
     setQuery: (value: string) => void;
+    setOpenDialog: (flag: boolean) => void;
 }
 
 interface I_ItemGridProps {
@@ -42,10 +44,16 @@ interface I_selectedItemProps {
     selectedItem: I_Item | null;
 }
 
+interface I_ItemDialog {
+    openDialog: boolean;
+    setOpenDialog: (flag: boolean) => void;
+}
+
 export default function Pack() {
     const [selectedItem, setSelectedItem] = useState<I_Item | null>(null);
     const [query, setQuery] = useState('');
     const [currentType, setCurrentType] = useState(E_Item_Types.All);
+    const [openDialog, setOpenDialog] = useState(false);
 
     const filterItemCheck = useMemo(() => {
         // 如果沒有 `query` 和 `currentType`，直接返回所有項目
@@ -65,7 +73,7 @@ export default function Pack() {
         <div className="flex h-screen">
             <Sidebar setCurrentType={setCurrentType}/>
             <div className="flex-1 p-6">
-                <SearchBar setQuery={setQuery}/>
+                <SearchBar setQuery={setQuery} setOpenDialog={setOpenDialog}/>
                 <div className="flex gap-6">
                     <div className="flex-1">
                         <ItemGrid items={filterItemCheck} onSelectItem={setSelectedItem} />
@@ -75,6 +83,7 @@ export default function Pack() {
                     </div>
                 </div>
             </div>
+            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog}/>
         </div>
     );
 };
@@ -95,7 +104,7 @@ const Sidebar = ({ setCurrentType }: I_SideBarProps) => {
     );
 };
 
-const SearchBar = ({ setQuery }: I_SearchBarProps) => {
+const SearchBar = ({ setQuery, setOpenDialog }: I_SearchBarProps) => {
     return (
         <div className="mb-4 flex">
             <Input
@@ -104,7 +113,7 @@ const SearchBar = ({ setQuery }: I_SearchBarProps) => {
                 className="w-[90%] p-2 rounded shadow border border-solid border-slate-500 outline-none mr-5"
                 onChange={(event) => setQuery(event.target.value)}
             />
-            <Button className="w-[10%] bg-coverground text-topcovercolor rounded-md w-7">新增物品</Button>
+            <Button className="w-[10%] bg-coverground text-topcovercolor rounded-md w-7" onClick={() => setOpenDialog(true)}>新增物品</Button>
         </div>
     );
 };
@@ -147,3 +156,11 @@ const PreviewPane = ({ selectedItem }: I_selectedItemProps) => {
         </div>
     );
 };
+
+const ItemDialog = ({ openDialog, setOpenDialog }: I_ItemDialog) => {
+    return (
+        <CustomDialog open={openDialog} close={setOpenDialog} title="新增物品">
+            <div>123</div>
+        </CustomDialog>
+    )
+}
