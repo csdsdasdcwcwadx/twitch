@@ -1,7 +1,7 @@
 import axios from "axios";
 import { domainEnv } from "./util";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
-import { I_CheckPage, I_Header } from "./interface";
+import { I_CheckPage, I_Header, I_PackPage } from "./interface";
 
 const api = axios.create({
     baseURL: domainEnv, // 確保後端的 API URL 從環境變量中獲取
@@ -44,6 +44,16 @@ export const setCheckStatus = async(checkId: string, streaming: boolean) => {
         checkId,
         streaming,
     });
+    return response.data;
+};
+
+export const setItem = async(name: string, type: string, description: string) => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("type", type);
+    formData.append("description", description);
+
+    const response = await api.post("/twitch/item/addItem", formData);
     return response.data;
 }
 
@@ -95,14 +105,6 @@ export const getchecks = async () => {
                     created_at
                 }
             }
-            getUsers {
-                id
-                twitch_id
-                login
-                name
-                email
-                profile_image
-            }
         }
     `;
 
@@ -147,6 +149,40 @@ export const getbacks = async () => {
 
     const response = await apollo.query<I_CheckPage>({
         query: GET_USER_CHECKS,
+        fetchPolicy: "no-cache",
+    });
+    return response.data;
+}
+
+export const getpacks = async () => {
+    const GET_USER_ITEMS = gql`
+        query GetAllItems {
+            getItems {
+                id
+                name
+                image
+                description
+                created_at
+                type
+                userItems {
+                    user {
+                        id
+                        twitch_id
+                        login
+                        name
+                        email
+                        profile_image
+                    }
+                    item
+                    amount
+                    created_at
+                }
+            }
+        }
+    `;
+
+    const response = await apollo.query<I_PackPage>({
+        query: GET_USER_ITEMS,
         fetchPolicy: "no-cache",
     });
     return response.data;

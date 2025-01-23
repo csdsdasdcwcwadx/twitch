@@ -44,3 +44,7 @@ export type I_CheckPage = {
 export type I_Header = {
     getUsers: I_User;
 }
+
+export type I_PackPage = {
+    getItems: I_Item[];
+}

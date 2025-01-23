@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useMemo } from "react";
-import { ItemTypes } from "@/utils/util";
-import { Input, Button } from "@headlessui/react";
-import { E_Item_Types } from "@/utils/util";
+import { useState, useMemo, useEffect } from "react";
+import { Input, Button, Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import { E_Item_Types, ItemTypes } from "@/utils/util";
 import { I_Item } from "@/utils/interface";
 // import Image from "next/image";
 import CustomDialog from "@/components/common/CustomDialog";
+import Inputfile from "@/components/common/Inputfile";
+import { getpacks } from "@/utils/api";
 
 const items: I_Item[] = [
     { id: '1', name: "Sword", description: "A sharp blade.", image: "/sword.png", type: E_Item_Types.WEAPONS },
@@ -54,6 +55,18 @@ export default function Pack() {
     const [query, setQuery] = useState('');
     const [currentType, setCurrentType] = useState(E_Item_Types.All);
     const [openDialog, setOpenDialog] = useState(false);
+    // const [image, setImage] = useState<File>();
+
+    useEffect(() => {
+        (async function () {
+            try {
+                const result = await getpacks();
+                console.log(result)
+            } catch(e) {
+                console.log(e)
+            }
+        })()
+    }, [])
 
     const filterItemCheck = useMemo(() => {
         // 如果沒有 `query` 和 `currentType`，直接返回所有項目
@@ -158,9 +171,42 @@ const PreviewPane = ({ selectedItem }: I_selectedItemProps) => {
 };
 
 const ItemDialog = ({ openDialog, setOpenDialog }: I_ItemDialog) => {
+    const [selected, setSelected] = useState(E_Item_Types.All);
+    console.log(selected)
+
     return (
         <CustomDialog open={openDialog} close={setOpenDialog} title="新增物品">
-            <div>123</div>
+            <section>
+                <aside>
+                    <span className="text-sm pl-1">物品名稱</span>
+                    <Input className="w-[100%] pt-1 pb-1 pl-3 border border-solid border-slate-500 outline-none w-11/12 rounded" placeholder="請輸入物品名稱"/>
+                </aside>
+                <aside className="mt-3">
+                    <span className="text-sm pl-1">物品敘述</span>
+                    <Input className="w-[100%] pt-1 pb-1 pl-3 border border-solid border-slate-500 outline-none w-11/12 rounded" placeholder="請輸入物品敘述"/>
+                </aside>
+                <aside className="mt-3">
+                    <span className="text-sm pl-1">選擇圖片</span>
+                    <Inputfile accept=".jpg, .jpeg" onChange={() => {}}/>
+                </aside>
+                <aside className="mt-3">
+                    <span className="text-sm pl-1">選擇種類</span>
+                    <Listbox value={selected} onChange={setSelected}>
+                        <ListboxButton className="w-[100%] pt-1 pb-1 pl-3 border border-solid border-slate-500 outline-none w-11/12 rounded text-left">{selected}</ListboxButton>
+                        <ListboxOptions anchor="bottom" className="z-20 w-[var(--button-width)] rounded-xl border border-white/5 bg-white/5 p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none">
+                        {
+                            ItemTypes.map(item => {
+                                return (
+                                    <ListboxOption key={item} value={item} className="  group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10">
+                                        {item}
+                                    </ListboxOption>
+                                )
+                            })
+                        }
+                        </ListboxOptions>
+                    </Listbox>
+                </aside>
+            </section>
         </CustomDialog>
     )
 }
