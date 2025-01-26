@@ -47,13 +47,26 @@ export const setCheckStatus = async(checkId: string, streaming: boolean) => {
     return response.data;
 };
 
-export const setItem = async(name: string, type: string, description: string) => {
+export const setItem = async(name: string, type: string, description: string, image?: File, id?: string, imageName?: string) => {
     const formData = new FormData();
+    formData.append('image', image!);
     formData.append("name", name);
     formData.append("type", type);
     formData.append("description", description);
+    if (imageName) formData.append("existimagename", imageName);
 
-    const response = await api.post("/twitch/item/addItem", formData);
+    const response = await api.post("/twitch/item/additem", formData, {
+        params: id ? { id } : undefined,
+    });
+    return response.data;
+}
+
+export const deleteItem = async(existimagename: string, id: string) => {
+    const response = await api.post("/twitch/item/deleteItem", {
+        existimagename,
+    }, {
+        params: id ? { id } : undefined,
+    });
     return response.data;
 }
 

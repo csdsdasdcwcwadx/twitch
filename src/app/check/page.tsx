@@ -2,7 +2,7 @@
 
 import { getchecks, setUserCheck } from "@/utils/api"
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Input } from '@headlessui/react';
+import { Button, Input } from '@headlessui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
@@ -70,7 +70,7 @@ export default function Check () {
             <CustomDialog open={Boolean(checkInput)} close={() => setCheckInput(null)} title="請輸入簽到驗證">
                 <Input name="full_name" className="mt-5 w-full pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/>
                 <div className="text-center mt-3">
-                    <button className="mr-3" onClick={async () => {
+                    <Button className="mr-3" onClick={async () => {
                         const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");
                         alert(setCheckResult.message);
                         if (setCheckResult.status) {
@@ -78,8 +78,8 @@ export default function Check () {
                             setCheckPageData(result);
                             setCheckInput(null);
                         };
-                    }}>簽到</button>
-                    <button onClick={() => setCheckInput(null)}>取消</button>
+                    }}>簽到</Button>
+                    <Button onClick={() => setCheckInput(null)}>取消</Button>
                 </div>
             </CustomDialog>
         </main>

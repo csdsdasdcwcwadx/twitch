@@ -1,11 +1,9 @@
 'use client';
 
 import { ChangeEvent, memo, useEffect, useState } from "react";
-// import styles from './styles.module.scss';
 import Image from "next/image";
 import uploadSrc from '@/icon/upload.png';
 import closeSrc from '@/icon/close.png'
-// import { handlepath } from "@/apisource/apiname";
 
 interface I_props {
     onChange: (event: ChangeEvent<HTMLInputElement> | null) => void;
@@ -29,9 +27,8 @@ function InputFile({onChange, accept, defaultImage}: I_props) {
     }
 
     useEffect(() => {
-        // const currentTime = new Date().getTime();
-        // if(defaultImage) setDisplayImage(`${handlepath()}${defaultImage}`);
-        // else setDisplayImage('');
+        if(defaultImage) setDisplayImage(defaultImage);
+        else setDisplayImage('');
     }, [defaultImage])
 
     return (
