@@ -23,8 +23,8 @@ interface I_MenuAllItemsProps {
 
 const displayItems = [
     {type: "pack", text: "前往背包", icon: ""},
+    {type: "check", text: "前往簽到頁", icon: ""},
     {type: "logout", text: "登出", icon: ""},
-    {type: "logout", text: "功能1", icon: ""},
     {type: "logout", text: "功能2", icon: ""},
     {type: "logout", text: "功能3", icon: ""},
     {type: "logout", text: "功能4", icon: ""},
@@ -38,14 +38,19 @@ export function Header() {
     const router = useRouter();
 
     const handleItemsClick = (item: { type: string, text: string, icon: string }) => {
+        const prefix = pathname.includes("/back") ? '/back' : '';
         switch(item.type) {
             case "pack":
-                router.push('/pack');
+                router.push(`${prefix}/pack`);
                 break;
             case "logout":
                 window.location.href = `${domainEnv}/twitch/member/logout`;
                 break;
+            case "check":
+                router.push(`${prefix}/check`);
+                break;
         }
+        setMenuOpen(false);
     }
 
     useEffect(() => {

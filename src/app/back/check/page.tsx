@@ -8,7 +8,6 @@ import { Input, Button } from '@headlessui/react';
 import { I_CheckPage, I_UserCheck } from "@/utils/interface";
 import Image from "next/image";
 import searchIcon from "@/icon/search.png";
-import closeIcon from "@/icon/close.png";
 import { twitchIconDomain } from "@/utils/util";
 import CustomDialog from "@/components/common/CustomDialog";
 
@@ -99,7 +98,6 @@ export default function Back() {
                 />
             </section>
             <CustomDialog open={openCheckDialog} close={setOpenCheckDialog} title={!checkItem ? "請輸入設定的簽到驗證" : ""}>
-                <Image className="absolute top-[10px] right-[10px] cursor-pointer" src={closeIcon} alt="close" onClick={() => setOpenCheckDialog(false)}/>
                 {
                     showCheckInfo && (
                         <>

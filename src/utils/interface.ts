@@ -52,6 +52,7 @@ export type I_Header = {
     getUsers: I_User;
 }
 
-export type I_PackPage = {
+export type I_BackPackPage = {
     getItems: I_Item[];
+    getAllUsers: I_User[];
 }

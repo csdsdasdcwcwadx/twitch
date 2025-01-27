@@ -1,7 +1,7 @@
 import axios from "axios";
 import { domainEnv } from "./util";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
-import { I_CheckPage, I_Header, I_PackPage } from "./interface";
+import { I_CheckPage, I_Header, I_BackPackPage } from "./interface";
 
 const api = axios.create({
     baseURL: domainEnv, // 確保後端的 API URL 從環境變量中獲取
@@ -67,6 +67,15 @@ export const deleteItem = async(existimagename: string, id: string) => {
     }, {
         params: id ? { id } : undefined,
     });
+    return response.data;
+}
+
+export const addUserItem = async(userId: string, itemId: string, amount: number) => {
+    const response = await api.post("/twitch/useritem/ownitem", {
+        userId,
+        itemId,
+        amount,
+    })
     return response.data;
 }
 
@@ -167,6 +176,47 @@ export const getbacks = async () => {
     return response.data;
 }
 
+export const getbackpacks = async () => {
+    const GET_USER_ITEMS = gql`
+        query GetAllItems {
+            getItems {
+                id
+                name
+                image
+                description
+                created_at
+                type
+                userItems {
+                    user {
+                        id
+                        twitch_id
+                        login
+                        name
+                        email
+                        profile_image
+                    }
+                    amount
+                    created_at
+                }
+            }
+            getAllUsers {
+                id
+                twitch_id
+                login
+                name
+                email
+                profile_image
+            }
+        }
+    `;
+
+    const response = await apollo.query<I_BackPackPage>({
+        query: GET_USER_ITEMS,
+        fetchPolicy: "no-cache",
+    });
+    return response.data;
+}
+
 export const getpacks = async () => {
     const GET_USER_ITEMS = gql`
         query GetAllItems {
@@ -194,7 +244,7 @@ export const getpacks = async () => {
         }
     `;
 
-    const response = await apollo.query<I_PackPage>({
+    const response = await apollo.query<I_BackPackPage>({
         query: GET_USER_ITEMS,
         fetchPolicy: "no-cache",
     });

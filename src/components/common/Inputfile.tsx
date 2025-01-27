@@ -33,8 +33,8 @@ function InputFile({onChange, accept, defaultImage}: I_props) {
 
     return (
         <div>
-            <label htmlFor="upload" className="relative inline-block bg-gray-100 text-gray-800 border border-gray-300 px-3 py-2 cursor-pointer rounded-md w-[100%] h-72 rounded-xl">
-                { displayImage && <Image src={displayImage as string} alt="image" fill sizes='100%'/>}
+            <label htmlFor="upload" className="relative inline-block bg-gray-100 text-gray-800 border border-gray-300 px-3 py-2 cursor-pointer w-[100%] h-72 rounded-xl">
+                { displayImage && <Image src={displayImage as string} alt="image" fill sizes='100%' className="rounded-xl object-cover"/>}
                 <div className="absolute top-1/2 left-1/2 w-12 h-12 transform -translate-x-1/2 -translate-y-1/2 opacity-70">
                     <Image src={uploadSrc} alt="image" fill sizes='100%'/>
                 </div>

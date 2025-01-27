@@ -48,3 +48,14 @@ body {
     background: #4c69fc;
   }
 }
+
+input[type="number"]::-webkit-inner-spin-button, 
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 適用於 Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
