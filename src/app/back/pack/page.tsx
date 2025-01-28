@@ -58,6 +58,7 @@ interface I_ItemSettingDialog {
     selectedItem: I_Item | null;
     setSelectedItem: (flag: I_Item | null) => void;
     data: I_BackPackPage;
+    setData: (data: I_BackPackPage) => void;
 }
 
 export default function Pack() {
@@ -116,7 +117,7 @@ export default function Pack() {
                 </div>
             </div>
             <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} selectedItem={selectedItem} setData={setData}/>
-            <ItemSettingDialog selectedItem={openItemSettingDialog} setSelectedItem={setOpenItemSettingDialog} data={data}/>
+            <ItemSettingDialog selectedItem={openItemSettingDialog} setSelectedItem={setOpenItemSettingDialog} data={data} setData={setData}/>
         </main>
     );
 };
@@ -278,7 +279,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
     )
 };
 
-const ItemSettingDialog = ({selectedItem, setSelectedItem, data}: I_ItemSettingDialog) => {
+const ItemSettingDialog = ({selectedItem, setSelectedItem, data, setData}: I_ItemSettingDialog) => {
     const [query, setQuery] = useState('');
     const [openUser, setOpenUser] = useState<I_User | null>(null);
     const [value, setValue] = useState(0);
@@ -305,6 +306,11 @@ const ItemSettingDialog = ({selectedItem, setSelectedItem, data}: I_ItemSettingD
         }
     };
 
+    const currentUserItem = useMemo(() => {
+        if (!selectedItem?.userItems) return [];
+        return selectedItem?.userItems?.filter(useritem => useritem.user.id === openUser?.id);
+    }, [openUser, selectedItem])
+
     return (
         <CustomDialog open={Boolean(selectedItem)} close={() => setSelectedItem(null)} title="道具設定">
             <section className="mt-5">
@@ -324,7 +330,8 @@ const ItemSettingDialog = ({selectedItem, setSelectedItem, data}: I_ItemSettingD
                         return (
                             <Fragment key={user.id}>
                                 <aside className="py-2.5 px-3.5 hover:bg-slate-100 rounded flex items-center cursor-pointer relative" onClick={() => {
-                                    setOpenUser(user);
+                                    if (currentUser) setOpenUser(null);
+                                    else setOpenUser(user);
                                 }}>
                                     <figure className="relative w-9 h-9 mr-2">
                                         <Image src={`${twitchIconDomain}${user.profile_image}`} alt={user.name} sizes="100" fill/>
@@ -335,22 +342,27 @@ const ItemSettingDialog = ({selectedItem, setSelectedItem, data}: I_ItemSettingD
                                     </i>
                                 </aside>
                                 {
-                                    currentUser ? <div className="px-3.5">
-                                        <div className="flex items-center">
-                                            <i className="block w-[30px] h-[30px] cursor-pointer" onClick={decrease}>
-                                                <Image src={minusIcon} alt="arrow-down" className="absolute"/>
-                                            </i>
-                                            <Input value={value} type="number" className="text-lg outline-none px-2 border-slate-500 w-[50px] text-center" onChange={handleChange}/>
-                                            <i className="block w-[30px] h-[30px] cursor-pointer"  onClick={increase}>
-                                                <Image src={plusIcon} alt="arrow-down" className="absolute"/>
-                                            </i>
+                                    currentUser ? <div className="px-3.5 flex items-center justify-between">
+                                        <div>
+                                            <div className="flex items-center">
+                                                <i className="block w-[30px] h-[30px] cursor-pointer" onClick={decrease}>
+                                                    <Image src={minusIcon} alt="arrow-down" className="absolute"/>
+                                                </i>
+                                                <Input value={value} type="number" className="text-lg outline-none px-2 border-slate-500 w-[50px] text-center" onChange={handleChange}/>
+                                                <i className="block w-[30px] h-[30px] cursor-pointer"  onClick={increase}>
+                                                    <Image src={plusIcon} alt="arrow-down" className="absolute"/>
+                                                </i>
+                                            </div>
+                                            <Button onClick={async () => {
+                                                const result = await addUserItem(user.id, selectedItem?.id || "", value);
+                                                if (result.status) {
+                                                    const result = await getbackpacks();
+                                                    setData(result);
+                                                    setSelectedItem(null);
+                                                }
+                                            }} className="m-auto block">送出</Button>
                                         </div>
-                                        <Button onClick={async () => {
-                                            const result = await addUserItem(user.id, selectedItem?.id || "", value);
-                                            if (result.status) {
-                                                console.log(result)
-                                            }
-                                        }}>送出</Button>
+                                        <div className="mr-5">{`數量 : ${currentUserItem.length && currentUserItem[0].amount}`}</div>
                                     </div> : <></>
                                 }
                             </Fragment>
