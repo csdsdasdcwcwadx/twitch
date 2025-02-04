@@ -38,7 +38,8 @@ export function Header() {
     const router = useRouter();
 
     const handleItemsClick = (item: { type: string, text: string, icon: string }) => {
-        const prefix = pathname.includes("/back") ? '/back' : '';
+        const currentpage = pathname.split('/');
+        const prefix = currentpage.length > 2 ? `/${currentpage[1]}` : '';
         switch(item.type) {
             case "pack":
                 router.push(`${prefix}/pack`);

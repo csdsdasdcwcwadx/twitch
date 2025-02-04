@@ -228,15 +228,6 @@ export const getpacks = async () => {
                 created_at
                 type
                 userItems {
-                    user {
-                        id
-                        twitch_id
-                        login
-                        name
-                        email
-                        profile_image
-                    }
-                    item
                     amount
                     created_at
                 }

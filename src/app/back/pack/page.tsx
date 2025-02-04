@@ -14,24 +14,6 @@ import arrowupIcon from "@/icon/arrow-up.png";
 import plusIcon from "@/icon/plus.png";
 import minusIcon from "@/icon/minus.png";
 
-// const items: I_Item[] = [
-//     { id: '1', name: "Sword", description: "A sharp blade.", image: "/sword.png", type: E_Item_Types.WEAPONS },
-//     { id: '2', name: "Shield", description: "A sturdy shield.", image: "/shield.png", type: E_Item_Types.TOOLS },
-//     { id: '3', name: "Potion", description: "Restores health.", image: "/potion.png", type: E_Item_Types.CONSUMABLES },
-//     { id: '4', name: "Bow", description: "A ranged weapon.", image: "/bow.png", type: E_Item_Types.WEAPONS },
-//     { id: '5', name: "Hammer", description: "A tool for construction.", image: "/hammer.png", type: E_Item_Types.TOOLS },
-//     { id: '6', name: "Bandage", description: "Heals minor wounds.", image: "/bandage.png", type: E_Item_Types.CONSUMABLES },
-//     { id: '7', name: "Dagger", description: "A small, sharp knife.", image: "/dagger.png", type: E_Item_Types.WEAPONS },
-//     { id: '8', name: "Axe", description: "Chops wood effectively.", image: "/axe.png", type: E_Item_Types.TOOLS },
-//     { id: '9', name: "Magic Scroll", description: "Contains a powerful spell.", image: "/scroll.png", type: E_Item_Types.CONSUMABLES },
-//     { id: '10', name: "Crossbow", description: "A precise ranged weapon.", image: "/crossbow.png", type: E_Item_Types.WEAPONS },
-//     { id: '11', name: "Wrench", description: "Used for mechanical repairs.", image: "/wrench.png", type: E_Item_Types.TOOLS },
-//     { id: '12', name: "Herbs", description: "Used in healing potions.", image: "/herbs.png", type: E_Item_Types.CONSUMABLES },
-//     { id: '13', name: "Lance", description: "A long, sharp weapon.", image: "/lance.png", type: E_Item_Types.WEAPONS },
-//     { id: '14', name: "Saw", description: "Used for cutting wood.", image: "/saw.png", type: E_Item_Types.TOOLS },
-//     { id: '15', name: "Elixir", description: "Grants temporary strength.", image: "/elixir.png", type: E_Item_Types.CONSUMABLES },
-// ];
-
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
 }
@@ -183,7 +165,7 @@ const ItemGrid = ({ items, onSelectItem, setOpenItemSettingDialog }: I_ItemGridP
 };
 
 const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_ItemDialog) => {
-    const [selected, setSelected] = useState(E_Item_Types.All);
+    const [selected, setSelected] = useState(E_Item_Types.CONSUMABLES);
     const [image, setImage] = useState<File>();
     const nameRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLInputElement>(null);
@@ -200,7 +182,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
                 }
             }, 0);
         } else {
-            setSelected(E_Item_Types.All);
+            setSelected(E_Item_Types.CONSUMABLES);
         }
     }, [selectedItem])
 
@@ -231,7 +213,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
                     <span className="text-sm pl-1">選擇種類</span>
                     <Listbox value={selected} onChange={setSelected}>
                         <ListboxButton className="w-[100%] pt-1 pb-1 pl-3 border border-solid border-slate-500 outline-none w-11/12 rounded text-left">{selected}</ListboxButton>
-                        <ListboxOptions anchor="bottom" className="z-20 w-[var(--button-width)] rounded-xl border border-white/5 bg-white/5 p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none">
+                        <ListboxOptions anchor="bottom" className="z-20 w-[var(--button-width)] rounded-xl border border-white/5 p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none bg-coverground text-topcovercolor">
                         {
                             ItemTypes.map(item => {
                                 if (item === E_Item_Types.All) return;
@@ -317,7 +299,7 @@ const ItemSettingDialog = ({selectedItem, setSelectedItem, data, setData}: I_Ite
                 <div className="flex relative">
                     <Image src={searchIcon} alt="search" className="h-5 w-5 absolute left-3"/>
                     <Input
-                        placeholder="搜尋簽到用戶"
+                        placeholder="搜尋持有用戶"
                         onChange={(event) => setQuery(event.target.value)}
                         className="mb-2.5 ml-2.5 pl-7 border-b border-solid border-slate-500 outline-none w-11/12 pb-1"
                     />
