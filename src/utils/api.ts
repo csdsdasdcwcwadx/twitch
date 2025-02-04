@@ -1,7 +1,7 @@
 import axios from "axios";
 import { domainEnv } from "./util";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
-import { I_CheckPage, I_Header } from "./interface";
+import { I_CheckPage, I_Header, I_BackPackPage } from "./interface";
 
 const api = axios.create({
     baseURL: domainEnv, // 確保後端的 API URL 從環境變量中獲取
@@ -44,6 +44,38 @@ export const setCheckStatus = async(checkId: string, streaming: boolean) => {
         checkId,
         streaming,
     });
+    return response.data;
+};
+
+export const setItem = async(name: string, type: string, description: string, image?: File, id?: string, imageName?: string) => {
+    const formData = new FormData();
+    formData.append('image', image!);
+    formData.append("name", name);
+    formData.append("type", type);
+    formData.append("description", description);
+    if (imageName) formData.append("existimagename", imageName);
+
+    const response = await api.post("/twitch/item/additem", formData, {
+        params: id ? { id } : undefined,
+    });
+    return response.data;
+}
+
+export const deleteItem = async(existimagename: string, id: string) => {
+    const response = await api.post("/twitch/item/deleteItem", {
+        existimagename,
+    }, {
+        params: id ? { id } : undefined,
+    });
+    return response.data;
+}
+
+export const addUserItem = async(userId: string, itemId: string, amount: number) => {
+    const response = await api.post("/twitch/useritem/ownitem", {
+        userId,
+        itemId,
+        amount,
+    })
     return response.data;
 }
 
@@ -95,14 +127,6 @@ export const getchecks = async () => {
                     created_at
                 }
             }
-            getUsers {
-                id
-                twitch_id
-                login
-                name
-                email
-                profile_image
-            }
         }
     `;
 
@@ -147,6 +171,72 @@ export const getbacks = async () => {
 
     const response = await apollo.query<I_CheckPage>({
         query: GET_USER_CHECKS,
+        fetchPolicy: "no-cache",
+    });
+    return response.data;
+}
+
+export const getbackpacks = async () => {
+    const GET_USER_ITEMS = gql`
+        query GetAllItems {
+            getItems {
+                id
+                name
+                image
+                description
+                created_at
+                type
+                userItems {
+                    user {
+                        id
+                        twitch_id
+                        login
+                        name
+                        email
+                        profile_image
+                    }
+                    amount
+                    created_at
+                }
+            }
+            getAllUsers {
+                id
+                twitch_id
+                login
+                name
+                email
+                profile_image
+            }
+        }
+    `;
+
+    const response = await apollo.query<I_BackPackPage>({
+        query: GET_USER_ITEMS,
+        fetchPolicy: "no-cache",
+    });
+    return response.data;
+}
+
+export const getpacks = async () => {
+    const GET_USER_ITEMS = gql`
+        query GetAllItems {
+            getItems {
+                id
+                name
+                image
+                description
+                created_at
+                type
+                userItems {
+                    amount
+                    created_at
+                }
+            }
+        }
+    `;
+
+    const response = await apollo.query<I_BackPackPage>({
+        query: GET_USER_ITEMS,
         fetchPolicy: "no-cache",
     });
     return response.data;

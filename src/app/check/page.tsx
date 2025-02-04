@@ -2,11 +2,12 @@
 
 import { getchecks, setUserCheck } from "@/utils/api"
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Input, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import { Button, Input } from '@headlessui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import { I_CheckPage, I_Check } from "@/utils/interface";
+import CustomDialog from "@/components/common/CustomDialog";
 
 export default function Check () {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
@@ -66,26 +67,21 @@ export default function Check () {
                     }}
                 />
             </section>
-            <Dialog open={Boolean(checkInput)} onClose={() => setCheckInput(null)} className="relative z-50">
-                <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60">
-                    <DialogPanel className="max-w-lg space-y-4 border bg-background p-12">
-                        <DialogTitle className="font-bold text-center">請輸入簽到驗證</DialogTitle>
-                        <Input name="full_name" className="pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/>
-                        <div className="text-center">
-                            <button className="mr-3" onClick={async () => {
-                                const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");
-                                alert(setCheckResult.message);
-                                if (setCheckResult.status) {
-                                    const result = await getchecks();
-                                    setCheckPageData(result);
-                                    setCheckInput(null);
-                                };
-                            }}>簽到</button>
-                            <button onClick={() => setCheckInput(null)}>取消</button>
-                        </div>
-                    </DialogPanel>
+            <CustomDialog open={Boolean(checkInput)} close={() => setCheckInput(null)} title="請輸入簽到驗證">
+                <Input name="full_name" className="mt-5 w-full pl-1.5 border border-solid border-foreground outline-none rounded" ref={passcodeRef} type="text"/>
+                <div className="text-center mt-3">
+                    <Button className="mr-3" onClick={async () => {
+                        const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcodeRef.current?.value || "");
+                        alert(setCheckResult.message);
+                        if (setCheckResult.status) {
+                            const result = await getchecks();
+                            setCheckPageData(result);
+                            setCheckInput(null);
+                        };
+                    }}>簽到</Button>
+                    <Button onClick={() => setCheckInput(null)}>取消</Button>
                 </div>
-            </Dialog>
+            </CustomDialog>
         </main>
     )
 }

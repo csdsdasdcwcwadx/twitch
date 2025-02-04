@@ -21,11 +21,18 @@ export type I_User = {
     profile_image: string;
 }
 
+export enum E_Item_Types {
+    All = "All",
+    WEAPONS = "Weapons",
+    TOOLS = "Tools",
+    CONSUMABLES = "Consumables",
+} 
+
 export type I_Item = {
     id: string;
     name: string;
     image: string;
-    type: string;
+    type: E_Item_Types;
     description: string;
     userItems?: I_UserItem[];
 }
@@ -43,4 +50,9 @@ export type I_CheckPage = {
 
 export type I_Header = {
     getUsers: I_User;
+}
+
+export type I_BackPackPage = {
+    getItems: I_Item[];
+    getAllUsers: I_User[];
 }
