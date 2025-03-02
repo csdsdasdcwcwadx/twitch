@@ -24,8 +24,8 @@ interface I_MenuAllItemsProps {
 const displayItems = [
     {type: "pack", text: "前往背包", icon: ""},
     {type: "check", text: "前往簽到頁", icon: ""},
+    {type: "exchange", text: "前往禮品兌換頁", icon: ""},
     {type: "logout", text: "登出", icon: ""},
-    {type: "logout", text: "功能2", icon: ""},
     {type: "logout", text: "功能3", icon: ""},
     {type: "logout", text: "功能4", icon: ""},
     {type: "logout", text: "功能5", icon: ""},
@@ -41,6 +41,9 @@ export function Header() {
         const currentpage = pathname.split('/');
         const prefix = currentpage.length > 2 ? `/${currentpage[1]}` : '';
         switch(item.type) {
+            case "exchange":
+                router.push(`${prefix}/exchange`);
+                break;
             case "pack":
                 router.push(`${prefix}/pack`);
                 break;

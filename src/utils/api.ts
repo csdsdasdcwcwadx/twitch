@@ -79,6 +79,14 @@ export const addUserItem = async(userId: string, itemId: string, amount: number)
     return response.data;
 }
 
+export const exchange = async(itemId: string, amount: number) => {
+    const response = await api.post("/twitch/redemp/exchange", {
+        itemId,
+        amount,
+    })
+    return response.data;
+}
+
 // -----------------------------------------graphQL-----------------------------------------
 
 export const getUsers = async () => {
@@ -227,6 +235,7 @@ export const getpacks = async () => {
                 description
                 created_at
                 type
+                amount
                 userItems {
                     amount
                     created_at
