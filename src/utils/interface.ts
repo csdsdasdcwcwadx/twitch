@@ -34,6 +34,7 @@ export type I_Item = {
     image: string;
     type: E_Item_Types;
     description: string;
+    amount: number;
     userItems?: I_UserItem[];
 }
 

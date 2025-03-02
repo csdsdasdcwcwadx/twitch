@@ -1,29 +1,15 @@
 'use client';
 
 import { useState, useMemo, useEffect } from "react";
-import { Input } from "@headlessui/react";
+import { Input, Button } from "@headlessui/react";
 import { ItemTypes, ImagePath } from "@/utils/util";
 import { I_Item, E_Item_Types } from "@/utils/interface";
 import Image from "next/image";
 import { getpacks } from "@/utils/api";
-
-// const items: I_Item[] = [
-//     { id: '1', name: "Sword", description: "A sharp blade.", image: "/sword.png", type: E_Item_Types.WEAPONS },
-//     { id: '2', name: "Shield", description: "A sturdy shield.", image: "/shield.png", type: E_Item_Types.TOOLS },
-//     { id: '3', name: "Potion", description: "Restores health.", image: "/potion.png", type: E_Item_Types.CONSUMABLES },
-//     { id: '4', name: "Bow", description: "A ranged weapon.", image: "/bow.png", type: E_Item_Types.WEAPONS },
-//     { id: '5', name: "Hammer", description: "A tool for construction.", image: "/hammer.png", type: E_Item_Types.TOOLS },
-//     { id: '6', name: "Bandage", description: "Heals minor wounds.", image: "/bandage.png", type: E_Item_Types.CONSUMABLES },
-//     { id: '7', name: "Dagger", description: "A small, sharp knife.", image: "/dagger.png", type: E_Item_Types.WEAPONS },
-//     { id: '8', name: "Axe", description: "Chops wood effectively.", image: "/axe.png", type: E_Item_Types.TOOLS },
-//     { id: '9', name: "Magic Scroll", description: "Contains a powerful spell.", image: "/scroll.png", type: E_Item_Types.CONSUMABLES },
-//     { id: '10', name: "Crossbow", description: "A precise ranged weapon.", image: "/crossbow.png", type: E_Item_Types.WEAPONS },
-//     { id: '11', name: "Wrench", description: "Used for mechanical repairs.", image: "/wrench.png", type: E_Item_Types.TOOLS },
-//     { id: '12', name: "Herbs", description: "Used in healing potions.", image: "/herbs.png", type: E_Item_Types.CONSUMABLES },
-//     { id: '13', name: "Lance", description: "A long, sharp weapon.", image: "/lance.png", type: E_Item_Types.WEAPONS },
-//     { id: '14', name: "Saw", description: "Used for cutting wood.", image: "/saw.png", type: E_Item_Types.TOOLS },
-//     { id: '15', name: "Elixir", description: "Grants temporary strength.", image: "/elixir.png", type: E_Item_Types.CONSUMABLES },
-// ];
+import CustomDialog from "@/components/common/CustomDialog";
+import plusIcon from "@/icon/plus.png";
+import minusIcon from "@/icon/minus.png";
+import { exchange } from "@/utils/api";
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -35,12 +21,21 @@ interface I_SearchBarProps {
 
 interface I_ItemGridProps {
     items: I_Item[];
+    openDialog: I_Item | null;
+    setOpenDialog: (flag: I_Item | null) => void;
+}
+
+interface I_ItemDialogProps {
+    openDialog: I_Item | null;
+    setOpenDialog: (flag: I_Item | null) => void;
+    setItems: (items: I_Item[]) => void;
 }
 
 export default function Pack() {
     const [query, setQuery] = useState('');
     const [currentType, setCurrentType] = useState(E_Item_Types.All);
     const [items, setItems] = useState<I_Item[]>([]);
+    const [openDialog, setOpenDialog] = useState<I_Item | null>(null);
 
     useEffect(() => {
         (async function () {
@@ -74,10 +69,11 @@ export default function Pack() {
                 <SearchBar setQuery={setQuery}/>
                 <div className="flex gap-6">
                     <div className="flex-1">
-                        <ItemGrid items={filterItemCheck}/>
+                        <ItemGrid items={filterItemCheck} openDialog={openDialog} setOpenDialog={setOpenDialog}/>
                     </div>
                 </div>
             </div>
+            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} setItems={setItems}/>
         </main>
     );
 };
@@ -110,15 +106,16 @@ const SearchBar = ({ setQuery }: I_SearchBarProps) => {
     );
 };
 
-const ItemGrid = ({ items }: I_ItemGridProps) => {
+const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
     return (
-        <div className="grid grid-cols-3 gap-4 mobile:grid-cols-1">
+        <div className="grid grid-cols-[1fr_1fr_1fr] gap-4 mobile:grid-cols-1">
             {items.map((item) => {
                 if (!item.userItems?.length) return;
                 return (
                     <div
                         key={item.id}
-                        className="p-4 border rounded shadow cursor-pointer hover:bg-blue-50 min-h-[200px] aspect-1"
+                        className="p-4 border rounded shadow cursor-pointer hover:bg-blue-50 min-h-[350px] pc:min-h-[250px] aspect-1 relative"
+                        onClick={() => setOpenDialog(item)}
                     >
                         <figure className="relative h-16 cursor-pointer transform h-[50%] rounded">
                             {
@@ -128,9 +125,52 @@ const ItemGrid = ({ items }: I_ItemGridProps) => {
                         </figure>
                         <h3 className="text-lg font-semibold mt-3 mobile:text-center mobile:text-3xl">{item.name}</h3>
                         <p className="text-sm text-foreground text-lg mobile:text-center">{item.description}</p>
+                        <div className="mobile:absolute bottom-[2rem]">
+                            <div>兌換數量 : {item.amount}</div>
+                            <div>持有數量 : {item.userItems[0]?.amount}</div>
+                        </div>
                     </div>
                 )
             })}
         </div>
     );
 };
+
+const ItemDialog = ({ openDialog, setOpenDialog, setItems }: I_ItemDialogProps) => {
+    const [value, setValue] = useState(0);
+
+    const increase = () => setValue((prev) => prev + 1);
+    const decrease = () => setValue((prev) => Math.max(0, prev - 1)); // 避免負數
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = parseInt(e.target.value, 10);
+        if (!isNaN(newValue)) {
+          setValue(newValue);
+        }
+    };
+    if (!openDialog) return null;
+
+    return (
+        <CustomDialog open={Boolean(openDialog)} close={() => setOpenDialog(null)} title={`${openDialog.name}兌換數量`}>
+            <section>
+                <div className="flex justify-center mt-5">
+                    <i className="block w-[30px] h-[30px] cursor-pointer" onClick={decrease}>
+                        <Image src={minusIcon} alt="arrow-down" className="absolute"/>
+                    </i>
+                    <Input value={value} type="number" className="text-lg outline-none px-2 border-slate-500 w-[50px] text-center pointer-events-none" onChange={handleChange}/>
+                    <i className="block w-[30px] h-[30px] cursor-pointer"  onClick={increase}>
+                        <Image src={plusIcon} alt="arrow-down" className="absolute"/>
+                    </i>
+                </div>
+                <Button onClick={async () => {
+                    const result = await exchange(openDialog.id, value*openDialog.amount);
+                    if (result.status) {
+                        const result = await getpacks();
+                        setItems(result.getItems);
+                        setOpenDialog(null);
+                    }
+                }} className="mt-3 m-auto block bg-coverground text-topcovercolor rounded p-4">送出</Button>
+            </section>
+        </CustomDialog>
+    )
+}
