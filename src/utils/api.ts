@@ -1,7 +1,7 @@
 import axios from "axios";
 import { domainEnv } from "./util";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
-import { I_CheckPage, I_Header, I_BackPackPage } from "./interface";
+import { I_CheckPage, I_Header, I_BackPackPage, I_ExchangePage } from "./interface";
 
 const api = axios.create({
     baseURL: domainEnv, // 確保後端的 API URL 從環境變量中獲取
@@ -246,6 +246,33 @@ export const getpacks = async () => {
 
     const response = await apollo.query<I_BackPackPage>({
         query: GET_USER_ITEMS,
+        fetchPolicy: "no-cache",
+    });
+    return response.data;
+}
+
+export const getRedemption = async () => {
+    const GET_REDEMPTION = gql`
+        query GetAllItems {
+            getRedemptions {
+                id
+                amount
+                created_at
+                item {
+                    name
+                    type
+                    id
+                    image
+                    description
+                    amount
+                    created_at
+                }
+            }
+        }
+    `;
+
+    const response = await apollo.query<I_ExchangePage>({
+        query: GET_REDEMPTION,
         fetchPolicy: "no-cache",
     });
     return response.data;

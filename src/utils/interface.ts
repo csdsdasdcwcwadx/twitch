@@ -38,6 +38,14 @@ export type I_Item = {
     userItems?: I_UserItem[];
 }
 
+export type I_Redemption = {
+    id: string;
+    user_id: string;
+    item_id: string;
+    amount: number;
+    created_at: string;
+}
+
 export type I_UserItem = {
     user: I_User;
     item: string;
@@ -56,4 +64,8 @@ export type I_Header = {
 export type I_BackPackPage = {
     getItems: I_Item[];
     getAllUsers: I_User[];
+}
+
+export type I_ExchangePage = {
+    getRedemptions: I_Redemption[];
 }
