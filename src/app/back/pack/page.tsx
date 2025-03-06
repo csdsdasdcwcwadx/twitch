@@ -13,6 +13,7 @@ import arrowdownIcon from "@/icon/arrow-down.png";
 import arrowupIcon from "@/icon/arrow-up.png";
 import plusIcon from "@/icon/plus.png";
 import minusIcon from "@/icon/minus.png";
+import InputBox, { E_RegexType } from "@/components/common/InputBox";
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -167,8 +168,10 @@ const ItemGrid = ({ items, onSelectItem, setOpenItemSettingDialog }: I_ItemGridP
 const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_ItemDialog) => {
     const [selected, setSelected] = useState(E_Item_Types.CONSUMABLES);
     const [image, setImage] = useState<File>();
+
     const nameRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLInputElement>(null);
+    const amountRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (selectedItem) {
@@ -180,6 +183,9 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
                 if (descriptionRef.current) {
                     descriptionRef.current.value = selectedItem.description;
                 }
+                if (amountRef.current) {
+                    amountRef.current.value = selectedItem.amount + "";
+                }
             }, 0);
         } else {
             setSelected(E_Item_Types.CONSUMABLES);
@@ -189,15 +195,30 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
     return (
         <CustomDialog open={openDialog} close={setOpenDialog} title="新增物品">
             <section>
-                <aside>
-                    <span className="text-sm pl-1">物品名稱</span>
-                    <Input className="w-[100%] pt-1 pb-1 pl-3 border border-solid border-slate-500 outline-none w-11/12 rounded" placeholder="請輸入物品名稱" ref={nameRef}/>
-                </aside>
-                <aside className="mt-3">
-                    <span className="text-sm pl-1">物品敘述</span>
-                    <Input className="w-[100%] pt-1 pb-1 pl-3 border border-solid border-slate-500 outline-none w-11/12 rounded" placeholder="請輸入物品敘述" ref={descriptionRef}/>
-                </aside>
-                <aside className="mt-3">
+                <InputBox
+                    title="物品名稱"
+                    placeholder="請輸入物品名稱"
+                    type={E_RegexType.NAME}
+                    ref={nameRef}
+                    maxlength={20}
+                />
+                <InputBox
+                    title="物品敘述"
+                    placeholder="請輸入物品敘述"
+                    type={E_RegexType.NAME}
+                    ref={descriptionRef}
+                    maxlength={100}
+                    className="mt-2"
+                />
+                <InputBox
+                    title="物品數量"
+                    placeholder="請輸入物品數量"
+                    type={E_RegexType.NUMBER}
+                    ref={amountRef}
+                    maxlength={2}
+                    className="mt-2"
+                />
+                <aside className="mt-2">
                     <span className="text-sm pl-1">選擇圖片</span>
                     <Inputfile 
                         accept=".jpg, .jpeg" 
@@ -209,7 +230,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
                         defaultImage={selectedItem && selectedItem.image ? ImagePath + selectedItem.image : undefined}
                     />
                 </aside>
-                <aside className="mt-3">
+                <aside className="mt-2">
                     <span className="text-sm pl-1">選擇種類</span>
                     <Listbox value={selected} onChange={setSelected}>
                         <ListboxButton className="w-[100%] pt-1 pb-1 pl-3 border border-solid border-slate-500 outline-none w-11/12 rounded text-left">{selected}</ListboxButton>
@@ -234,8 +255,9 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
                     onClick={async () => {
                         const name = nameRef.current?.value || "";
                         const description = descriptionRef.current?.value || "";
+                        const amount = amountRef.current?.value || "";
 
-                        const result = await setItem(name || "", selected, description, image, selectedItem?.id ,selectedItem?.image);
+                        const result = await setItem(name || "", selected, description, amount, image, selectedItem?.id ,selectedItem?.image);
                         if (result.status) {
                             const result = await getbackpacks();
                             setData(result);

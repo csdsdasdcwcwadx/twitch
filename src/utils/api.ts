@@ -47,11 +47,12 @@ export const setCheckStatus = async(checkId: string, streaming: boolean) => {
     return response.data;
 };
 
-export const setItem = async(name: string, type: string, description: string, image?: File, id?: string, imageName?: string) => {
+export const setItem = async(name: string, type: string, description: string, amount: string, image?: File, id?: string, imageName?: string) => {
     const formData = new FormData();
     formData.append('image', image!);
     formData.append("name", name);
     formData.append("type", type);
+    formData.append("amount", amount.toString());
     formData.append("description", description);
     if (imageName) formData.append("existimagename", imageName);
 
@@ -194,6 +195,7 @@ export const getbackpacks = async () => {
                 description
                 created_at
                 type
+                amount
                 userItems {
                     user {
                         id
