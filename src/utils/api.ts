@@ -260,6 +260,7 @@ export const getRedemption = async () => {
                 id
                 amount
                 created_at
+                status
                 item {
                     name
                     type

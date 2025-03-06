@@ -1,8 +1,63 @@
+'use client';
+
+import { Fragment, useEffect, useState } from "react";
+import { getRedemption } from "@/utils/api";
+import { I_Redemption } from "@/utils/interface";
+import { ImagePath } from "@/utils/util";
+import Image from "next/image";
 
 export default function Exchange () {
+    const [redemptions, setRedemptions] = useState<I_Redemption[]>([]);
+
+    useEffect(() => {
+        (async function () {
+            try {
+                const result = await getRedemption();
+                setRedemptions(result.getRedemptions);
+            } catch(e) {
+                console.log(e)
+            }
+        })()
+    }, [])
     return (
-        <div>
-            exchange
-        </div>
+        <main>
+            <h1 className="font-bold text-2xl block text-center pb-[10px] w-[90%] m-auto">禮品兌換紀錄</h1>
+            <table className="m-auto w-[60%]">
+                <thead className="border-b border-solid border-foreground">
+                    <tr>
+                        <td className="p-[10px]">物品</td>
+                        <td className="p-[10px] text-center">數量</td>
+                        <td className="p-[10px] text-center">名稱</td>
+                        <td className="p-[10px] text-center">日期</td>
+                        <td className="p-[10px] text-center">狀態</td>
+                    </tr>
+                </thead>
+                <tbody>
+                {
+                    redemptions.map(redemption => {
+                        const date = new Date(Number(redemption.created_at));
+                        const formattedDate = date.toISOString().split("T")[0];
+
+                        return (
+                            <tr key={redemption.id}>
+                                <td className="p-[10px]">
+                                    <figure className="relative rounded aspect-[1.5]">
+                                    {
+                                        redemption.item.image ? <Image src={ImagePath + redemption.item.image} alt={redemption.item.name} className="object-cover rounded" fill sizes="100"/>
+                                        : <></>
+                                    }
+                                    </figure>
+                                </td>
+                                <td className="p-[10px] text-center">{redemption.amount}</td>
+                                <td className="p-[10px] text-center">{redemption.item.name}</td>
+                                <td className="p-[10px] text-center">{formattedDate}</td>
+                                <td className="p-[10px] text-center">{redemption.status ? "已兌換" : "尚未兌換"}</td>
+                            </tr>
+                        )
+                    })
+                }
+                </tbody>
+            </table>
+        </main>
     )
 }
