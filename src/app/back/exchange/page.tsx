@@ -21,15 +21,15 @@ export default function Exchange () {
     }, [])
     return (
         <main>
-            <h1 className="font-bold text-2xl block text-center pb-[10px] w-[90%] m-auto">禮品兌換紀錄</h1>
+            <h1 className="font-bold text-2xl block text-center pb-[10px] w-[90%] m-auto mt-8">禮品兌換紀錄</h1>
             <table className="m-auto w-[60%]">
                 <thead className="border-b border-solid border-foreground">
                     <tr>
-                        <td className="p-[10px]">物品</td>
-                        <td className="p-[10px] text-center">數量</td>
-                        <td className="p-[10px] text-center">名稱</td>
-                        <td className="p-[10px] text-center">日期</td>
-                        <td className="p-[10px] text-center">狀態</td>
+                        <td className="p-[10px] text-center cursor-pointer">物品</td>
+                        <td className="p-[10px] text-center cursor-pointer">數量</td>
+                        <td className="p-[10px] text-center cursor-pointer">名稱</td>
+                        <td className="p-[10px] text-center cursor-pointer">日期</td>
+                        <td className="p-[10px] text-center cursor-pointer">狀態</td>
                     </tr>
                 </thead>
                 <tbody>
