@@ -43,7 +43,9 @@ export type I_Redemption = {
     user_id: string;
     item_id: string;
     amount: number;
+    status: boolean;
     created_at: string;
+    item: I_Item;
 }
 
 export type I_UserItem = {

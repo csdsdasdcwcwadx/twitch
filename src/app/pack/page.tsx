@@ -167,8 +167,10 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems }: I_ItemDialogProps) 
                     if (result.status) {
                         const result = await getpacks();
                         setItems(result.getItems);
-                        setOpenDialog(null);
+                    } else {
+                        alert(result.message);
                     }
+                    setOpenDialog(null);
                 }} className="mt-3 m-auto block bg-coverground text-topcovercolor rounded p-4">送出</Button>
             </section>
         </CustomDialog>
