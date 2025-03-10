@@ -46,6 +46,7 @@ export type I_Redemption = {
     status: boolean;
     created_at: string;
     item: I_Item;
+    user: I_User;
 }
 
 export type I_UserItem = {
