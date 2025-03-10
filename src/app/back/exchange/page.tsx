@@ -5,6 +5,7 @@ import { getRedemption } from "@/utils/api";
 import { I_Redemption } from "@/utils/interface";
 import { ImagePath } from "@/utils/util";
 import Image from "next/image";
+import { Button } from "@headlessui/react";
 
 export default function Exchange () {
     const [redemptions, setRedemptions] = useState<I_Redemption[]>([]);
@@ -22,7 +23,7 @@ export default function Exchange () {
     return (
         <main>
             <h1 className="font-bold text-2xl block text-center pb-[10px] w-[90%] m-auto mt-8">禮品兌換紀錄</h1>
-            <table className="m-auto w-[60%]">
+            <table className="m-auto w-[90%]">
                 <thead className="border-b border-solid border-foreground">
                     <tr>
                         <td className="p-[10px] text-center cursor-pointer">物品</td>
@@ -51,7 +52,10 @@ export default function Exchange () {
                                 <td className="p-[10px] text-center">{redemption.amount}</td>
                                 <td className="p-[10px] text-center">{redemption.item.name}</td>
                                 <td className="p-[10px] text-center">{formattedDate}</td>
-                                <td className="p-[10px] text-center">{redemption.status ? "已兌換" : "尚未兌換"}</td>
+                                <td className="p-[10px] text-center">
+                                    <Button className="text-topcovercolor rounded-md py-2.5 px-3 bg-coverground">{redemption.status ? "已兌換" : "尚未兌換"}</Button>
+                                </td>
+                                <td></td>
                             </tr>
                         )
                     })
