@@ -14,6 +14,7 @@ import arrowupIcon from "@/icon/arrow-up.png";
 import plusIcon from "@/icon/plus.png";
 import minusIcon from "@/icon/minus.png";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
+import PageNumber from "@/components/common/PageNumber";
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -50,9 +51,11 @@ export default function Pack() {
     const [currentType, setCurrentType] = useState(E_Item_Types.All);
     const [openDialog, setOpenDialog] = useState(false);
     const [openItemSettingDialog, setOpenItemSettingDialog] = useState<I_Item | null>(null);
+    const [page, setPage] = useState(1);
     const [data, setData] = useState<I_BackPackPage>({
         getItems: [],
         getAllUsers: [],
+        getItemPages: 1,
     });
 
     useEffect(() => {
@@ -99,6 +102,7 @@ export default function Pack() {
                     </div>
                 </div>
             </div>
+            <PageNumber maxpage={10} serial={page} setSerial={setPage}/>
             <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} selectedItem={selectedItem} setData={setData}/>
             <ItemSettingDialog selectedItem={openItemSettingDialog} setSelectedItem={setOpenItemSettingDialog} data={data} setData={setData}/>
         </main>

@@ -25,7 +25,7 @@ export default function Exchange () {
             <table className="m-auto w-[60%]">
                 <thead className="border-b border-solid border-foreground">
                     <tr>
-                        <td className="p-[10px] text-center">物品</td>
+                        <td className="p-[10px] text-center w-[20%]">物品</td>
                         <td className="p-[10px] text-center">名稱</td>
                         <td className="p-[10px] text-center">數量</td>
                         <td className="p-[10px] text-center">日期</td>

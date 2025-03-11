@@ -67,8 +67,10 @@ export type I_Header = {
 export type I_BackPackPage = {
     getItems: I_Item[];
     getAllUsers: I_User[];
+    getItemPages: number;
 }
 
 export type I_ExchangePage = {
     getRedemptions: I_Redemption[];
+    getRedemptionPages: number;
 }

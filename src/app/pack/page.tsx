@@ -10,6 +10,7 @@ import CustomDialog from "@/components/common/CustomDialog";
 import plusIcon from "@/icon/plus.png";
 import minusIcon from "@/icon/minus.png";
 import { exchange } from "@/utils/api";
+import PageNumber from "@/components/common/PageNumber";
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -36,6 +37,7 @@ export default function Pack() {
     const [currentType, setCurrentType] = useState(E_Item_Types.All);
     const [items, setItems] = useState<I_Item[]>([]);
     const [openDialog, setOpenDialog] = useState<I_Item | null>(null);
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         (async function () {
@@ -73,6 +75,7 @@ export default function Pack() {
                     </div>
                 </div>
             </div>
+            <PageNumber maxpage={10} serial={page} setSerial={setPage}/>
             <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} setItems={setItems}/>
         </main>
     );
