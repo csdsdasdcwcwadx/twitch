@@ -178,10 +178,10 @@ export const getbacks = async () => {
     return response.data;
 }
 
-export const getbackpacks = async () => {
+export const getbackpacks = async (page = 1, pageSize = 10) => {
     const GET_USER_ITEMS = gql`
-        query GetAllItems {
-            getItems {
+        query GetAllItems($page: Int, $pageSize: Int) {
+            getItems(page: $page, pageSize: $pageSize) {
                 id
                 name
                 image
@@ -210,20 +210,22 @@ export const getbackpacks = async () => {
                 email
                 profile_image
             }
+            getItemPages(pageSize: $pageSize)
         }
     `;
 
     const response = await apollo.query<I_BackPackPage>({
         query: GET_USER_ITEMS,
+        variables: { page, pageSize },
         fetchPolicy: "no-cache",
     });
     return response.data;
 }
 
-export const getpacks = async () => {
+export const getpacks = async (page = 1, pageSize = 10) => {
     const GET_USER_ITEMS = gql`
-        query GetAllItems {
-            getItems {
+        query GetAllItems($page: Int, $pageSize: Int) {
+            getItems(page: $page, pageSize: $pageSize) {
                 id
                 name
                 image
@@ -236,20 +238,22 @@ export const getpacks = async () => {
                     created_at
                 }
             }
+            getItemPages(pageSize: $pageSize)
         }
     `;
 
     const response = await apollo.query<I_BackPackPage>({
         query: GET_USER_ITEMS,
+        variables: { page, pageSize },
         fetchPolicy: "no-cache",
     });
     return response.data;
 }
 
-export const getRedemption = async () => {
+export const getRedemption = async (page = 1, pageSize = 10) => {
     const GET_REDEMPTION = gql`
-        query GetAllItems {
-            getRedemptions {
+        query GetAllItems($page: Int, $pageSize: Int) {
+            getRedemptions(page: $page, pageSize: $pageSize) {
                 id
                 amount
                 created_at
@@ -272,11 +276,13 @@ export const getRedemption = async () => {
                     profile_image
                 }
             }
+            getRedemptionPages(pageSize: $pageSize)
         }
     `;
 
     const response = await apollo.query<I_ExchangePage>({
         query: GET_REDEMPTION,
+        variables: { page, pageSize },
         fetchPolicy: "no-cache",
     });
     return response.data;
