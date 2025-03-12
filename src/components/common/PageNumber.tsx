@@ -50,17 +50,19 @@ function Nums ({num, click, maxpage, serial}: I_NumsProps) {
         'w-[30px]',
         'h-[30px]',
         'cursor-pointer',
-        'mr-2',
-        'hover:bg-hoverground',
-        'hover:text-topcovercolor'
+        'mr-1',
+        'ml-1',
+        'hover:bg-coverground',
+        'hover:text-topcovercolor',
+        'rounded-3xl',
     ];
     if (num <= 0 || num > maxpage) {
-        className.push('none');
+        className.push('hidden');
     }
     if (serial && serial === num) {
         className.push('text-center');
         className.push('text-topcovercolor');
-        className.push('bg-hoverground')
+        className.push('bg-coverground')
     }
 
     return (
