@@ -30,7 +30,10 @@ interface I_ItemDialogProps {
     openDialog: I_Item | null;
     setOpenDialog: (flag: I_Item | null) => void;
     setItems: (items: I_Item[]) => void;
+    page: number;
 }
+
+const pagesize = 12;
 
 export default function Pack() {
     const [query, setQuery] = useState('');
@@ -38,17 +41,19 @@ export default function Pack() {
     const [items, setItems] = useState<I_Item[]>([]);
     const [openDialog, setOpenDialog] = useState<I_Item | null>(null);
     const [page, setPage] = useState(1);
+    const [maxPage, setMaxPage] = useState(1);
 
     useEffect(() => {
         (async function () {
             try {
-                const result = await getpacks();
+                const result = await getpacks(page, pagesize);
+                setMaxPage(result.getItemPages);
                 setItems(result.getItems);
             } catch(e) {
                 console.log(e)
             }
         })()
-    }, [])
+    }, [page])
 
     const filterItemCheck = useMemo(() => {
         // 如果沒有 `query` 和 `currentType`，直接返回所有項目
@@ -74,9 +79,11 @@ export default function Pack() {
                         <ItemGrid items={filterItemCheck} openDialog={openDialog} setOpenDialog={setOpenDialog}/>
                     </div>
                 </div>
+                <div className="mt-8">
+                    <PageNumber maxpage={maxPage} serial={page} setSerial={setPage}/>
+                </div>
             </div>
-            <PageNumber maxpage={10} serial={page} setSerial={setPage}/>
-            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} setItems={setItems}/>
+            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} setItems={setItems} page={page}/>
         </main>
     );
 };
@@ -139,7 +146,7 @@ const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
     );
 };
 
-const ItemDialog = ({ openDialog, setOpenDialog, setItems }: I_ItemDialogProps) => {
+const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogProps) => {
     const [value, setValue] = useState(0);
 
     const increase = () => setValue((prev) => prev + 1);
@@ -168,7 +175,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems }: I_ItemDialogProps) 
                 <Button onClick={async () => {
                     const result = await exchange(openDialog.id, value*openDialog.amount);
                     if (result.status) {
-                        const result = await getpacks();
+                        const result = await getpacks(page, pagesize);
                         setItems(result.getItems);
                     } else {
                         alert(result.message);

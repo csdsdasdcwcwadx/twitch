@@ -15,6 +15,7 @@ import plusIcon from "@/icon/plus.png";
 import minusIcon from "@/icon/minus.png";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
 import PageNumber from "@/components/common/PageNumber";
+import DropSelection from "@/components/common/DropSelection";
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -36,6 +37,7 @@ interface I_ItemDialog {
     setOpenDialog: (flag: boolean) => void;
     selectedItem: I_Item | null;
     setData: (data: I_BackPackPage) => void;
+    page: number;
 }
 
 interface I_ItemSettingDialog {
@@ -43,7 +45,10 @@ interface I_ItemSettingDialog {
     setSelectedItem: (flag: I_Item | null) => void;
     data: I_BackPackPage;
     setData: (data: I_BackPackPage) => void;
+    page: number;
 }
+
+const pagesize = 12;
 
 export default function Pack() {
     const [selectedItem, setSelectedItem] = useState<I_Item | null>(null);
@@ -61,13 +66,13 @@ export default function Pack() {
     useEffect(() => {
         (async function () {
             try {
-                const result = await getbackpacks();
+                const result = await getbackpacks(page, pagesize);
                 setData(result);
             } catch(e) {
                 console.log(e)
             }
         })()
-    }, [])
+    }, [page])
 
     useEffect(() => {
         if (selectedItem) setOpenDialog(true);
@@ -101,10 +106,12 @@ export default function Pack() {
                         <ItemGrid items={filterItemCheck} onSelectItem={setSelectedItem} setOpenItemSettingDialog={setOpenItemSettingDialog}/>
                     </div>
                 </div>
+                <div className="mt-8">
+                    <PageNumber maxpage={data.getItemPages} serial={page} setSerial={setPage}/>
+                </div>
             </div>
-            <PageNumber maxpage={10} serial={page} setSerial={setPage}/>
-            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} selectedItem={selectedItem} setData={setData}/>
-            <ItemSettingDialog selectedItem={openItemSettingDialog} setSelectedItem={setOpenItemSettingDialog} data={data} setData={setData}/>
+            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} selectedItem={selectedItem} setData={setData} page={page}/>
+            <ItemSettingDialog selectedItem={openItemSettingDialog} setSelectedItem={setOpenItemSettingDialog} data={data} setData={setData} page={page}/>
         </main>
     );
 };
@@ -144,7 +151,7 @@ const ItemGrid = ({ items, onSelectItem, setOpenItemSettingDialog }: I_ItemGridP
             {items.map((item) => (
                 <div
                     key={item.id}
-                    className="p-4 border rounded shadow cursor-pointer hover:bg-blue-50 min-h-[200px] aspect-1 relative"
+                    className="p-4 border rounded shadow cursor-pointer hover:bg-blue-50 min-h-[200px] aspect-1 relative overflow-hidden"
                     onClick={() => onSelectItem(item)}
                 >
                     <figure className="relative h-16 cursor-pointer transform h-[50%] rounded">
@@ -154,7 +161,7 @@ const ItemGrid = ({ items, onSelectItem, setOpenItemSettingDialog }: I_ItemGridP
                         }
                     </figure>
                     <h3 className="text-lg font-semibold mt-3 mobile:text-center mobile:text-3xl">{item.name}</h3>
-                    <p className="text-sm text-foreground text-lg mobile:text-center">{item.description}</p>
+                    <p className="text-sm text-foreground text-lg mobile:text-center pc:h-[24%] overflow-hidden">{item.description}</p>
                     <Button 
                         className="bg-coverground text-topcovercolor w-[100%] mt-auto absolute w-[calc(100%-2em)] bottom-[1em] rounded"
                         onClick={(event) => {
@@ -169,7 +176,7 @@ const ItemGrid = ({ items, onSelectItem, setOpenItemSettingDialog }: I_ItemGridP
     );
 };
 
-const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_ItemDialog) => {
+const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData, page}: I_ItemDialog) => {
     const [selected, setSelected] = useState(E_Item_Types.CONSUMABLES);
     const [image, setImage] = useState<File>();
 
@@ -215,8 +222,8 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
                     className="mt-2"
                 />
                 <InputBox
-                    title="物品數量"
-                    placeholder="請輸入物品數量"
+                    title="物品兌換數量"
+                    placeholder="請輸入物品兌換數量"
                     type={E_RegexType.NUMBER}
                     ref={amountRef}
                     maxlength={2}
@@ -234,24 +241,13 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
                         defaultImage={selectedItem && selectedItem.image ? ImagePath + selectedItem.image : undefined}
                     />
                 </aside>
-                <aside className="mt-2">
-                    <span className="text-sm pl-1">選擇種類</span>
-                    <Listbox value={selected} onChange={setSelected}>
-                        <ListboxButton className="w-[100%] pt-1 pb-1 pl-3 border border-solid border-slate-500 outline-none w-11/12 rounded text-left">{selected}</ListboxButton>
-                        <ListboxOptions anchor="bottom" className="z-20 w-[var(--button-width)] rounded-xl border border-white/5 p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none bg-coverground text-topcovercolor">
-                        {
-                            ItemTypes.map(item => {
-                                if (item === E_Item_Types.All) return;
-                                return (
-                                    <ListboxOption key={item} value={item} className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10">
-                                        {item}
-                                    </ListboxOption>
-                                )
-                            })
-                        }
-                        </ListboxOptions>
-                    </Listbox>
-                </aside>
+                <DropSelection
+                    selections={ItemTypes}
+                    setSelected={setSelected}
+                    selected={selected}
+                    disableOptions={[E_Item_Types.All]}
+                    className="mt-2"
+                />
             </section>
             <div className="flex justify-center mt-3">
                 <Button 
@@ -263,7 +259,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
 
                         const result = await setItem(name || "", selected, description, amount, image, selectedItem?.id ,selectedItem?.image);
                         if (result.status) {
-                            const result = await getbackpacks();
+                            const result = await getbackpacks(page, pagesize);
                             setData(result);
                             setOpenDialog(false);
                         }
@@ -275,7 +271,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
                         onClick={async () => {
                             const result = await deleteItem(selectedItem.image, selectedItem.id);
                             if (result.status) {
-                                const result = await getbackpacks();
+                                const result = await getbackpacks(page, pagesize);
                                 setData(result);
                                 setOpenDialog(false);
                             }
@@ -287,7 +283,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData }: I_Item
     )
 };
 
-const ItemSettingDialog = ({selectedItem, setSelectedItem, data, setData}: I_ItemSettingDialog) => {
+const ItemSettingDialog = ({selectedItem, setSelectedItem, data, setData, page}: I_ItemSettingDialog) => {
     const [query, setQuery] = useState('');
     const [openUser, setOpenUser] = useState<I_User | null>(null);
     const [value, setValue] = useState(0);
@@ -364,7 +360,7 @@ const ItemSettingDialog = ({selectedItem, setSelectedItem, data, setData}: I_Ite
                                             <Button onClick={async () => {
                                                 const result = await addUserItem(user.id, selectedItem?.id || "", value);
                                                 if (result.status) {
-                                                    const result = await getbackpacks();
+                                                    const result = await getbackpacks(page, pagesize);
                                                     setData(result);
                                                     setSelectedItem(null);
                                                 }
