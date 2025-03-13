@@ -161,7 +161,7 @@ const ItemGrid = ({ items, onSelectItem, setOpenItemSettingDialog }: I_ItemGridP
                         }
                     </figure>
                     <h3 className="text-lg font-semibold mt-3 mobile:text-center mobile:text-3xl">{item.name}</h3>
-                    <p className="text-sm text-foreground text-lg mobile:text-center">{item.description}</p>
+                    <p className="text-sm text-foreground text-lg mobile:text-center pc:h-[24%] overflow-hidden">{item.description}</p>
                     <Button 
                         className="bg-coverground text-topcovercolor w-[100%] mt-auto absolute w-[calc(100%-2em)] bottom-[1em] rounded"
                         onClick={(event) => {
