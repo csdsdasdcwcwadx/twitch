@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
-import { Input, Button, Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import { Input, Button } from "@headlessui/react";
 import { ItemTypes, ImagePath, twitchIconDomain } from "@/utils/util";
 import { I_Item, E_Item_Types, I_BackPackPage, I_User } from "@/utils/interface";
 import Image from "next/image";
@@ -315,6 +315,12 @@ const ItemSettingDialog = ({selectedItem, setSelectedItem, data, setData, page}:
         return selectedItem?.userItems?.filter(useritem => useritem.user.id === openUser?.id);
     }, [openUser, selectedItem])
 
+    useEffect(() => {
+        if (currentUserItem.length && currentUserItem[0].amount) {
+            setValue(currentUserItem[0].amount);
+        }
+    }, [currentUserItem])
+
     return (
         <CustomDialog open={Boolean(selectedItem)} close={() => setSelectedItem(null)} title="道具設定">
             <section className="mt-5">
@@ -364,14 +370,14 @@ const ItemSettingDialog = ({selectedItem, setSelectedItem, data, setData, page}:
                                                     setData(result);
                                                     setSelectedItem(null);
                                                 }
-                                            }} className="m-auto block">送出</Button>
+                                            }} className="m-auto block bg-coverground text-topcovercolor rounded p-[10px] mt-3">送出</Button>
                                         </div>
                                         <div className="mr-5">{`數量 : ${currentUserItem.length && currentUserItem[0].amount}`}</div>
                                     </div> : <></>
                                 }
                             </Fragment>
                         )
-                    }) : <span className="block text-center mt-2">沒有簽到用戶</span>
+                    }) : <span className="block text-center mt-2">沒有持有用戶</span>
                 }
                 </div>
             </section>
