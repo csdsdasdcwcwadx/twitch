@@ -7,18 +7,16 @@ export default function PageRequest () {
     const pathname = usePathname();
 
     useEffect(() => {
-        if (process.env.ENV !== "prod") {
-            (async function() {
-                try {
-                    const data = await login(pathname);
-                    if (data.href) {
-                        window.location.href = data.href;
-                    }
-                } catch (e: unknown) {
-                    console.log(e)
+        (async function() {
+            try {
+                const data = await login(pathname);
+                if (data.href) {
+                    window.location.href = data.href;
                 }
-            })()
-        }
+            } catch (e: unknown) {
+                console.error(e)
+            }
+        })()
     }, [pathname])
 
     return <></>

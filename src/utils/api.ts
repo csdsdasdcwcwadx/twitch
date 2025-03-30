@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 const apollo = new ApolloClient({
-    uri: `${domainEnv}/graphql`,
+    uri: `${domainEnv}/twitch/graphql`,
     cache: new InMemoryCache(),
 });
 
