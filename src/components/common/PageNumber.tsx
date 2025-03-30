@@ -3,7 +3,7 @@ import React, { memo, useRef } from "react";
 interface I_props {
     maxpage: number;
     serial: number;
-    setSerial: Function;
+    setSerial: (num: number) => void;
     typeIn?: boolean;
 }
 
@@ -25,9 +25,11 @@ function PageNumber ({setSerial, maxpage, serial, typeIn}: I_props) {
                 typeIn && <div>
                     <input className="block m-auto mt-2 outline-none" type="text" placeholder="請輸入頁碼" ref={page} onKeyUp={e=>{
                         if(e.code !== "Enter") return;
-                        if(isNaN(parseInt(page.current?.value!))) return;
-                        if(parseInt(page.current?.value!) <= 0 || parseInt(page.current?.value!) > maxpage) return;
-                        setSerial(parseInt(page.current?.value!));
+                        if (page.current) {
+                            if(isNaN(parseInt(page.current.value!))) return;
+                            if(parseInt(page.current.value!) <= 0 || parseInt(page.current.value!) > maxpage) return;
+                            setSerial(parseInt(page.current.value!));
+                        } else return;
                     }}/>
                 </div>
             }
@@ -38,7 +40,7 @@ function PageNumber ({setSerial, maxpage, serial, typeIn}: I_props) {
 interface I_NumsProps {
     num: number;
     maxpage: number;
-    click: Function;
+    click: (num: number) => void;
     serial?: number;
 }
 

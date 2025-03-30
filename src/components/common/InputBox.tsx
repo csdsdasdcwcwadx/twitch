@@ -27,19 +27,19 @@ function InputBar ({title, placeholder, type, value, unnecessary, trigger, maxle
     const [errMsg, setErrMsg] = useState<string | undefined>();
 
     useEffect(() => {
-        value && setInput(`${value}`);
+        if (value) setInput(`${value}`);
     },[value])
 
-    // useEffect(() => {
-    //     if(trigger) setErrMsg(undefined);
-    //     else setErrMsg(`${title}必填`);
-    // },[trigger, title])
+    useEffect(() => {
+        if(trigger) setErrMsg(undefined);
+        else setErrMsg(`${title}必填`);
+    },[trigger, title])
 
 
     useEffect(() => {
         let flag = true;
         const RegexNumTypes = /^[0-9]*$/;
-        const RegexChineseTypes = /^[^\u4e00-\u9fa5]+$/;
+        // const RegexChineseTypes = /^[^\u4e00-\u9fa5]+$/;
         const RegexPhoneNum = /^09\d{8}$/;
         const RegexDecimalPoint = /^\d+$/;
         const Regexmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,7 +100,7 @@ function InputBar ({title, placeholder, type, value, unnecessary, trigger, maxle
         <div className={className}>
             <span className='text-sm pl-1 text-coverground'>{title}</span>
             <Input className='w-[100%] pt-1 pb-1 pl-2 border border-solid border-slate-500 outline-none w-11/12 rounded text-sm' placeholder={placeholder} onChange={e=>setInput(e.target.value)} ref={ref} defaultValue={value} maxLength={maxlength}/>
-            {/* {errMsg && <span className='text-red-500 mb-0 text-xs ml-1'>{errMsg}</span>} */}
+            {errMsg && <span className='text-red-500 mb-0 text-xs ml-1'>{errMsg}</span>}
         </div>
     );
 }
