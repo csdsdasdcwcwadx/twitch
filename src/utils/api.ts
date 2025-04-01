@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 const apollo = new ApolloClient({
-    uri: `${domainEnv}/twitch/graphql`,
+    uri: `${domainEnv}/graphql`,
     cache: new InMemoryCache(),
 });
 
@@ -19,14 +19,14 @@ export const login = async (path = "") => {
 };
 
 export const setcheck = async (passcode: string) => {
-    const response = await api.post("/twitch/check/addcheck", {
+    const response = await api.post("/check/addcheck", {
         passcode,
     });
     return response.data;
 };
 
 export const setUserCheck = async(checkId: string, isChecked: boolean, passcode: string) => {
-    const response = await api.post("/twitch/usercheck/sign", {
+    const response = await api.post("/usercheck/sign", {
         checkId,
         isChecked,
         passcode,
@@ -35,12 +35,12 @@ export const setUserCheck = async(checkId: string, isChecked: boolean, passcode:
 };
 
 export const logout = async () => {
-    const response = await api.get("/twitch/member/logout");
+    const response = await api.get("/member/logout");
     return response.data;
 };
 
 export const setCheckStatus = async(checkId: string, streaming: boolean) => {
-    const response = await api.post("/twitch/check/updatecheckstatus", {
+    const response = await api.post("/check/updatecheckstatus", {
         checkId,
         streaming,
     });
@@ -56,14 +56,14 @@ export const setItem = async(name: string, type: string, description: string, am
     formData.append("description", description);
     if (imageName) formData.append("existimagename", imageName);
 
-    const response = await api.post("/twitch/item/additem", formData, {
+    const response = await api.post("/item/additem", formData, {
         params: id ? { id } : undefined,
     });
     return response.data;
 }
 
 export const deleteItem = async(existimagename: string, id: string) => {
-    const response = await api.post("/twitch/item/deleteItem", {
+    const response = await api.post("/item/deleteItem", {
         existimagename,
     }, {
         params: id ? { id } : undefined,
@@ -72,7 +72,7 @@ export const deleteItem = async(existimagename: string, id: string) => {
 }
 
 export const addUserItem = async(userId: string, itemId: string, amount: number) => {
-    const response = await api.post("/twitch/useritem/ownitem", {
+    const response = await api.post("/useritem/ownitem", {
         userId,
         itemId,
         amount,
@@ -81,7 +81,7 @@ export const addUserItem = async(userId: string, itemId: string, amount: number)
 }
 
 export const exchange = async(itemId: string, amount: number) => {
-    const response = await api.post("/twitch/redemp/exchange", {
+    const response = await api.post("/redemp/exchange", {
         itemId,
         amount,
     })
@@ -89,7 +89,7 @@ export const exchange = async(itemId: string, amount: number) => {
 }
 
 export const updateRedemptions = async(redemptionId: string, status: boolean) => {
-    const response = await api.post("/twitch/redemp/update", {
+    const response = await api.post("/redemp/update", {
         redemptionId,
         status,
     })

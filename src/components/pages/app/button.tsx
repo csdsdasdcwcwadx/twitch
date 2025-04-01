@@ -7,7 +7,7 @@ function LoginButton () {
             className="bg-[#f1b600] py-5 px-10 pl-10 font-bold text-background tracking-widest text-[17px] rounded-[20px] mx-auto block"
             onClick={() => {
                 const clientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
-                const redirectUri = `${process.env.NEXT_PUBLIC_SERVER_HOST}/twitch/member/login`;
+                const redirectUri = `${process.env.NEXT_PUBLIC_SERVER_HOST}/member/login`;
                 const scope = "user:read:email";
                 const force_verify = true;
                 const login_type = 'login';
