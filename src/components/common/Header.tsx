@@ -48,7 +48,7 @@ export function Header() {
                 router.push(`${prefix}/pack`);
                 break;
             case "logout":
-                window.location.href = `${domainEnv}/twitch/member/logout`;
+                window.location.href = `${domainEnv}/member/logout`;
                 break;
             case "check":
                 router.push(`${prefix}/check`);
