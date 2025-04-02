@@ -7,10 +7,8 @@ function LoginButton () {
         <button
             className="bg-[#f1b600] py-5 px-10 pl-10 font-bold text-background tracking-widest text-[17px] rounded-[20px] mx-auto block"
             onClick={() => {
-                const requestPath = process.env.NEXT_PUBLIC_ENV === "prod" ? domainEnv : process.env.NEXT_PUBLIC_SERVER_HOST;
-
                 const clientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
-                const redirectUri = `${requestPath}/member/login`;
+                const redirectUri = `${domainEnv}/member/login`;
                 const scope = "user:read:email";
                 const force_verify = true;
                 const login_type = 'login';

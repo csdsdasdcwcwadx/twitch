@@ -22,13 +22,13 @@ interface I_MenuAllItemsProps {
 }
 
 const displayItems = [
-    {type: "pack", text: "前往背包", icon: ""},
     {type: "check", text: "前往簽到頁", icon: ""},
+    {type: "pack", text: "前往背包", icon: ""},
     {type: "exchange", text: "前往禮品兌換頁", icon: ""},
     {type: "logout", text: "登出", icon: ""},
-    {type: "logout", text: "功能3", icon: ""},
-    {type: "logout", text: "功能4", icon: ""},
-    {type: "logout", text: "功能5", icon: ""},
+    // {type: "logout", text: "功能3", icon: ""},
+    // {type: "logout", text: "功能4", icon: ""},
+    // {type: "logout", text: "功能5", icon: ""},
 ]
 
 export function Header() {
