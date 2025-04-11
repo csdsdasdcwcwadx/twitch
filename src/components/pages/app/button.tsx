@@ -1,7 +1,12 @@
 'use client';
 import { domainEnv } from "@/utils/util";
+import { useEffect } from "react";
 
 function LoginButton () {
+
+    useEffect(() => {
+        console.log("@@@")
+    }, [])
 
     return (
         <button
