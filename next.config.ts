@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
         port: '', // 如果有特定端口可以填入，否則保持空字串
         pathname: '/**', // 表示允許這個域名下的所有圖片
       },
+      {
+        protocol: 'https',
+        hostname: 'ec2-54-253-97-210.ap-southeast-2.compute.amazonaws.com',
+        pathname: '/twitch/item/images/**',
+      },
     ],
   }
 };
