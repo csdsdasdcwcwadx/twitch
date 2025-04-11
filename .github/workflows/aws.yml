@@ -23,7 +23,7 @@ jobs:
         ssh -o StrictHostKeyChecking=no ec2-user@54.253.97.210 << 'EOF'
             cd /home/ec2-user/twitch/application/twitch
 
-            echo "Stop service..."
+            echo "🔴 Stop service..."
             sudo systemctl stop twitch-frontend.service
 
             echo "🔁 Pulling latest code..."
