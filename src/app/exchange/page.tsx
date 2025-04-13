@@ -1,11 +1,10 @@
 'use client';
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getRedemption } from "@/utils/api";
 import { I_Redemption } from "@/utils/interface";
-import { ImagePath } from "@/utils/util";
-import Image from "next/image";
 import PageNumber from "@/components/common/PageNumber";
+import ImageHandler from "@/components/common/ImageHandler";
 
 export default function Exchange () {
     const [redemptions, setRedemptions] = useState<I_Redemption[]>([]);
@@ -54,8 +53,7 @@ export default function Exchange () {
                                 <div className="p-[10px] table-cell mobile:block align-middle">
                                     <figure className="relative rounded aspect-[1.5] mobile:aspect-[3]">
                                     {
-                                        redemption.item.image ? <Image src={ImagePath + redemption.item.image} alt={redemption.item.name} className="object-cover rounded" fill sizes="100"/>
-                                        : <></>
+                                        redemption.item.image ? <ImageHandler item={redemption.item}/> : <></>
                                     }
                                     </figure>
                                 </div>
