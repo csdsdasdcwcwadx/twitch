@@ -16,6 +16,7 @@ import minusIcon from "@/icon/minus.png";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
 import PageNumber from "@/components/common/PageNumber";
 import DropSelection from "@/components/common/DropSelection";
+import ImageHandler from "@/components/common/ImageHandler";
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -156,8 +157,7 @@ const ItemGrid = ({ items, onSelectItem, setOpenItemSettingDialog }: I_ItemGridP
                 >
                     <figure className="relative h-16 cursor-pointer transform h-[50%] rounded">
                         {
-                            item.image ? <Image src={ImagePath + item.image} alt={item.name} className="object-cover rounded" fill sizes="100"/>
-                            : <></>
+                            item.image ? <ImageHandler item={item}/> : <></>
                         }
                     </figure>
                     <h3 className="text-lg font-semibold mt-3 mobile:text-center mobile:text-3xl">{item.name}</h3>

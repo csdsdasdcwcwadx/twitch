@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Input, Button } from "@headlessui/react";
-import { ItemTypes, ImagePath } from "@/utils/util";
+import { ItemTypes } from "@/utils/util";
 import { I_Item, E_Item_Types } from "@/utils/interface";
 import Image from "next/image";
 import { getpacks } from "@/utils/api";
@@ -11,6 +11,7 @@ import plusIcon from "@/icon/plus.png";
 import minusIcon from "@/icon/minus.png";
 import { exchange } from "@/utils/api";
 import PageNumber from "@/components/common/PageNumber";
+import ImageHandler from "@/components/common/ImageHandler";
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -129,10 +130,7 @@ const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
                     >
                         <figure className="relative h-16 cursor-pointer transform h-[50%] rounded">
                             {
-                                item.image ? process.env.NEXT_PUBLIC_ENV === "prod" ? // 需使用Lets Encrypt 簽章才能使用此網域
-                                <img src={ImagePath + item.image} alt={item.name} className="object-cover rounded" sizes="100"/> 
-                                : <Image src={ImagePath + item.image} alt={item.name} className="object-cover rounded" fill sizes="100"/>
-                                : <></>
+                                item.image ? <ImageHandler item={item}/> : <></>
                             }
                         </figure>
                         <h3 className="text-lg font-semibold mt-3 mobile:text-center mobile:text-3xl">{item.name}</h3>
