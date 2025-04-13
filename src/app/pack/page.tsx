@@ -129,7 +129,7 @@ const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
                     >
                         <figure className="relative h-16 cursor-pointer transform h-[50%] rounded">
                             {
-                                item.image ? process.env.ENV === "prod" ? // 需使用Lets Encrypt 簽章才能使用此網域
+                                item.image ? process.env.NEXT_PUBLIC_ENV === "prod" ? // 需使用Lets Encrypt 簽章才能使用此網域
                                 <img src={ImagePath + item.image} alt={item.name} className="object-cover rounded" sizes="100"/> 
                                 : <Image src={ImagePath + item.image} alt={item.name} className="object-cover rounded" fill sizes="100"/>
                                 : <></>
