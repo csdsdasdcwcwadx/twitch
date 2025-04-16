@@ -80,10 +80,13 @@ export const addUserItem = async(userId: string, itemId: string, amount: number)
     return response.data;
 }
 
-export const exchange = async(itemId: string, amount: number) => {
+export const exchange = async(itemId: string, amount: number, realname: string, address: string, phone: string) => {
     const response = await api.post("/redemp/exchange", {
         itemId,
         amount,
+        realname,
+        address,
+        phone,
     })
     return response.data;
 }

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Input, Button } from "@headlessui/react";
-import { ItemTypes } from "@/utils/util";
+import { ItemTypes, ImagePath, domainEnv } from "@/utils/util";
 import { I_Item, E_Item_Types } from "@/utils/interface";
 import Image from "next/image";
 import { getpacks } from "@/utils/api";
@@ -12,6 +12,10 @@ import minusIcon from "@/icon/minus.png";
 import { exchange } from "@/utils/api";
 import PageNumber from "@/components/common/PageNumber";
 import ImageHandler from "@/components/common/ImageHandler";
+import InputBox, { E_RegexType } from "@/components/common/InputBox";
+import RadioSelector from "@/components/common/RadioSelector";
+import seven_elevenIcon from "@/icon/seven_eleven.png";
+import { useSearchParams } from 'next/navigation'
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -32,6 +36,12 @@ interface I_ItemDialogProps {
     setOpenDialog: (flag: I_Item | null) => void;
     setItems: (items: I_Item[]) => void;
     page: number;
+}
+
+enum E_AddressType {
+    SEVEN = 0,
+    POST = 1,
+    PA = 2,
 }
 
 const pagesize = 12;
@@ -148,9 +158,20 @@ const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
 
 const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogProps) => {
     const [value, setValue] = useState(0);
+    const [addressing, setAddressing] = useState<E_AddressType>(E_AddressType.PA);
 
     const increase = () => setValue((prev) => prev + 1);
     const decrease = () => setValue((prev) => Math.max(0, prev - 1)); // 避免負數
+
+    const name = useRef<HTMLInputElement>(null);
+    const phone = useRef<HTMLInputElement>(null);
+    const address = useRef<HTMLInputElement>(null);
+    const postcal = useRef<HTMLInputElement>(null);
+    const postOffice = useRef<HTMLInputElement>(null);
+    const seven = useRef<HTMLInputElement>(null);
+
+    const searchParams = useSearchParams();
+    const storeaddress = searchParams.get('storeaddress');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(e.target.value, 10);
@@ -158,29 +179,94 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
           setValue(newValue);
         }
     };
+
+    useEffect(() => {
+        if (storeaddress) {
+            setAddressing(E_AddressType.SEVEN);
+        }
+    }, [openDialog])
+
+    const addressOptions = useMemo(() => {
+        return Object.entries(E_AddressType)
+            .filter(([key]) => isNaN(Number(key)))
+            .map(([key, value]) => ({
+                name: key,
+                value: value as string
+            }))
+    }, [])
+
     if (!openDialog) return null;
 
     return (
         <CustomDialog open={Boolean(openDialog)} close={() => setOpenDialog(null)} title={`${openDialog.name}兌換數量`}>
             <section>
-                <div className="flex justify-center mt-5">
-                    <i className="block w-[30px] h-[30px] cursor-pointer" onClick={decrease}>
-                        <Image src={minusIcon} alt="arrow-down" className="absolute"/>
-                    </i>
-                    <Input value={value} type="number" className="text-lg outline-none px-2 border-slate-500 w-[50px] text-center pointer-events-none" onChange={handleChange}/>
-                    <i className="block w-[30px] h-[30px] cursor-pointer"  onClick={increase}>
-                        <Image src={plusIcon} alt="arrow-down" className="absolute"/>
-                    </i>
+                <div className="">
+                    <div>
+                        <InputBox title="姓名" placeholder="請輸入姓名" type={E_RegexType.NAME} maxlength={10} ref={name}/>
+                    </div>
+                    <div>
+                        <InputBox title="電話" placeholder="請輸入電話" type={E_RegexType.PHONE} maxlength={10} ref={phone}/>
+                    </div>
+                    <div>
+                        <RadioSelector options={addressOptions} onChange={(value) => {setAddressing(value as E_AddressType)}} seleted={addressing}/>
+                    </div>
+                    <div className="flex items-center">
+                        {
+                            E_AddressType.PA === addressing ? <>
+                                <InputBox title="郵遞區號" placeholder="請輸入郵遞區號" type={E_RegexType.NUMBER} maxlength={5} className="flex-1 mr-2" ref={postcal}/>
+                                <InputBox title="地址" placeholder="請輸入地址" type={E_RegexType.ADDRESS} maxlength={50} className="flex-[3]" ref={address}/>
+                            </> :
+                            E_AddressType.SEVEN === addressing ? <>
+                                <figure className="h-10 relative w-10 cursor-pointer">
+                                    <Image
+                                        src={seven_elevenIcon} 
+                                        alt="7-11"
+                                        fill
+                                        onClick={() => {
+                                            const redirectUrl = `https://emap.presco.com.tw/c2cemap.ashx?eshopid=870&servicetype=3&url=${domainEnv}/member/redirect&tempvar=${window.location.href}`;
+                                            window.location.href = redirectUrl;
+                                        }}
+                                    />
+                                </figure>
+                                <span ref={seven}>{storeaddress}</span>
+                            </> :
+                            E_AddressType.POST === addressing ? <>
+                                <InputBox title="郵局" placeholder="請輸入郵局" type={E_RegexType.ADDRESS} maxlength={50} className="flex-[3]" ref={postOffice}/>
+                            </> :
+                            null
+                        }
+                    </div>
+                    <div className="flex justify-center mt-5">
+                        <i className="block w-[30px] h-[30px] cursor-pointer" onClick={decrease}>
+                            <Image src={minusIcon} alt="arrow-down" className="absolute"/>
+                        </i>
+                        <Input value={value} type="number" className="text-lg outline-none px-2 border-slate-500 w-[50px] text-center pointer-events-none" onChange={handleChange}/>
+                        <i className="block w-[30px] h-[30px] cursor-pointer"  onClick={increase}>
+                            <Image src={plusIcon} alt="arrow-down" className="absolute"/>
+                        </i>
+                    </div>
                 </div>
                 <Button onClick={async () => {
-                    const result = await exchange(openDialog.id, value*openDialog.amount);
-                    if (result.status) {
-                        const result = await getpacks(page, pagesize);
-                        setItems(result.getItems);
-                    } else {
-                        alert(result.message);
+                    const addressPost = 
+                        addressing === E_AddressType.PA ? `(地址)${postcal.current?.value}${address.current?.value}` : 
+                        addressing === E_AddressType.POST ? `(郵局)${postOffice.current?.value}` : 
+                        addressing === E_AddressType.SEVEN ? `(7-11)${seven.current?.value}` : 
+                        null;
+
+                    const post = {
+                        name: name.current?.value,
+                        address: addressPost,
+                        phone: phone.current?.value,
                     }
-                    setOpenDialog(null);
+                    console.log(post)
+                    // const result = await exchange(openDialog.id, value*openDialog.amount);
+                    // if (result.status) {
+                    //     const result = await getpacks(page, pagesize);
+                    //     setItems(result.getItems);
+                    // } else {
+                    //     alert(result.message);
+                    // }
+                    // setOpenDialog(null);
                 }} className="mt-3 m-auto block bg-coverground text-topcovercolor rounded p-4">送出</Button>
             </section>
         </CustomDialog>
