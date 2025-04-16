@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Input, Button } from "@headlessui/react";
-import { ItemTypes, ImagePath, domainEnv } from "@/utils/util";
+import { ItemTypes, domainEnv } from "@/utils/util";
 import { I_Item, E_Item_Types } from "@/utils/interface";
 import Image from "next/image";
 import { getpacks } from "@/utils/api";
@@ -15,7 +15,7 @@ import ImageHandler from "@/components/common/ImageHandler";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
 import RadioSelector from "@/components/common/RadioSelector";
 import seven_elevenIcon from "@/icon/seven_eleven.png";
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation';
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -168,7 +168,6 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
     const address = useRef<HTMLInputElement>(null);
     const postcal = useRef<HTMLInputElement>(null);
     const postOffice = useRef<HTMLInputElement>(null);
-    const seven = useRef<HTMLInputElement>(null);
 
     const searchParams = useSearchParams();
     const storeaddress = searchParams.get('storeaddress');
@@ -183,8 +182,10 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
     useEffect(() => {
         if (storeaddress) {
             setAddressing(E_AddressType.SEVEN);
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, '', cleanUrl);
         }
-    }, [openDialog])
+    }, [storeaddress])
 
     const addressOptions = useMemo(() => {
         return Object.entries(E_AddressType)
@@ -228,7 +229,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
                                         }}
                                     />
                                 </figure>
-                                <span ref={seven}>{storeaddress}</span>
+                                <span>{storeaddress}</span>
                             </> :
                             E_AddressType.POST === addressing ? <>
                                 <InputBox title="郵局" placeholder="請輸入郵局" type={E_RegexType.ADDRESS} maxlength={50} className="flex-[3]" ref={postOffice}/>
@@ -250,23 +251,24 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
                     const addressPost = 
                         addressing === E_AddressType.PA ? `(地址)${postcal.current?.value}${address.current?.value}` : 
                         addressing === E_AddressType.POST ? `(郵局)${postOffice.current?.value}` : 
-                        addressing === E_AddressType.SEVEN ? `(7-11)${seven.current?.value}` : 
-                        null;
+                        addressing === E_AddressType.SEVEN ? `(7-11)${storeaddress}` : 
+                        "";
 
-                    const post = {
-                        name: name.current?.value,
-                        address: addressPost,
-                        phone: phone.current?.value,
+                    const result = await exchange(
+                        openDialog.id,
+                        value*openDialog.amount,
+                        name.current?.value || "",
+                        addressPost,
+                        phone.current?.value || ""
+                    );
+
+                    if (result.status) {
+                        const result = await getpacks(page, pagesize);
+                        setItems(result.getItems);
+                    } else {
+                        alert(result.message);
                     }
-                    console.log(post)
-                    // const result = await exchange(openDialog.id, value*openDialog.amount);
-                    // if (result.status) {
-                    //     const result = await getpacks(page, pagesize);
-                    //     setItems(result.getItems);
-                    // } else {
-                    //     alert(result.message);
-                    // }
-                    // setOpenDialog(null);
+                    setOpenDialog(null);
                 }} className="mt-3 m-auto block bg-coverground text-topcovercolor rounded p-4">送出</Button>
             </section>
         </CustomDialog>
