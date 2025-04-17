@@ -23,12 +23,14 @@ interface I_props {
 }
 
 function InputBar ({title, placeholder, type, value, unnecessary, trigger, maxlength, className}: I_props, ref: React.ForwardedRef<HTMLInputElement>) {
+    const inputRef = ref as React.RefObject<HTMLInputElement>;
     const [input, setInput] = useState<string>('');
     const [errMsg, setErrMsg] = useState<string | undefined>();
 
     useEffect(() => {
         if (value) setInput(`${value}`);
-    },[value])
+        if (inputRef.current.value) setInput(`${inputRef.current.value}`);
+    },[value, inputRef])
 
     useEffect(() => {
         if(trigger) setErrMsg(undefined);
@@ -100,7 +102,7 @@ function InputBar ({title, placeholder, type, value, unnecessary, trigger, maxle
         <div className={className}>
             <span className='text-sm pl-1 text-coverground'>{title}</span>
             <Input className='w-[100%] pt-1 pb-1 pl-2 border border-solid border-slate-500 outline-none w-11/12 rounded text-sm' placeholder={placeholder} onChange={e=>setInput(e.target.value)} ref={ref} defaultValue={value} maxLength={maxlength}/>
-            {errMsg && <span className='text-red-500 mb-0 text-xs ml-1'>{errMsg}</span>}
+            {errMsg && <span className='text-red-500 mb-0 text-xs ml-1 errormessage'>{errMsg}</span>}
         </div>
     );
 }
