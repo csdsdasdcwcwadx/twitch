@@ -9,6 +9,7 @@ import { Fragment, useEffect, useState } from "react";
 import { domainEnv, twitchIconDomain } from "@/utils/util";
 import { getUsers } from "@/utils/api";
 import { usePathname } from "next/navigation";
+import { useUserStore } from "@/stores/userStore";
 
 interface I_MobileDialogProps {
     menuOpen: boolean;
@@ -37,6 +38,9 @@ export function Header() {
     const pathname = usePathname();
     const router = useRouter();
 
+    // const user = useUserStore((state) => state.user);
+    const setUser = useUserStore((state) => state.setUser);
+
     const handleItemsClick = (item: { type: string, text: string, icon: string }) => {
         const currentpage = pathname.split('/');
         const prefix = currentpage.length > 2 ? `/${currentpage[1]}` : '';
@@ -62,13 +66,14 @@ export function Header() {
             if (pathname !== "/") {
                 try {
                     const result = await getUsers();
+                    setUser(result.getUsers);
                     setUserInfo(result.getUsers);
                 } catch (e) {
                     console.log(e)
                 }
             }
         })()
-    }, [pathname])
+    }, [pathname, setUser])
 
     if (pathname === "/") return <></>
 

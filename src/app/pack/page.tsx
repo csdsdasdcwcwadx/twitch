@@ -16,6 +16,7 @@ import InputBox, { E_RegexType } from "@/components/common/InputBox";
 import RadioSelector from "@/components/common/RadioSelector";
 import seven_elevenIcon from "@/icon/seven_eleven.png";
 import { useSearchParams } from 'next/navigation';
+import { useUserStore } from "@/stores/userStore";
 
 interface I_SideBarProps {
     setCurrentType: (category: E_Item_Types) => void;
@@ -159,18 +160,20 @@ const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
 const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogProps) => {
     const [value, setValue] = useState(0);
     const [addressing, setAddressing] = useState<E_AddressType>(E_AddressType.PA);
+    const [seven, setSeven] = useState("");
+    const userinfo = useUserStore((state) => state.user);
 
     const increase = () => setValue((prev) => prev + 1);
     const decrease = () => setValue((prev) => Math.max(0, prev - 1)); // 避免負數
+
+    const searchParams = useSearchParams();
+    const storeaddress = searchParams.get('storeaddress');
 
     const name = useRef<HTMLInputElement>(null);
     const phone = useRef<HTMLInputElement>(null);
     const address = useRef<HTMLInputElement>(null);
     const postcal = useRef<HTMLInputElement>(null);
     const postOffice = useRef<HTMLInputElement>(null);
-
-    const searchParams = useSearchParams();
-    const storeaddress = searchParams.get('storeaddress');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(e.target.value, 10);
@@ -179,8 +182,48 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
         }
     };
 
+    useEffect (() => {
+        if (userinfo?.realname && name.current) { // name
+            name.current.value = userinfo.realname;
+        }
+        if (userinfo?.phone && phone.current) { // phone
+            phone.current.value = userinfo.phone;
+        }
+        if (userinfo?.address) { // address
+            const address_type = userinfo.address.split(":::")[0];
+            const address_value = userinfo.address.split(":::")[1];
+
+            switch (parseInt(address_type)) {
+                case E_AddressType.PA:
+                    setAddressing(E_AddressType.PA);
+
+                    const postcal_PA = address_value.split("---")[0];
+                    const address_PA = address_value.split("---")[1];
+
+                    if (postcal.current) {
+                        postcal.current.value = postcal_PA;
+                    }
+                    if (address.current) {
+                        address.current.value = address_PA;
+                    }
+                    break;
+                case E_AddressType.POST:
+                    setAddressing(E_AddressType.POST);
+                    if (postOffice.current) {
+                        postOffice.current.value = address_value;
+                    }
+                    break;
+                case E_AddressType.SEVEN:
+                    setAddressing(E_AddressType.SEVEN);
+                    setSeven(address_value);
+                    break;
+            }
+        }
+    }, [userinfo, openDialog])
+
     useEffect(() => {
         if (storeaddress) {
+            setSeven(storeaddress);
             setAddressing(E_AddressType.SEVEN);
             const cleanUrl = window.location.origin + window.location.pathname;
             window.history.replaceState({}, '', cleanUrl);
@@ -200,7 +243,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
 
     return (
         <CustomDialog open={Boolean(openDialog)} close={() => setOpenDialog(null)} title={`${openDialog.name}兌換數量`}>
-            <section>
+            <section id="pack_itemdialog">
                 <div className="">
                     <div>
                         <InputBox title="姓名" placeholder="請輸入姓名" type={E_RegexType.NAME} maxlength={10} ref={name}/>
@@ -215,7 +258,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
                         {
                             E_AddressType.PA === addressing ? <>
                                 <InputBox title="郵遞區號" placeholder="請輸入郵遞區號" type={E_RegexType.NUMBER} maxlength={5} className="flex-1 mr-2" ref={postcal}/>
-                                <InputBox title="地址" placeholder="請輸入地址" type={E_RegexType.ADDRESS} maxlength={50} className="flex-[3]" ref={address}/>
+                                <InputBox title="地址" placeholder="請輸入地址" type={E_RegexType.ADDRESS} maxlength={40} className="flex-[3]" ref={address}/>
                             </> :
                             E_AddressType.SEVEN === addressing ? <>
                                 <figure className="h-10 relative w-10 cursor-pointer">
@@ -229,10 +272,10 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
                                         }}
                                     />
                                 </figure>
-                                <span>{storeaddress}</span>
+                                <span>{seven}</span>
                             </> :
                             E_AddressType.POST === addressing ? <>
-                                <InputBox title="郵局" placeholder="請輸入郵局" type={E_RegexType.ADDRESS} maxlength={50} className="flex-[3]" ref={postOffice}/>
+                                <InputBox title="郵局" placeholder="請輸入郵局" type={E_RegexType.ADDRESS} maxlength={40} className="flex-[3]" ref={postOffice}/>
                             </> :
                             null
                         }
@@ -248,27 +291,30 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
                     </div>
                 </div>
                 <Button onClick={async () => {
-                    const addressPost = 
-                        addressing === E_AddressType.PA ? `(地址)${postcal.current?.value}${address.current?.value}` : 
-                        addressing === E_AddressType.POST ? `(郵局)${postOffice.current?.value}` : 
-                        addressing === E_AddressType.SEVEN ? `(7-11)${storeaddress}` : 
-                        "";
+                    const errormessage = document.querySelector("#pack_itemdialog .errormessage");
 
-                    const result = await exchange(
-                        openDialog.id,
-                        value*openDialog.amount,
-                        name.current?.value || "",
-                        addressPost,
-                        phone.current?.value || ""
-                    );
+                    if (!errormessage) {
+                        const addressPost = 
+                            addressing === E_AddressType.PA ? `${E_AddressType.PA}:::${postcal.current?.value}---${address.current?.value}` : 
+                            addressing === E_AddressType.POST ? `${E_AddressType.POST}:::${postOffice.current?.value}` : 
+                            addressing === E_AddressType.SEVEN ? `${E_AddressType.SEVEN}:::${seven}` : 
+                            "";
 
-                    if (result.status) {
-                        const result = await getpacks(page, pagesize);
-                        setItems(result.getItems);
-                    } else {
+                        const result = await exchange(
+                            openDialog.id,
+                            value*openDialog.amount,
+                            name.current?.value || "",
+                            addressPost,
+                            phone.current?.value || ""
+                        );
+
+                        if (result.status) {
+                            const result = await getpacks(page, pagesize);
+                            setItems(result.getItems);
+                        }
                         alert(result.message);
-                    }
-                    setOpenDialog(null);
+                        setOpenDialog(null);
+                    } else alert(errormessage.textContent);
                 }} className="mt-3 m-auto block bg-coverground text-topcovercolor rounded p-4">送出</Button>
             </section>
         </CustomDialog>

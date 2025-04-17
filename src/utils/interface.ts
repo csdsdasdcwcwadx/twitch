@@ -19,6 +19,9 @@ export type I_User = {
     name: string;
     email: string;
     profile_image: string;
+    realname: string;
+    phone: string;
+    address: string;
 }
 
 export enum E_Item_Types {
@@ -62,6 +65,11 @@ export type I_CheckPage = {
 
 export type I_Header = {
     getUsers: I_User;
+}
+
+export type I_PackPage = {
+    getItems: I_Item[];
+    getItemPages: number;
 }
 
 export type I_BackPackPage = {

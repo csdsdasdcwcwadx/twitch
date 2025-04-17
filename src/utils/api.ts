@@ -111,6 +111,9 @@ export const getUsers = async () => {
                 name
                 email
                 profile_image
+                realname
+                address
+                phone
             }
         }
     `;
@@ -170,6 +173,9 @@ export const getbacks = async () => {
                 name
                 email
                 profile_image
+                realname
+                address
+                phone
             }
         }
     `;
