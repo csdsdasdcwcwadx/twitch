@@ -15,7 +15,6 @@ import ImageHandler from "@/components/common/ImageHandler";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
 import RadioSelector from "@/components/common/RadioSelector";
 import seven_elevenIcon from "@/icon/seven_eleven.png";
-import { useSearchParams } from 'next/navigation';
 import { useUserStore } from "@/stores/userStore";
 
 interface I_SideBarProps {
@@ -37,6 +36,7 @@ interface I_ItemDialogProps {
     setOpenDialog: (flag: I_Item | null) => void;
     setItems: (items: I_Item[]) => void;
     page: number;
+    storeaddress: string | null;
 }
 
 enum E_AddressType {
@@ -54,6 +54,19 @@ export default function Pack() {
     const [openDialog, setOpenDialog] = useState<I_Item | null>(null);
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+
+    const [params, setParams] = useState("");
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const storeaddress = searchParams.get('storeaddress');
+
+        if (storeaddress) {
+            setParams(storeaddress);
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, '', cleanUrl);
+        }
+    }, [])
 
     useEffect(() => {
         (async function () {
@@ -95,7 +108,7 @@ export default function Pack() {
                     <PageNumber maxpage={maxPage} serial={page} setSerial={setPage}/>
                 </div>
             </div>
-            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} setItems={setItems} page={page}/>
+            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} setItems={setItems} page={page} storeaddress={params}/>
         </main>
     );
 };
@@ -157,7 +170,7 @@ const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
     );
 };
 
-const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogProps) => {
+const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }: I_ItemDialogProps) => {
     const [value, setValue] = useState(0);
     const [addressing, setAddressing] = useState<E_AddressType>(E_AddressType.PA);
     const [seven, setSeven] = useState("");
@@ -165,9 +178,6 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
 
     const increase = () => setValue((prev) => prev + 1);
     const decrease = () => setValue((prev) => Math.max(0, prev - 1)); // 避免負數
-
-    const searchParams = useSearchParams();
-    const storeaddress = searchParams.get('storeaddress');
 
     const name = useRef<HTMLInputElement>(null);
     const phone = useRef<HTMLInputElement>(null);
@@ -189,46 +199,42 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page }: I_ItemDialogP
         if (userinfo?.phone && phone.current) { // phone
             phone.current.value = userinfo.phone;
         }
-        if (userinfo?.address) { // address
-            const address_type = userinfo.address.split(":::")[0];
-            const address_value = userinfo.address.split(":::")[1];
-
-            switch (parseInt(address_type)) {
-                case E_AddressType.PA:
-                    setAddressing(E_AddressType.PA);
-
-                    const postcal_PA = address_value.split("---")[0];
-                    const address_PA = address_value.split("---")[1];
-
-                    if (postcal.current) {
-                        postcal.current.value = postcal_PA;
-                    }
-                    if (address.current) {
-                        address.current.value = address_PA;
-                    }
-                    break;
-                case E_AddressType.POST:
-                    setAddressing(E_AddressType.POST);
-                    if (postOffice.current) {
-                        postOffice.current.value = address_value;
-                    }
-                    break;
-                case E_AddressType.SEVEN:
-                    setAddressing(E_AddressType.SEVEN);
-                    setSeven(address_value);
-                    break;
-            }
-        }
-    }, [userinfo, openDialog])
-
-    useEffect(() => {
         if (storeaddress) {
             setSeven(storeaddress);
             setAddressing(E_AddressType.SEVEN);
-            const cleanUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, '', cleanUrl);
+        } else {
+            if (userinfo?.address) { // address
+                const address_type = userinfo.address.split(":::")[0];
+                const address_value = userinfo.address.split(":::")[1];
+    
+                switch (parseInt(address_type)) {
+                    case E_AddressType.PA:
+                        setAddressing(E_AddressType.PA);
+    
+                        const postcal_PA = address_value.split("---")[0];
+                        const address_PA = address_value.split("---")[1];
+    
+                        if (postcal.current) {
+                            postcal.current.value = postcal_PA;
+                        }
+                        if (address.current) {
+                            address.current.value = address_PA;
+                        }
+                        break;
+                    case E_AddressType.POST:
+                        setAddressing(E_AddressType.POST);
+                        if (postOffice.current) {
+                            postOffice.current.value = address_value;
+                        }
+                        break;
+                    case E_AddressType.SEVEN:
+                        setAddressing(E_AddressType.SEVEN);
+                        setSeven(address_value);
+                        break;
+                }
+            }
         }
-    }, [storeaddress])
+    }, [userinfo, openDialog, storeaddress])
 
     const addressOptions = useMemo(() => {
         return Object.entries(E_AddressType)
