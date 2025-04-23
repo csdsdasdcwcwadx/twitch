@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef, Fragment } from "react";
+import { useState, useMemo, useEffect, Fragment } from "react";
 import { Input, Button } from "@headlessui/react";
 import { ItemTypes, ImagePath, twitchIconDomain } from "@/utils/util";
 import { I_Item, E_Item_Types, I_BackPackPage, I_User } from "@/utils/interface";
@@ -180,23 +180,17 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData, page}: I
     const [selected, setSelected] = useState(E_Item_Types.CONSUMABLES);
     const [image, setImage] = useState<File>();
 
-    const nameRef = useRef<HTMLInputElement>(null);
-    const descriptionRef = useRef<HTMLInputElement>(null);
-    const amountRef = useRef<HTMLInputElement>(null);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [amount, setAmount] = useState("");
 
     useEffect(() => {
         if (selectedItem) {
             setSelected(selectedItem.type);
             setTimeout(() => {
-                if (nameRef.current) {
-                    nameRef.current.value = selectedItem.name;
-                }
-                if (descriptionRef.current) {
-                    descriptionRef.current.value = selectedItem.description;
-                }
-                if (amountRef.current) {
-                    amountRef.current.value = selectedItem.amount + "";
-                }
+                setName(selectedItem.name);
+                setDescription(selectedItem.description);
+                setAmount(`${selectedItem.amount}`);
             }, 0);
         } else {
             setSelected(E_Item_Types.CONSUMABLES);
@@ -210,24 +204,27 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData, page}: I
                     title="物品名稱"
                     placeholder="請輸入物品名稱"
                     type={E_RegexType.NAME}
-                    ref={nameRef}
                     maxlength={20}
+                    value={name}
+                    onChange={setName}
                 />
                 <InputBox
                     title="物品敘述"
                     placeholder="請輸入物品敘述"
                     type={E_RegexType.NAME}
-                    ref={descriptionRef}
                     maxlength={100}
                     className="mt-2"
+                    value={description}
+                    onChange={setDescription}
                 />
                 <InputBox
                     title="物品兌換數量"
                     placeholder="請輸入物品兌換數量"
                     type={E_RegexType.NUMBER}
-                    ref={amountRef}
                     maxlength={2}
                     className="mt-2"
+                    value={amount}
+                    onChange={setAmount}
                 />
                 <aside className="mt-2">
                     <span className="text-sm pl-1">選擇圖片</span>
@@ -253,11 +250,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, selectedItem, setData, page}: I
                 <Button 
                     className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground block"
                     onClick={async () => {
-                        const name = nameRef.current?.value || "";
-                        const description = descriptionRef.current?.value || "";
-                        const amount = amountRef.current?.value || "";
-
-                        const result = await setItem(name || "", selected, description, amount, image, selectedItem?.id ,selectedItem?.image);
+                        const result = await setItem(name, selected, description, amount, image, selectedItem?.id ,selectedItem?.image);
                         if (result.status) {
                             const result = await getbackpacks(page, pagesize);
                             setData(result);

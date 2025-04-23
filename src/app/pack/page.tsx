@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Input, Button } from "@headlessui/react";
 import { ItemTypes, domainEnv } from "@/utils/util";
 import { I_Item, E_Item_Types } from "@/utils/interface";
@@ -14,6 +14,7 @@ import PageNumber from "@/components/common/PageNumber";
 import ImageHandler from "@/components/common/ImageHandler";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
 import RadioSelector from "@/components/common/RadioSelector";
+import CheckBox from "@/components/common/CheckBox";
 import seven_elevenIcon from "@/icon/seven_eleven.png";
 import { useUserStore } from "@/stores/userStore";
 
@@ -171,19 +172,20 @@ const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
 };
 
 const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }: I_ItemDialogProps) => {
-    const [value, setValue] = useState(0);
+    const [value, setValue] = useState(1);
     const [addressing, setAddressing] = useState<E_AddressType>(E_AddressType.PA);
-    const [seven, setSeven] = useState("");
+    const [isSame, setIsSame] = useState(false);
     const userinfo = useUserStore((state) => state.user);
 
     const increase = () => setValue((prev) => prev + 1);
-    const decrease = () => setValue((prev) => Math.max(0, prev - 1)); // 避免負數
+    const decrease = () => setValue((prev) => Math.max(1, prev - 1)); // 避免負數
 
-    const name = useRef<HTMLInputElement>(null);
-    const phone = useRef<HTMLInputElement>(null);
-    const address = useRef<HTMLInputElement>(null);
-    const postcal = useRef<HTMLInputElement>(null);
-    const postOffice = useRef<HTMLInputElement>(null);
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [address, setAddress] = useState("");
+    const [postcal, setPostcal] = useState("");
+    const [postOffice, setPostOffice] = useState("");
+    const [seven, setSeven] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(e.target.value, 10);
@@ -192,40 +194,34 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }:
         }
     };
 
-    useEffect (() => {
-        if (userinfo?.realname && name.current) { // name
-            name.current.value = userinfo.realname;
-        }
-        if (userinfo?.phone && phone.current) { // phone
-            phone.current.value = userinfo.phone;
-        }
+    useEffect(() => {
         if (storeaddress) {
             setSeven(storeaddress);
             setAddressing(E_AddressType.SEVEN);
-        } else {
-            if (userinfo?.address) { // address
+        }
+        if (isSame) {
+            if (userinfo?.realname) { // name
+                setName(userinfo.realname);
+            }
+            if (userinfo?.phone) { // phone
+                setPhone(userinfo.phone);
+            }
+            if (userinfo?.address) {
                 const address_type = userinfo.address.split(":::")[0];
                 const address_value = userinfo.address.split(":::")[1];
-    
+
                 switch (parseInt(address_type)) {
                     case E_AddressType.PA:
-                        setAddressing(E_AddressType.PA);
-    
                         const postcal_PA = address_value.split("---")[0];
                         const address_PA = address_value.split("---")[1];
-    
-                        if (postcal.current) {
-                            postcal.current.value = postcal_PA;
-                        }
-                        if (address.current) {
-                            address.current.value = address_PA;
-                        }
+
+                        setAddressing(E_AddressType.PA);
+                        setPostcal(postcal_PA);
+                        setAddress(address_PA);
                         break;
                     case E_AddressType.POST:
                         setAddressing(E_AddressType.POST);
-                        if (postOffice.current) {
-                            postOffice.current.value = address_value;
-                        }
+                        setPostOffice(address_value);
                         break;
                     case E_AddressType.SEVEN:
                         setAddressing(E_AddressType.SEVEN);
@@ -234,7 +230,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }:
                 }
             }
         }
-    }, [userinfo, openDialog, storeaddress])
+    }, [isSame, userinfo, storeaddress])
 
     const addressOptions = useMemo(() => {
         return Object.entries(E_AddressType)
@@ -250,12 +246,13 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }:
     return (
         <CustomDialog open={Boolean(openDialog)} close={() => setOpenDialog(null)} title={`${openDialog.name}兌換數量`}>
             <section id="pack_itemdialog">
+                <CheckBox title="與上次相同資料" value={isSame} onChange={setIsSame}/>
                 <div className="">
                     <div>
-                        <InputBox title="姓名" placeholder="請輸入姓名" type={E_RegexType.NAME} maxlength={10} ref={name}/>
+                        <InputBox title="姓名" placeholder="請輸入姓名" type={E_RegexType.NAME} maxlength={10} value={name} onChange={setName}/>
                     </div>
                     <div>
-                        <InputBox title="電話" placeholder="請輸入電話" type={E_RegexType.PHONE} maxlength={10} ref={phone}/>
+                        <InputBox title="電話" placeholder="請輸入電話" type={E_RegexType.PHONE} maxlength={10} value={phone} onChange={setPhone}/>
                     </div>
                     <div>
                         <RadioSelector options={addressOptions} onChange={(value) => {setAddressing(value as E_AddressType)}} seleted={addressing}/>
@@ -263,8 +260,8 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }:
                     <div className="flex items-center">
                         {
                             E_AddressType.PA === addressing ? <>
-                                <InputBox title="郵遞區號" placeholder="請輸入郵遞區號" type={E_RegexType.NUMBER} maxlength={5} className="flex-1 mr-2" ref={postcal}/>
-                                <InputBox title="地址" placeholder="請輸入地址" type={E_RegexType.ADDRESS} maxlength={40} className="flex-[3]" ref={address}/>
+                                <InputBox title="郵遞區號" placeholder="請輸入郵遞區號" type={E_RegexType.NUMBER} maxlength={5} className="flex-1 mr-2" value={postcal} onChange={setPostcal}/>
+                                <InputBox title="地址" placeholder="請輸入地址" type={E_RegexType.ADDRESS} maxlength={40} className="flex-[3]" value={address} onChange={setAddress}/>
                             </> :
                             E_AddressType.SEVEN === addressing ? <>
                                 <figure className="h-10 relative w-10 cursor-pointer">
@@ -281,7 +278,7 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }:
                                 <span>{seven}</span>
                             </> :
                             E_AddressType.POST === addressing ? <>
-                                <InputBox title="郵局" placeholder="請輸入郵局" type={E_RegexType.ADDRESS} maxlength={40} className="flex-[3]" ref={postOffice}/>
+                                <InputBox title="郵局" placeholder="請輸入郵局" type={E_RegexType.ADDRESS} maxlength={40} className="flex-[3]" value={postOffice} onChange={setPostOffice}/>
                             </> :
                             null
                         }
@@ -301,17 +298,17 @@ const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }:
 
                     if (!errormessage) {
                         const addressPost = 
-                            addressing === E_AddressType.PA ? `${E_AddressType.PA}:::${postcal.current?.value}---${address.current?.value}` : 
-                            addressing === E_AddressType.POST ? `${E_AddressType.POST}:::${postOffice.current?.value}` : 
+                            addressing === E_AddressType.PA ? `${E_AddressType.PA}:::${postcal}---${address}` : 
+                            addressing === E_AddressType.POST ? `${E_AddressType.POST}:::${postOffice}` : 
                             addressing === E_AddressType.SEVEN ? `${E_AddressType.SEVEN}:::${seven}` : 
                             "";
 
                         const result = await exchange(
                             openDialog.id,
                             value*openDialog.amount,
-                            name.current?.value || "",
+                            name,
                             addressPost,
-                            phone.current?.value || ""
+                            phone
                         );
 
                         if (result.status) {
