@@ -69,7 +69,7 @@ export default function Exchange () {
                                     <span className="pc:hidden font-bold mr-5">日期</span>
                                     <span>{formattedDate}</span>
                                 </div>
-                                <div className="p-[10px] table-cell mobile:block align-middle text-center">
+                                <div className="p-[10px] table-cell mobile:flex mobile:justify-between align-middle text-center">
                                     <span className="pc:hidden font-bold mr-5">狀態</span>
                                     <span>{redemption.status ? "已兌換" : "尚未兌換"}</span>
                                 </div>

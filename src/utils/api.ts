@@ -123,10 +123,10 @@ export const getUsers = async () => {
     return response.data;
 }
 
-export const getchecks = async () => {
+export const getchecks = async (year?: string, month?: string) => {
     const GET_USER_CHECKS = gql`
-        query GetAllChecks {
-            getChecks {
+        query GetAllChecks($year: String, $month: String) {
+            getChecks(year: $year, month: $month) {
                 id
                 streaming
                 created_at
@@ -140,6 +140,7 @@ export const getchecks = async () => {
 
     const response = await apollo.query<I_CheckPage>({
         query: GET_USER_CHECKS,
+        variables: { year, month },
         fetchPolicy: "no-cache",
     });
     return response.data;
