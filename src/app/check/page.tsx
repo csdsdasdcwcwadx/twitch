@@ -1,13 +1,14 @@
 'use client';
 
 import { getchecks, setUserCheck } from "@/utils/api"
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Button, Input } from '@headlessui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import { I_CheckPage, I_Check } from "@/utils/interface";
 import CustomDialog from "@/components/common/CustomDialog";
+import { setMonth } from "@/utils/util";
 
 export default function Check () {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>({
@@ -15,17 +16,6 @@ export default function Check () {
     });
     const [checkInput, setCheckInput] = useState<I_Check | null>(null);
     const passcodeRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        (async function () {
-            try {
-                const result = await getchecks();
-                setCheckPageData(result);
-            } catch(e) {
-                console.log(e)
-            }
-        })()
-    }, [])
 
     const CalendarEventsData = useMemo(() => {
         const returnData = checkPageData.getChecks.map((check) => {
@@ -60,10 +50,17 @@ export default function Check () {
                         if (!checks.streaming) return;
                         setCheckInput(checks); // 根據需要處理點擊事件
                     }}
-                    headerToolbar={{
-                        left: '',  // 移除左側按鈕
-                        center: 'title',  // 顯示標題
-                        right: '',  // 移除右側按鈕
+                    datesSet={async (arg) => {
+                        const title = arg.view.title;
+                        const year = title.split(" ")[1];
+                        const month = setMonth(title.split(" ")[0]);
+
+                        try {
+                            const result = await getchecks(year, month);
+                            setCheckPageData(result);
+                        } catch(e) {
+                            console.log(e)
+                        }
                     }}
                 />
             </section>
