@@ -38,3 +38,13 @@ export const setMonth = (month: string) => {
             return '';
     }
 }
+
+export const isServerSide = typeof window === "undefined";
+
+export const getServerCookies = async () => {
+    const { cookies } = await import("next/headers"); // 這裡改成動態 import
+    const cookieStore = await cookies();
+    return cookieStore.getAll()
+        .map(c => `${c.name}=${c.value}`)
+        .join("; ");
+};

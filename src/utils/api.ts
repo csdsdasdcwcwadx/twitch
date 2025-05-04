@@ -1,5 +1,5 @@
 import axios from "axios";
-import { domainEnv } from "./util";
+import { domainEnv, isServerSide, getServerCookies } from "./util";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 import { I_CheckPage, I_Header, I_BackPackPage, I_ExchangePage } from "./interface";
 
@@ -60,7 +60,7 @@ export const setItem = async(name: string, type: string, description: string, am
         params: id ? { id } : undefined,
     });
     return response.data;
-}
+};
 
 export const deleteItem = async(existimagename: string, id: string) => {
     const response = await api.post("/item/deleteItem", {
@@ -69,7 +69,7 @@ export const deleteItem = async(existimagename: string, id: string) => {
         params: id ? { id } : undefined,
     });
     return response.data;
-}
+};
 
 export const addUserItem = async(userId: string, itemId: string, amount: number) => {
     const response = await api.post("/useritem/ownitem", {
@@ -78,7 +78,7 @@ export const addUserItem = async(userId: string, itemId: string, amount: number)
         amount,
     })
     return response.data;
-}
+};
 
 export const exchange = async(itemId: string, amount: number, realname: string, address: string, phone: string) => {
     const response = await api.post("/redemp/exchange", {
@@ -89,7 +89,7 @@ export const exchange = async(itemId: string, amount: number, realname: string, 
         phone,
     })
     return response.data;
-}
+};
 
 export const updateRedemptions = async(redemptionId: string, status: boolean) => {
     const response = await api.post("/redemp/update", {
@@ -97,7 +97,7 @@ export const updateRedemptions = async(redemptionId: string, status: boolean) =>
         status,
     })
     return response.data;
-}
+};
 
 // -----------------------------------------graphQL-----------------------------------------
 
@@ -121,9 +121,14 @@ export const getUsers = async () => {
         query: GET_USER_CHECKS,
     });
     return response.data;
-}
+};
 
 export const getchecks = async (year?: string, month?: string) => {
+    const headers: Record<string, string> = {};
+    if (isServerSide) {
+        const allCookies = await getServerCookies();
+        headers.cookie = allCookies;
+    }
     const GET_USER_CHECKS = gql`
         query GetAllChecks($year: String, $month: String) {
             getChecks(year: $year, month: $month) {
@@ -142,14 +147,20 @@ export const getchecks = async (year?: string, month?: string) => {
         query: GET_USER_CHECKS,
         variables: { year, month },
         fetchPolicy: "no-cache",
+        context: { headers },
     });
     return response.data;
 };
 
-export const getbacks = async () => {
+export const getbackchecks = async (year?: string, month?: string) => {
+    const headers: Record<string, string> = {};
+    if (isServerSide) {
+        const allCookies = await getServerCookies();
+        headers.cookie = allCookies;
+    }
     const GET_USER_CHECKS = gql`
-        query GetAllChecks {
-            getChecks {
+        query GetAllChecks($year: String, $month: String) {
+            getChecks(year: $year, month: $month) {
                 id
                 streaming
                 created_at
@@ -167,26 +178,17 @@ export const getbacks = async () => {
                     created_at
                 }
             }
-            getUsers {
-                id
-                twitch_id
-                login
-                name
-                email
-                profile_image
-                realname
-                address
-                phone
-            }
         }
     `;
 
     const response = await apollo.query<I_CheckPage>({
         query: GET_USER_CHECKS,
+        variables: { year, month },
         fetchPolicy: "no-cache",
+        context: { headers },
     });
     return response.data;
-}
+};
 
 export const getbackpacks = async (page = 1, pageSize = 10) => {
     const GET_USER_ITEMS = gql`
@@ -230,7 +232,7 @@ export const getbackpacks = async (page = 1, pageSize = 10) => {
         fetchPolicy: "no-cache",
     });
     return response.data;
-}
+};
 
 export const getpacks = async (page = 1, pageSize = 10) => {
     const GET_USER_ITEMS = gql`
@@ -258,7 +260,7 @@ export const getpacks = async (page = 1, pageSize = 10) => {
         fetchPolicy: "no-cache",
     });
     return response.data;
-}
+};
 
 export const getRedemption = async (page = 1, pageSize = 10) => {
     const GET_REDEMPTION = gql`
@@ -296,4 +298,4 @@ export const getRedemption = async (page = 1, pageSize = 10) => {
         fetchPolicy: "no-cache",
     });
     return response.data;
-}
+};
