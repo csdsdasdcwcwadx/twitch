@@ -1,5 +1,5 @@
 import axios from "axios";
-import { domainEnv } from "./util";
+import { domainEnv, isServerSide, getServerCookies } from "./util";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 import { I_CheckPage, I_Header, I_BackPackPage, I_ExchangePage } from "./interface";
 
@@ -124,6 +124,11 @@ export const getUsers = async () => {
 }
 
 export const getchecks = async (year?: string, month?: string) => {
+    const headers: Record<string, string> = {};
+    if (isServerSide) {
+        const allCookies = await getServerCookies();
+        headers.cookie = allCookies;
+    }
     const GET_USER_CHECKS = gql`
         query GetAllChecks($year: String, $month: String) {
             getChecks(year: $year, month: $month) {
@@ -142,14 +147,20 @@ export const getchecks = async (year?: string, month?: string) => {
         query: GET_USER_CHECKS,
         variables: { year, month },
         fetchPolicy: "no-cache",
+        context: { headers },
     });
     return response.data;
 };
 
-export const getbacks = async () => {
+export const getbackchecks = async (year?: string, month?: string) => {
+    const headers: Record<string, string> = {};
+    if (isServerSide) {
+        const allCookies = await getServerCookies();
+        headers.cookie = allCookies;
+    }
     const GET_USER_CHECKS = gql`
-        query GetAllChecks {
-            getChecks {
+        query GetAllChecks($year: String, $month: String) {
+            getChecks(year: $year, month: $month) {
                 id
                 streaming
                 created_at
@@ -167,23 +178,14 @@ export const getbacks = async () => {
                     created_at
                 }
             }
-            getUsers {
-                id
-                twitch_id
-                login
-                name
-                email
-                profile_image
-                realname
-                address
-                phone
-            }
         }
     `;
 
     const response = await apollo.query<I_CheckPage>({
         query: GET_USER_CHECKS,
+        variables: { year, month },
         fetchPolicy: "no-cache",
+        context: { headers },
     });
     return response.data;
 }
