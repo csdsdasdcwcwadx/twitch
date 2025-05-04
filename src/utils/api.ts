@@ -102,6 +102,11 @@ export const updateRedemptions = async(redemptionId: string, status: boolean) =>
 // -----------------------------------------graphQL-----------------------------------------
 
 export const getUsers = async () => {
+    const headers: Record<string, string> = {};
+    if (isServerSide) {
+        const allCookies = await getServerCookies();
+        headers.cookie = allCookies;
+    }
     const GET_USER_CHECKS = gql`
         query GetAllChecks {
             getUsers {
@@ -119,6 +124,7 @@ export const getUsers = async () => {
     `;
     const response = await apollo.query<I_Header>({
         query: GET_USER_CHECKS,
+        context: { headers },
     });
     return response.data;
 };
