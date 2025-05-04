@@ -158,6 +158,78 @@ export const getchecks = async (year?: string, month?: string) => {
     return response.data;
 };
 
+export const getpacks = async (page = 1, pageSize = 10) => {
+    const headers: Record<string, string> = {};
+    if (isServerSide) {
+        const allCookies = await getServerCookies();
+        headers.cookie = allCookies;
+    }
+    const GET_USER_ITEMS = gql`
+        query GetAllItems($page: Int, $pageSize: Int) {
+            getItems(page: $page, pageSize: $pageSize) {
+                id
+                name
+                image
+                description
+                created_at
+                type
+                amount
+                userItems {
+                    amount
+                    created_at
+                }
+            }
+            getItemPages(pageSize: $pageSize)
+        }
+    `;
+
+    const response = await apollo.query<I_BackPackPage>({
+        query: GET_USER_ITEMS,
+        variables: { page, pageSize },
+        fetchPolicy: "no-cache",
+        context: { headers },
+    });
+    return response.data;
+};
+
+export const getRedemption = async (page = 1, pageSize = 10) => {
+    const GET_REDEMPTION = gql`
+        query GetAllItems($page: Int, $pageSize: Int) {
+            getRedemptions(page: $page, pageSize: $pageSize) {
+                id
+                amount
+                created_at
+                status
+                item {
+                    name
+                    type
+                    id
+                    image
+                    description
+                    amount
+                    created_at
+                }
+                user {
+                    id
+                    twitch_id
+                    login
+                    name
+                    email
+                    profile_image
+                }
+            }
+            getRedemptionPages(pageSize: $pageSize)
+        }
+    `;
+
+    const response = await apollo.query<I_ExchangePage>({
+        query: GET_REDEMPTION,
+        variables: { page, pageSize },
+        fetchPolicy: "no-cache",
+    });
+    return response.data;
+};
+
 export const getbackchecks = async (year?: string, month?: string) => {
     const headers: Record<string, string> = {};
     if (isServerSide) {
@@ -197,6 +269,11 @@ export const getbackchecks = async (year?: string, month?: string) => {
 };
 
 export const getbackpacks = async (page = 1, pageSize = 10) => {
+    const headers: Record<string, string> = {};
+    if (isServerSide) {
+        const allCookies = await getServerCookies();
+        headers.cookie = allCookies;
+    }
     const GET_USER_ITEMS = gql`
         query GetAllItems($page: Int, $pageSize: Int) {
             getItems(page: $page, pageSize: $pageSize) {
@@ -236,72 +313,7 @@ export const getbackpacks = async (page = 1, pageSize = 10) => {
         query: GET_USER_ITEMS,
         variables: { page, pageSize },
         fetchPolicy: "no-cache",
-    });
-    return response.data;
-};
-
-export const getpacks = async (page = 1, pageSize = 10) => {
-    const GET_USER_ITEMS = gql`
-        query GetAllItems($page: Int, $pageSize: Int) {
-            getItems(page: $page, pageSize: $pageSize) {
-                id
-                name
-                image
-                description
-                created_at
-                type
-                amount
-                userItems {
-                    amount
-                    created_at
-                }
-            }
-            getItemPages(pageSize: $pageSize)
-        }
-    `;
-
-    const response = await apollo.query<I_BackPackPage>({
-        query: GET_USER_ITEMS,
-        variables: { page, pageSize },
-        fetchPolicy: "no-cache",
-    });
-    return response.data;
-};
-
-export const getRedemption = async (page = 1, pageSize = 10) => {
-    const GET_REDEMPTION = gql`
-        query GetAllItems($page: Int, $pageSize: Int) {
-            getRedemptions(page: $page, pageSize: $pageSize) {
-                id
-                amount
-                created_at
-                status
-                item {
-                    name
-                    type
-                    id
-                    image
-                    description
-                    amount
-                    created_at
-                }
-                user {
-                    id
-                    twitch_id
-                    login
-                    name
-                    email
-                    profile_image
-                }
-            }
-            getRedemptionPages(pageSize: $pageSize)
-        }
-    `;
-
-    const response = await apollo.query<I_ExchangePage>({
-        query: GET_REDEMPTION,
-        variables: { page, pageSize },
-        fetchPolicy: "no-cache",
+        context: { headers },
     });
     return response.data;
 };

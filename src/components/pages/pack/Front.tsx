@@ -1,0 +1,311 @@
+"use client";
+
+import { useState, useMemo, useEffect } from "react";
+import { Input, Button } from "@headlessui/react";
+import { domainEnv } from "@/utils/util";
+import { I_Item, E_Item_Types, I_BackPackPage } from "@/utils/interface";
+import Image from "next/image";
+import { getpacks } from "@/utils/api";
+import CustomDialog from "@/components/common/CustomDialog";
+import plusIcon from "@/icon/plus.png";
+import minusIcon from "@/icon/minus.png";
+import { exchange } from "@/utils/api";
+import PageNumber from "@/components/common/PageNumber";
+import ImageHandler from "@/components/common/ImageHandler";
+import InputBox, { E_RegexType } from "@/components/common/InputBox";
+import RadioSelector from "@/components/common/RadioSelector";
+import CheckBox from "@/components/common/CheckBox";
+import seven_elevenIcon from "@/icon/seven_eleven.png";
+import { useUserStore } from "@/stores/userStore";
+import SideBar from "./SideBar";
+
+interface I_props {
+    packData: I_BackPackPage;
+}
+
+interface I_SearchBarProps {
+    setQuery: (value: string) => void;
+}
+
+interface I_ItemGridProps {
+    items: I_Item[];
+    openDialog: I_Item | null;
+    setOpenDialog: (flag: I_Item | null) => void;
+}
+
+interface I_ItemDialogProps {
+    openDialog: I_Item | null;
+    setOpenDialog: (flag: I_Item | null) => void;
+    setItems: (items: I_Item[]) => void;
+    page: number;
+    storeaddress: string | null;
+}
+
+enum E_AddressType {
+    SEVEN = 0,
+    POST = 1,
+    PA = 2,
+}
+
+const pagesize = 12;
+
+export default function Pack({packData}: I_props) {
+    const [query, setQuery] = useState('');
+    const [currentType, setCurrentType] = useState(E_Item_Types.All);
+    const [items, setItems] = useState<I_Item[]>(packData.getItems);
+    const [openDialog, setOpenDialog] = useState<I_Item | null>(null);
+    const [page, setPage] = useState(1);
+    const [maxPage, setMaxPage] = useState(packData.getItemPages);
+
+    const [params, setParams] = useState("");
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const storeaddress = searchParams.get('storeaddress');
+
+        if (storeaddress) {
+            setParams(storeaddress);
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, '', cleanUrl);
+        }
+    }, [])
+
+    useEffect(() => {
+        (async function () {
+            try {
+                const result = await getpacks(page, pagesize);
+                setMaxPage(result.getItemPages);
+                setItems(result.getItems);
+            } catch(e) {
+                console.log(e)
+            }
+        })()
+    }, [page])
+
+    const filterItemCheck = useMemo(() => {
+        // 如果沒有 `query` 和 `currentType`，直接返回所有項目
+        if (query === "" && currentType === E_Item_Types.All) return items;
+      
+        return items.filter((item) => {
+          // 檢查名稱是否匹配 `query`
+          const matchesQuery = query === "" || item.name.toLowerCase().includes(query.toLowerCase());
+          // 檢查類型是否匹配 `currentType`
+          const matchesType = currentType === "All" || item.type === currentType;
+      
+          return matchesQuery && matchesType;
+        });
+    }, [query, currentType, items]);
+  
+    return (
+        <main className="pc:flex h-screen mobile:w-[100%]">
+            <SideBar setCurrentType={setCurrentType}/>
+            <div className="flex-1 p-6">
+                <SearchBar setQuery={setQuery}/>
+                <div className="flex gap-6">
+                    <div className="flex-1">
+                        <ItemGrid items={filterItemCheck} openDialog={openDialog} setOpenDialog={setOpenDialog}/>
+                    </div>
+                </div>
+                <div className="mt-8">
+                    <PageNumber maxpage={maxPage} serial={page} setSerial={setPage}/>
+                </div>
+            </div>
+            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} setItems={setItems} page={page} storeaddress={params}/>
+        </main>
+    );
+};
+
+const SearchBar = ({ setQuery }: I_SearchBarProps) => {
+    return (
+        <div className="mb-4 flex mobile:flex-col">
+            <Input
+                type="text"
+                placeholder="搜尋物品"
+                className="w-[100%] p-2 rounded shadow border border-solid border-slate-500 outline-none"
+                onChange={(event) => setQuery(event.target.value)}
+            />
+        </div>
+    );
+};
+
+const ItemGrid = ({ items, setOpenDialog }: I_ItemGridProps) => {
+    return (
+        <div className="grid grid-cols-[1fr_1fr_1fr] gap-4 mobile:grid-cols-1">
+            {items.map((item) => {
+                if (!item.userItems?.length) return;
+                return (
+                    <div
+                        key={item.id}
+                        className="p-4 border rounded shadow cursor-pointer hover:bg-blue-50 min-h-[350px] pc:min-h-[250px] aspect-1 relative"
+                        onClick={() => setOpenDialog(item)}
+                    >
+                        <figure className="relative h-16 cursor-pointer transform h-[50%] rounded">
+                            {
+                                item.image ? <ImageHandler item={item}/> : <></>
+                            }
+                        </figure>
+                        <h3 className="text-lg font-semibold mt-3 mobile:text-center mobile:text-3xl">{item.name}</h3>
+                        <p className="text-sm text-foreground text-lg mobile:text-center">{item.description}</p>
+                        <div className="mobile:absolute bottom-[2rem]">
+                            <div>兌換數量 : {item.amount}</div>
+                            <div>持有數量 : {item.userItems[0]?.amount}</div>
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+    );
+};
+
+const ItemDialog = ({ openDialog, setOpenDialog, setItems, page, storeaddress }: I_ItemDialogProps) => {
+    const [value, setValue] = useState(1);
+    const [addressing, setAddressing] = useState<E_AddressType>(E_AddressType.PA);
+    const [isSame, setIsSame] = useState(false);
+    const userinfo = useUserStore((state) => state.user);
+
+    const increase = () => setValue((prev) => prev + 1);
+    const decrease = () => setValue((prev) => Math.max(1, prev - 1)); // 避免負數
+
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [address, setAddress] = useState("");
+    const [postcal, setPostcal] = useState("");
+    const [postOffice, setPostOffice] = useState("");
+    const [seven, setSeven] = useState("");
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = parseInt(e.target.value, 10);
+        if (!isNaN(newValue)) {
+          setValue(newValue);
+        }
+    };
+
+    useEffect(() => {
+        if (storeaddress) {
+            setSeven(storeaddress);
+            setAddressing(E_AddressType.SEVEN);
+        }
+        if (isSame) {
+            if (userinfo?.realname) { // name
+                setName(userinfo.realname);
+            }
+            if (userinfo?.phone) { // phone
+                setPhone(userinfo.phone);
+            }
+            if (userinfo?.address) {
+                const address_type = userinfo.address.split(":::")[0];
+                const address_value = userinfo.address.split(":::")[1];
+
+                switch (parseInt(address_type)) {
+                    case E_AddressType.PA:
+                        const postcal_PA = address_value.split("---")[0];
+                        const address_PA = address_value.split("---")[1];
+
+                        setAddressing(E_AddressType.PA);
+                        setPostcal(postcal_PA);
+                        setAddress(address_PA);
+                        break;
+                    case E_AddressType.POST:
+                        setAddressing(E_AddressType.POST);
+                        setPostOffice(address_value);
+                        break;
+                    case E_AddressType.SEVEN:
+                        setAddressing(E_AddressType.SEVEN);
+                        setSeven(address_value);
+                        break;
+                }
+            }
+        }
+    }, [isSame, userinfo, storeaddress])
+
+    const addressOptions = useMemo(() => {
+        return Object.entries(E_AddressType)
+            .filter(([key]) => isNaN(Number(key)))
+            .map(([key, value]) => ({
+                name: key,
+                value: value as string
+            }))
+    }, [])
+
+    if (!openDialog) return null;
+
+    return (
+        <CustomDialog open={Boolean(openDialog)} close={() => setOpenDialog(null)} title={`${openDialog.name}兌換數量`}>
+            <section id="pack_itemdialog">
+                <CheckBox title="與上次相同資料" value={isSame} onChange={setIsSame}/>
+                <div className="">
+                    <div>
+                        <InputBox title="姓名" placeholder="請輸入姓名" type={E_RegexType.NAME} maxlength={10} value={name} onChange={setName}/>
+                    </div>
+                    <div>
+                        <InputBox title="電話" placeholder="請輸入電話" type={E_RegexType.PHONE} maxlength={10} value={phone} onChange={setPhone}/>
+                    </div>
+                    <div>
+                        <RadioSelector options={addressOptions} onChange={(value) => {setAddressing(value as E_AddressType)}} seleted={addressing}/>
+                    </div>
+                    <div className="flex items-center">
+                        {
+                            E_AddressType.PA === addressing ? <>
+                                <InputBox title="郵遞區號" placeholder="請輸入郵遞區號" type={E_RegexType.NUMBER} maxlength={5} className="flex-1 mr-2" value={postcal} onChange={setPostcal}/>
+                                <InputBox title="地址" placeholder="請輸入地址" type={E_RegexType.ADDRESS} maxlength={40} className="flex-[3]" value={address} onChange={setAddress}/>
+                            </> :
+                            E_AddressType.SEVEN === addressing ? <>
+                                <figure className="h-10 relative w-10 cursor-pointer">
+                                    <Image
+                                        src={seven_elevenIcon} 
+                                        alt="7-11"
+                                        fill
+                                        onClick={() => {
+                                            const redirectUrl = `https://emap.presco.com.tw/c2cemap.ashx?eshopid=870&servicetype=3&url=${domainEnv}/member/redirect&tempvar=${window.location.href}`;
+                                            window.location.href = redirectUrl;
+                                        }}
+                                    />
+                                </figure>
+                                <span>{seven}</span>
+                            </> :
+                            E_AddressType.POST === addressing ? <>
+                                <InputBox title="郵局" placeholder="請輸入郵局" type={E_RegexType.ADDRESS} maxlength={40} className="flex-[3]" value={postOffice} onChange={setPostOffice}/>
+                            </> :
+                            null
+                        }
+                    </div>
+                    <div className="flex justify-center mt-5">
+                        <i className="block w-[30px] h-[30px] cursor-pointer" onClick={decrease}>
+                            <Image src={minusIcon} alt="arrow-down" className="absolute"/>
+                        </i>
+                        <Input value={value} type="number" className="text-lg outline-none px-2 border-slate-500 w-[50px] text-center pointer-events-none" onChange={handleChange}/>
+                        <i className="block w-[30px] h-[30px] cursor-pointer"  onClick={increase}>
+                            <Image src={plusIcon} alt="arrow-down" className="absolute"/>
+                        </i>
+                    </div>
+                </div>
+                <Button onClick={async () => {
+                    const errormessage = document.querySelector("#pack_itemdialog .errormessage");
+
+                    if (!errormessage) {
+                        const addressPost = 
+                            addressing === E_AddressType.PA ? `${E_AddressType.PA}:::${postcal}---${address}` : 
+                            addressing === E_AddressType.POST ? `${E_AddressType.POST}:::${postOffice}` : 
+                            addressing === E_AddressType.SEVEN ? `${E_AddressType.SEVEN}:::${seven}` : 
+                            "";
+
+                        const result = await exchange(
+                            openDialog.id,
+                            value*openDialog.amount,
+                            name,
+                            addressPost,
+                            phone
+                        );
+
+                        if (result.status) {
+                            const result = await getpacks(page, pagesize);
+                            setItems(result.getItems);
+                        }
+                        alert(result.message);
+                        setOpenDialog(null);
+                    } else alert(errormessage.textContent);
+                }} className="mt-3 m-auto block bg-coverground text-topcovercolor rounded p-4">送出</Button>
+            </section>
+        </CustomDialog>
+    )
+}
