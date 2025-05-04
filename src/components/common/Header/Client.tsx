@@ -1,14 +1,13 @@
 "use client";
 
+import { memo } from "react";
 import Image from "next/image";
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import twitchIcon from "@/icon/twitch.png";
 import { I_User } from "@/utils/interface";
 import { Menu, MenuButton, MenuItem, MenuItems, Dialog, DialogPanel } from '@headlessui/react'
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { domainEnv, twitchIconDomain } from "@/utils/util";
-import { getUsers } from "@/utils/api";
-import { usePathname } from "next/navigation";
 import { useUserStore } from "@/stores/userStore";
 
 interface I_MobileDialogProps {
@@ -22,23 +21,21 @@ interface I_MenuAllItemsProps {
     handleItemsClick: (item: { type: string, text: string, icon: string }) => void;
 }
 
+interface I_props {
+    userinfo: I_User;
+}
+
 const displayItems = [
     {type: "check", text: "前往簽到頁", icon: ""},
     {type: "pack", text: "前往背包", icon: ""},
     {type: "exchange", text: "前往禮品兌換頁", icon: ""},
     {type: "logout", text: "登出", icon: ""},
-    // {type: "logout", text: "功能3", icon: ""},
-    // {type: "logout", text: "功能4", icon: ""},
-    // {type: "logout", text: "功能5", icon: ""},
 ]
 
-export function Header() {
+function Client ({userinfo}: I_props) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [userinfo, setUserInfo] = useState<I_User | undefined>();
-    const pathname = usePathname();
     const router = useRouter();
-
-    // const user = useUserStore((state) => state.user);
+    const pathname = usePathname();
     const setUser = useUserStore((state) => state.setUser);
 
     const handleItemsClick = (item: { type: string, text: string, icon: string }) => {
@@ -62,20 +59,8 @@ export function Header() {
     }
 
     useEffect(() => {
-        (async function() {
-            if (pathname !== "/") {
-                try {
-                    const result = await getUsers();
-                    setUser(result.getUsers);
-                    setUserInfo(result.getUsers);
-                } catch (e) {
-                    console.log(e)
-                }
-            }
-        })()
-    }, [pathname, setUser])
-
-    if (pathname === "/") return <></>
+        setUser(userinfo);
+    }, [setUser, userinfo])
 
     return (
         <>
@@ -109,8 +94,9 @@ export function Header() {
             <MobileDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} userinfo={userinfo} handleItemsClick={handleItemsClick}/>
         </>
     )
-    
 }
+
+export default memo(Client);
 
 function MobileDialog({ menuOpen, setMenuOpen, userinfo, handleItemsClick }: I_MobileDialogProps) {
     return <Dialog open={menuOpen} onClose={() => setMenuOpen(false)} className="pc:hidden">
