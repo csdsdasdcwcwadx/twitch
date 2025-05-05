@@ -108,7 +108,7 @@ export const getUsers = async () => {
         headers.cookie = allCookies;
     }
     const GET_USER_CHECKS = gql`
-        query GetAllChecks {
+        query GetHeader {
             getUsers {
                 id
                 twitch_id

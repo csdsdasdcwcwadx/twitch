@@ -40,7 +40,6 @@ export const setMonth = (month: string) => {
 }
 
 export const isServerSide = typeof window === "undefined";
-
 export const getServerCookies = async () => {
     const { cookies } = await import("next/headers"); // 這裡改成動態 import
     const cookieStore = await cookies();
@@ -48,3 +47,5 @@ export const getServerCookies = async () => {
         .map(c => `${c.name}=${c.value}`)
         .join("; ");
 };
+
+export const pagesize = 12;
