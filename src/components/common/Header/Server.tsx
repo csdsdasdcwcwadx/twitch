@@ -7,6 +7,7 @@ export default async function Header () {
     const fullUrl = headersList.get('referer') || "";
 
     const pathname = fullUrl.replace(process.env.NEXT_PUBLIC_SERVER_HOST || "", "");
+    console.log(pathname)
     if (pathname === "/") return <></>
 
     const result = await getUsers();
