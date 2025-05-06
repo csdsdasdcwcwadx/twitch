@@ -2,7 +2,7 @@ import { memo, useState, useEffect } from "react";
 
 import { Button } from "@headlessui/react";
 import { pagesize, ImagePath, ItemTypes } from "@/utils/util";
-import { I_BackPackPage, E_Item_Types } from "@/utils/interface";
+import { E_Item_Types } from "@/utils/interface";
 import { getbackpacks, setItem, deleteItem } from "@/utils/api";
 import { I_Item } from "@/utils/interface";
 
@@ -15,11 +15,11 @@ interface I_props {
     openDialog: boolean;
     setOpenDialog: (flag: boolean) => void;
     selectedItem: I_Item | null;
-    setData: (data: I_BackPackPage) => void;
+    setItems: (data: I_Item[]) => void;
     page: number;
 }
 
-function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setData, page }: I_props) {
+function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setItems, page }: I_props) {
     const [selected, setSelected] = useState(E_Item_Types.CONSUMABLES);
     const [image, setImage] = useState<File>();
 
@@ -97,7 +97,7 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setData, page }:
                         const result = await setItem(name, selected, description, amount, image, selectedItem?.id ,selectedItem?.image);
                         if (result.status) {
                             const result = await getbackpacks(page, pagesize);
-                            setData(result);
+                            setItems(result.getItems);
                             setOpenDialog(false);
                         }
                     }}
@@ -109,7 +109,7 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setData, page }:
                             const result = await deleteItem(selectedItem.image, selectedItem.id);
                             if (result.status) {
                                 const result = await getbackpacks(page, pagesize);
-                                setData(result);
+                                setItems(result.getItems);
                                 setOpenDialog(false);
                             }
                         }}

@@ -19,7 +19,7 @@ export default function Exchange ({ exchangeData }: I_props) {
         const result = await getRedemption(page);
         setRedemptions(result.getRedemptions);
         setPage(page);
-    }, [])
+    }, []);
 
     return (
         <main>

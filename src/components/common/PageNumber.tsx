@@ -61,7 +61,7 @@ function Nums ({num, click, maxpage, serial}: I_NumsProps) {
     if (num <= 0 || num > maxpage) {
         className.push('hidden');
     }
-    if (serial && serial === num) {
+    if (serial === num) {
         className.push('text-center');
         className.push('text-topcovercolor');
         className.push('bg-coverground')
@@ -69,7 +69,7 @@ function Nums ({num, click, maxpage, serial}: I_NumsProps) {
 
     return (
         <span 
-            onClick={()=>click(num)} 
+            onClick={()=> serial!==num && click(num)} 
             className={className.join(' ')}
         >
             {num}
