@@ -9,7 +9,7 @@ interface I_props {
     setOpenItemSettingDialog?: (flag: I_Item | null) => void;
 }
 
-function ItemGrid ({items, setOpenDialog, setOpenItemSettingDialog}: I_props) {
+function ItemGrid ({ items, setOpenDialog, setOpenItemSettingDialog }: I_props) {
     return (
         <div className="grid grid-cols-[1fr_1fr_1fr] gap-4 mobile:grid-cols-1">
             {items.map((item) => {

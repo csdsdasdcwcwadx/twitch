@@ -15,7 +15,7 @@ interface I_props {
     packData: I_BackPackPage;
 }
 
-export default function Pack({packData}: I_props) {
+export default function Pack({ packData }: I_props) {
     const [query, setQuery] = useState('');
     const [currentType, setCurrentType] = useState(E_Item_Types.All);
     const [items, setItems] = useState<I_Item[]>(packData.getItems);

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useMemo, useEffect } from "react";
 
@@ -17,7 +17,7 @@ interface I_props {
     packData: I_BackPackPage;
 }
 
-export default function Pack({packData}: I_props) {
+export default function Pack({ packData }: I_props) {
     const [selectedItem, setSelectedItem] = useState<I_Item | null>(null);
     const [query, setQuery] = useState('');
     const [currentType, setCurrentType] = useState(E_Item_Types.All);

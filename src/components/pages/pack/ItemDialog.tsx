@@ -19,7 +19,7 @@ interface I_props {
     page: number;
 }
 
-function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setData, page}: I_props) {
+function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setData, page }: I_props) {
     const [selected, setSelected] = useState(E_Item_Types.CONSUMABLES);
     const [image, setImage] = useState<File>();
 

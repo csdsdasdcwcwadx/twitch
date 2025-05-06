@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { getchecks, setUserCheck } from "@/utils/api"
 import { useMemo, useState } from "react";
@@ -13,7 +13,7 @@ interface I_props {
     checkData: I_CheckPage;
 }
 
-export default function Check ({checkData}: I_props) {
+export default function Check ({ checkData }: I_props) {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>(checkData);
     const [checkInput, setCheckInput] = useState<I_Check | null>(null);
     const [passcode, setPasscode] = useState("");

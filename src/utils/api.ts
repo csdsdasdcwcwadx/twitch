@@ -193,8 +193,13 @@ export const getpacks = async (page = 1, pageSize = 10) => {
 };
 
 export const getRedemption = async (page = 1, pageSize = 10) => {
+    const headers: Record<string, string> = {};
+    if (isServerSide) {
+        const allCookies = await getServerCookies();
+        headers.cookie = allCookies;
+    }
     const GET_REDEMPTION = gql`
-        query GetAllItems($page: Int, $pageSize: Int) {
+        query GetAllRedemptions($page: Int, $pageSize: Int) {
             getRedemptions(page: $page, pageSize: $pageSize) {
                 id
                 amount
@@ -226,6 +231,7 @@ export const getRedemption = async (page = 1, pageSize = 10) => {
         query: GET_REDEMPTION,
         variables: { page, pageSize },
         fetchPolicy: "no-cache",
+        context: { headers },
     });
     return response.data;
 };

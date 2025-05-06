@@ -22,7 +22,7 @@ interface I_props {
     page: number;
 }
 
-function UserItemDialog ({selectedItem, setSelectedItem, data, setData, page}: I_props) {
+function UserItemDialog ({ selectedItem, setSelectedItem, data, setData, page }: I_props) {
     const [query, setQuery] = useState('');
     const [openUser, setOpenUser] = useState<I_User | null>(null);
     const [value, setValue] = useState(0);

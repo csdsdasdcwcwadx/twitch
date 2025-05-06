@@ -1,4 +1,5 @@
-'use client';
+"use client";
+
 import { setCheckStatus, setcheck, getbackchecks } from "@/utils/api"
 import { useState, useMemo } from "react";
 import { Input, Button } from '@headlessui/react';
@@ -14,7 +15,7 @@ interface I_props {
     checkData: I_CheckPage;
 }
 
-export default function Check({checkData}: I_props) {
+export default function Check({ checkData }: I_props) {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>(checkData);
     const [openCheckDialog, setOpenCheckDialog] = useState(false);
     const [showCheckInfo, setShowCheckInfo] = useState(true);
