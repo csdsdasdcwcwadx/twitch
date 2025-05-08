@@ -17,7 +17,7 @@ export default function Exchange ({ exchangeData }: I_props) {
 
     const pageChange = useCallback(async (page: number) => {
         const result = await getRedemption(page);
-        setRedemptions(result.getRedemptions);
+        if (result.payload) setRedemptions(result.payload.getRedemptions);
         setPage(page);
     }, []);
 
@@ -84,7 +84,7 @@ export default function Exchange ({ exchangeData }: I_props) {
                                                     const result = await updateRedemptions(redemption.id, true);
                                                     if (result.status) {
                                                         const result = await getRedemption();
-                                                        setRedemptions(result.getRedemptions);
+                                                        if (result.payload) setRedemptions(result.payload.getRedemptions);
                                                     }
                                                     alert(result.message);
                                                 }}

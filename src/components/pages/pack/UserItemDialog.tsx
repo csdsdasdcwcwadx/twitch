@@ -106,7 +106,7 @@ function UserItemDialog ({ selectedItem, setSelectedItem, setItems, page, allUse
                                                 const result = await addUserItem(user.id, selectedItem?.id || "", value);
                                                 if (result.status) {
                                                     const result = await getbackpacks(page, pagesize);
-                                                    setItems(result.getItems);
+                                                    if (result.payload) setItems(result.payload.getItems);
                                                     setSelectedItem(null);
                                                 }
                                             }} className="m-auto block bg-coverground text-topcovercolor rounded p-[10px] mt-3">送出</Button>

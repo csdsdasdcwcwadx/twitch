@@ -1,7 +1,8 @@
 import axios from "axios";
 import { domainEnv, isServerSide, getServerCookies } from "./util";
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
-import { I_CheckPage, I_Header, I_BackPackPage, I_ExchangePage } from "./interface";
+import { ApolloClient, ApolloError, InMemoryCache, gql, DocumentNode } from '@apollo/client';
+import { I_CheckPage, I_Header, I_BackPackPage, I_ExchangePage, I_Request, I_PackPage } from "./interface";
+import { cookiesError, serverapiError } from "./error_type";
 
 const api = axios.create({
     baseURL: domainEnv, // 確保後端的 API URL 從環境變量中獲取
@@ -12,6 +13,39 @@ const apollo = new ApolloClient({
     uri: `${domainEnv}/graphql`,
     cache: new InMemoryCache(),
 });
+
+const safeGraphQLRequest = async <T>(
+    query: DocumentNode,
+    variables?: Record<string, unknown>
+  ): Promise<I_Request<T>> => {
+    const headers: Record<string, string> = {};
+    
+    if (isServerSide) {
+        try {
+            const allCookies = await getServerCookies();
+            headers.cookie = allCookies;
+        } catch (err) {
+            console.log(err);
+            return { error: cookiesError };
+        }
+    }
+  
+    try {
+        const response = await apollo.query<T>({
+            query,
+            variables,
+            fetchPolicy: "no-cache",
+            context: { headers },
+        });
+    
+        return { payload: response.data };
+    } catch (e: unknown) {
+        if (e instanceof ApolloError) {
+            return { error: e.message };
+        }
+        return { error: serverapiError };
+    }
+};
 
 export const login = async (path = "") => {
     const response = await api.get(path);
@@ -39,7 +73,7 @@ export const logout = async () => {
     return response.data;
 };
 
-export const setCheckStatus = async(checkId: string, streaming: boolean) => {
+export const setCheckStatus = async (checkId: string, streaming: boolean) => {
     const response = await api.post("/check/updatecheckstatus", {
         checkId,
         streaming,
@@ -47,7 +81,7 @@ export const setCheckStatus = async(checkId: string, streaming: boolean) => {
     return response.data;
 };
 
-export const setItem = async(name: string, type: string, description: string, amount: string, image?: File, id?: string, imageName?: string) => {
+export const setItem = async (name: string, type: string, description: string, amount: string, image?: File, id?: string, imageName?: string) => {
     const formData = new FormData();
     formData.append('image', image!);
     formData.append("name", name);
@@ -62,7 +96,7 @@ export const setItem = async(name: string, type: string, description: string, am
     return response.data;
 };
 
-export const deleteItem = async(existimagename: string, id: string) => {
+export const deleteItem = async (existimagename: string, id: string) => {
     const response = await api.post("/item/deleteItem", {
         existimagename,
     }, {
@@ -71,7 +105,7 @@ export const deleteItem = async(existimagename: string, id: string) => {
     return response.data;
 };
 
-export const addUserItem = async(userId: string, itemId: string, amount: number) => {
+export const addUserItem = async (userId: string, itemId: string, amount: number) => {
     const response = await api.post("/useritem/ownitem", {
         userId,
         itemId,
@@ -80,7 +114,7 @@ export const addUserItem = async(userId: string, itemId: string, amount: number)
     return response.data;
 };
 
-export const exchange = async(itemId: string, amount: number, realname: string, address: string, phone: string) => {
+export const exchange = async (itemId: string, amount: number, realname: string, address: string, phone: string) => {
     const response = await api.post("/redemp/exchange", {
         itemId,
         amount,
@@ -91,7 +125,7 @@ export const exchange = async(itemId: string, amount: number, realname: string, 
     return response.data;
 };
 
-export const updateRedemptions = async(redemptionId: string, status: boolean) => {
+export const updateRedemptions = async (redemptionId: string, status: boolean) => {
     const response = await api.post("/redemp/update", {
         redemptionId,
         status,
@@ -102,12 +136,7 @@ export const updateRedemptions = async(redemptionId: string, status: boolean) =>
 // -----------------------------------------graphQL-----------------------------------------
 
 export const getUsers = async () => {
-    const headers: Record<string, string> = {};
-    if (isServerSide) {
-        const allCookies = await getServerCookies();
-        headers.cookie = allCookies;
-    }
-    const GET_USER_CHECKS = gql`
+    const GET_USER = gql`
         query GetHeader {
             getUsers {
                 id
@@ -122,19 +151,10 @@ export const getUsers = async () => {
             }
         }
     `;
-    const response = await apollo.query<I_Header>({
-        query: GET_USER_CHECKS,
-        context: { headers },
-    });
-    return response.data;
+    return await safeGraphQLRequest<I_Header>(GET_USER);
 };
 
 export const getchecks = async (year?: string, month?: string) => {
-    const headers: Record<string, string> = {};
-    if (isServerSide) {
-        const allCookies = await getServerCookies();
-        headers.cookie = allCookies;
-    }
     const GET_USER_CHECKS = gql`
         query GetAllChecks($year: String, $month: String) {
             getChecks(year: $year, month: $month) {
@@ -142,28 +162,24 @@ export const getchecks = async (year?: string, month?: string) => {
                 streaming
                 created_at
                 userChecks {
+                    user {
+                        id
+                        twitch_id
+                        login
+                        name
+                        email
+                        profile_image
+                    }
                     checked
                     created_at
                 }
             }
         }
     `;
-
-    const response = await apollo.query<I_CheckPage>({
-        query: GET_USER_CHECKS,
-        variables: { year, month },
-        fetchPolicy: "no-cache",
-        context: { headers },
-    });
-    return response.data;
+    return await safeGraphQLRequest<I_CheckPage>(GET_USER_CHECKS, { year, month });
 };
 
 export const getpacks = async (page = 1, pageSize = 10) => {
-    const headers: Record<string, string> = {};
-    if (isServerSide) {
-        const allCookies = await getServerCookies();
-        headers.cookie = allCookies;
-    }
     const GET_USER_ITEMS = gql`
         query GetAllItems($page: Int, $pageSize: Int) {
             getItems(page: $page, pageSize: $pageSize) {
@@ -182,22 +198,10 @@ export const getpacks = async (page = 1, pageSize = 10) => {
             getItemPages(pageSize: $pageSize)
         }
     `;
-
-    const response = await apollo.query<I_BackPackPage>({
-        query: GET_USER_ITEMS,
-        variables: { page, pageSize },
-        fetchPolicy: "no-cache",
-        context: { headers },
-    });
-    return response.data;
+    return await safeGraphQLRequest<I_PackPage>(GET_USER_ITEMS, { page, pageSize });
 };
 
 export const getRedemption = async (page = 1, pageSize = 10) => {
-    const headers: Record<string, string> = {};
-    if (isServerSide) {
-        const allCookies = await getServerCookies();
-        headers.cookie = allCookies;
-    }
     const GET_REDEMPTION = gql`
         query GetAllRedemptions($page: Int, $pageSize: Int) {
             getRedemptions(page: $page, pageSize: $pageSize) {
@@ -226,60 +230,10 @@ export const getRedemption = async (page = 1, pageSize = 10) => {
             getRedemptionPages(pageSize: $pageSize)
         }
     `;
-
-    const response = await apollo.query<I_ExchangePage>({
-        query: GET_REDEMPTION,
-        variables: { page, pageSize },
-        fetchPolicy: "no-cache",
-        context: { headers },
-    });
-    return response.data;
-};
-
-export const getbackchecks = async (year?: string, month?: string) => {
-    const headers: Record<string, string> = {};
-    if (isServerSide) {
-        const allCookies = await getServerCookies();
-        headers.cookie = allCookies;
-    }
-    const GET_USER_CHECKS = gql`
-        query GetAllChecks($year: String, $month: String) {
-            getChecks(year: $year, month: $month) {
-                id
-                streaming
-                created_at
-                passcode
-                userChecks {
-                    user {
-                        id
-                        twitch_id
-                        login
-                        name
-                        email
-                        profile_image
-                    }
-                    checked
-                    created_at
-                }
-            }
-        }
-    `;
-
-    const response = await apollo.query<I_CheckPage>({
-        query: GET_USER_CHECKS,
-        variables: { year, month },
-        fetchPolicy: "no-cache",
-        context: { headers },
-    });
-    return response.data;
+    return await safeGraphQLRequest<I_ExchangePage>(GET_REDEMPTION, { page, pageSize });
 };
 
 export const getbackpacks = async (page = 1, pageSize = 10) => {
-    const headers: Record<string, string> = {};
-    if (isServerSide) {
-        const allCookies = await getServerCookies();
-        headers.cookie = allCookies;
-    }
     const GET_USER_ITEMS = gql`
         query GetAllItems($page: Int, $pageSize: Int) {
             getItems(page: $page, pageSize: $pageSize) {
@@ -314,12 +268,5 @@ export const getbackpacks = async (page = 1, pageSize = 10) => {
             getItemPages(pageSize: $pageSize)
         }
     `;
-
-    const response = await apollo.query<I_BackPackPage>({
-        query: GET_USER_ITEMS,
-        variables: { page, pageSize },
-        fetchPolicy: "no-cache",
-        context: { headers },
-    });
-    return response.data;
+    return await safeGraphQLRequest<I_BackPackPage>(GET_USER_ITEMS, { page, pageSize });
 };

@@ -97,7 +97,7 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setItems, page }
                         const result = await setItem(name, selected, description, amount, image, selectedItem?.id ,selectedItem?.image);
                         if (result.status) {
                             const result = await getbackpacks(page, pagesize);
-                            setItems(result.getItems);
+                            if (result.payload) setItems(result.payload.getItems);
                             setOpenDialog(false);
                         }
                     }}
@@ -109,7 +109,7 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setItems, page }
                             const result = await deleteItem(selectedItem.image, selectedItem.id);
                             if (result.status) {
                                 const result = await getbackpacks(page, pagesize);
-                                setItems(result.getItems);
+                                if (result.payload) setItems(result.payload.getItems);
                                 setOpenDialog(false);
                             }
                         }}

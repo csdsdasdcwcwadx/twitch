@@ -28,7 +28,7 @@ export default function Pack({ packData }: I_props) {
 
     const pageChange = useCallback(async (page: number) => {
         const result = await getbackpacks(page, pagesize);
-        setItems(result.getItems);
+        if (result.payload) setItems(result.payload.getItems);
         setPage(page);
     }, []);
 

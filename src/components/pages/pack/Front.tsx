@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { I_Item, E_Item_Types, I_BackPackPage } from "@/utils/interface";
+import { I_Item, E_Item_Types, I_PackPage } from "@/utils/interface";
 import { getpacks } from "@/utils/api";
 import PageNumber from "@/components/common/PageNumber";
 
@@ -12,7 +12,7 @@ import ExchangeDialog from "./ExchangeDialog";
 import { pagesize } from "@/utils/util";
 
 interface I_props {
-    packData: I_BackPackPage;
+    packData: I_PackPage;
 }
 
 export default function Pack({ packData }: I_props) {
@@ -36,7 +36,7 @@ export default function Pack({ packData }: I_props) {
 
     const pageChange = useCallback(async (page: number) => {
         const result = await getpacks(page, pagesize);
-        setItems(result.getItems);
+        if (result.payload) setItems(result.payload.getItems);
         setPage(page);
     }, []);
 
