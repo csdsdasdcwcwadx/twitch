@@ -1,7 +1,7 @@
 import { getchecks } from "@/utils/api";
-import CheckClient from "@/components/pages/check/Front";
+import CheckFront from "@/components/pages/check/Front";
 
 export default async function CheckPage() {    
-    const data = await getchecks(); // Server Side fetch
-    return <CheckClient checkData={data}/>;
+    const result = await getchecks(); // Server Side fetch
+    if (result.payload) return <CheckFront checkData={result.payload}/>;
 }

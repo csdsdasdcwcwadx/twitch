@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { I_Item, E_Item_Types, I_BackPackPage } from "@/utils/interface";
 import { getbackpacks } from "@/utils/api";
@@ -17,29 +17,20 @@ interface I_props {
     packData: I_BackPackPage;
 }
 
-export default function Pack({packData}: I_props) {
+export default function Pack({ packData }: I_props) {
     const [selectedItem, setSelectedItem] = useState<I_Item | null>(null);
     const [query, setQuery] = useState('');
     const [currentType, setCurrentType] = useState(E_Item_Types.All);
     const [openDialog, setOpenDialog] = useState(false);
     const [openItemSettingDialog, setOpenItemSettingDialog] = useState<I_Item | null>(null);
     const [page, setPage] = useState(1);
-    const [data, setData] = useState<I_BackPackPage>({
-        getItems: packData.getItems,
-        getAllUsers: packData.getAllUsers,
-        getItemPages: packData.getItemPages,
-    });
+    const [items, setItems] = useState<I_Item[]>(packData.getItems);
 
-    useEffect(() => {
-        (async function () {
-            try {
-                const result = await getbackpacks(page, pagesize);
-                setData(result);
-            } catch(e) {
-                console.log(e)
-            }
-        })()
-    }, [page])
+    const pageChange = useCallback(async (page: number) => {
+        const result = await getbackpacks(page, pagesize);
+        if (result.payload) setItems(result.payload.getItems);
+        setPage(page);
+    }, []);
 
     useEffect(() => {
         if (selectedItem) setOpenDialog(true);
@@ -51,9 +42,9 @@ export default function Pack({packData}: I_props) {
 
     const filterItemCheck = useMemo(() => {
         // 如果沒有 `query` 和 `currentType`，直接返回所有項目
-        if (query === "" && currentType === E_Item_Types.All) return data.getItems;
+        if (query === "" && currentType === E_Item_Types.All) return items;
       
-        return data.getItems.filter((item) => {
+        return items.filter((item) => {
           // 檢查名稱是否匹配 `query`
           const matchesQuery = query === "" || item.name.toLowerCase().includes(query.toLowerCase());
           // 檢查類型是否匹配 `currentType`
@@ -61,7 +52,7 @@ export default function Pack({packData}: I_props) {
       
           return matchesQuery && matchesType;
         });
-    }, [query, currentType, data]);
+    }, [query, currentType, items]);
   
     return (
         <main className="pc:flex h-screen mobile:w-[100%]">
@@ -74,11 +65,11 @@ export default function Pack({packData}: I_props) {
                     </div>
                 </div>
                 <div className="mt-8">
-                    <PageNumber maxpage={data.getItemPages} serial={page} setSerial={setPage}/>
+                    <PageNumber maxpage={packData.getItemPages} serial={page} setSerial={pageChange}/>
                 </div>
             </div>
-            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} selectedItem={selectedItem} setData={setData} page={page}/>
-            <UserItemDialog selectedItem={openItemSettingDialog} setSelectedItem={setOpenItemSettingDialog} data={data} setData={setData} page={page}/>
+            <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} selectedItem={selectedItem} setItems={setItems} page={page}/>
+            <UserItemDialog selectedItem={openItemSettingDialog} setSelectedItem={setOpenItemSettingDialog} setItems={setItems} page={page} allUsers={packData.getAllUsers}/>
         </main>
     );
 };

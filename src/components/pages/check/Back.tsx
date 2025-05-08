@@ -1,5 +1,6 @@
-'use client';
-import { setCheckStatus, setcheck, getbackchecks } from "@/utils/api"
+"use client";
+
+import { setCheckStatus, setcheck, getchecks } from "@/utils/api"
 import { useState, useMemo } from "react";
 import { Input, Button } from '@headlessui/react';
 import { I_CheckPage, I_UserCheck } from "@/utils/interface";
@@ -14,7 +15,7 @@ interface I_props {
     checkData: I_CheckPage;
 }
 
-export default function Check({checkData}: I_props) {
+export default function Check({ checkData }: I_props) {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>(checkData);
     const [openCheckDialog, setOpenCheckDialog] = useState(false);
     const [showCheckInfo, setShowCheckInfo] = useState(true);
@@ -82,12 +83,8 @@ export default function Check({checkData}: I_props) {
                     const year = title.split(" ")[1];
                     const month = setMonth(title.split(" ")[0]);
 
-                    try {
-                        const result = await getbackchecks(year, month);
-                        setCheckPageData(result);
-                    } catch(e) {
-                        console.log(e)
-                    }
+                    const result = await getchecks(year, month);
+                    if (result.payload) setCheckPageData(result.payload);
                 }}
             />
             <CustomDialog open={openCheckDialog} close={setOpenCheckDialog} title={!checkItem ? "請輸入設定的簽到驗證" : ""}>
@@ -100,15 +97,15 @@ export default function Check({checkData}: I_props) {
                                     if (!checkItem) {
                                         const result = await setcheck(passcode);
                                         if (result.status) {
-                                            const checkResult = await getbackchecks();
-                                            setCheckPageData(checkResult);
+                                            const checkResult = await getchecks();
+                                            if (checkResult.payload) setCheckPageData(checkResult.payload);
                                             setOpenCheckDialog(false);
                                         }
                                     } else {
                                         const result = await setCheckStatus(checkItem.id, false);
                                         if (result.status) {
-                                            const checkResult = await getbackchecks();
-                                            setCheckPageData(checkResult);
+                                            const checkResult = await getchecks();
+                                            if (checkResult.payload) setCheckPageData(checkResult.payload);
                                             setOpenCheckDialog(false);
                                         }
                                     }

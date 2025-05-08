@@ -172,7 +172,7 @@ function ExchangeDialog ({ openDialog, setOpenDialog, setItems, page, storeaddre
 
                         if (result.status) {
                             const result = await getpacks(page, pagesize);
-                            setItems(result.getItems);
+                            if (result.payload) setItems(result.payload.getItems);
                         }
                         alert(result.message);
                         setOpenDialog(null);

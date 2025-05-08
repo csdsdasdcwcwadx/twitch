@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import { Input, Button } from "@headlessui/react";
 import { twitchIconDomain, pagesize } from "@/utils/util";
-import { I_Item, I_BackPackPage, I_User } from "@/utils/interface";
+import { I_Item, I_User } from "@/utils/interface";
 import { getbackpacks, addUserItem } from "@/utils/api";
 
 import searchIcon from "@/icon/search.png";
@@ -17,20 +17,20 @@ import CustomDialog from "@/components/common/CustomDialog";
 interface I_props {
     selectedItem: I_Item | null;
     setSelectedItem: (flag: I_Item | null) => void;
-    data: I_BackPackPage;
-    setData: (data: I_BackPackPage) => void;
+    setItems: (data: I_Item[]) => void;
     page: number;
+    allUsers: I_User[];
 }
 
-function UserItemDialog ({selectedItem, setSelectedItem, data, setData, page}: I_props) {
+function UserItemDialog ({ selectedItem, setSelectedItem, setItems, page, allUsers }: I_props) {
     const [query, setQuery] = useState('');
     const [openUser, setOpenUser] = useState<I_User | null>(null);
     const [value, setValue] = useState(0);
 
     const filterUserCheck = useMemo(() => {
-        if (query === "") return data.getAllUsers;
-        return data.getAllUsers.filter(user => user.name.toLowerCase().includes(query.toLowerCase()));
-    }, [data, query])
+        if (query === "") return allUsers;
+        return allUsers.filter(user => user.name.toLowerCase().includes(query.toLowerCase()));
+    }, [allUsers, query])
 
     useEffect(() => {
         if (!selectedItem) {
@@ -73,7 +73,7 @@ function UserItemDialog ({selectedItem, setSelectedItem, data, setData, page}: I
                 </div>
                 <div className="max-h-60 overflow-auto">
                 {
-                    data.getAllUsers.length ? filterUserCheck.map((user) => {
+                    allUsers.length ? filterUserCheck.map((user) => {
                         const currentUser = user.id === openUser?.id;
 
                         return (
@@ -106,7 +106,7 @@ function UserItemDialog ({selectedItem, setSelectedItem, data, setData, page}: I
                                                 const result = await addUserItem(user.id, selectedItem?.id || "", value);
                                                 if (result.status) {
                                                     const result = await getbackpacks(page, pagesize);
-                                                    setData(result);
+                                                    if (result.payload) setItems(result.payload.getItems);
                                                     setSelectedItem(null);
                                                 }
                                             }} className="m-auto block bg-coverground text-topcovercolor rounded p-[10px] mt-3">送出</Button>

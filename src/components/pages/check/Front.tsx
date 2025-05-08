@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { getchecks, setUserCheck } from "@/utils/api"
 import { useMemo, useState } from "react";
@@ -13,7 +13,7 @@ interface I_props {
     checkData: I_CheckPage;
 }
 
-export default function Check ({checkData}: I_props) {
+export default function Check ({ checkData }: I_props) {
     const [checkPageData, setCheckPageData] = useState<I_CheckPage>(checkData);
     const [checkInput, setCheckInput] = useState<I_Check | null>(null);
     const [passcode, setPasscode] = useState("");
@@ -52,12 +52,8 @@ export default function Check ({checkData}: I_props) {
                     const year = title.split(" ")[1];
                     const month = setMonth(title.split(" ")[0]);
 
-                    try {
-                        const result = await getchecks(year, month);
-                        setCheckPageData(result);
-                    } catch(e) {
-                        console.log(e)
-                    }
+                    const result = await getchecks(year, month);
+                    if (result.payload) setCheckPageData(result.payload);
                 }}
                 events={CalendarEventsData}
             />
@@ -69,7 +65,7 @@ export default function Check ({checkData}: I_props) {
                         alert(setCheckResult.message);
                         if (setCheckResult.status) {
                             const result = await getchecks();
-                            setCheckPageData(result);
+                            if (result.payload) setCheckPageData(result.payload);
                             setCheckInput(null);
                         };
                     }}>簽到</Button>

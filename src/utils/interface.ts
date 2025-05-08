@@ -82,3 +82,8 @@ export type I_ExchangePage = {
     getRedemptions: I_Redemption[];
     getRedemptionPages: number;
 }
+
+export type I_Request<T> = {
+    payload?: T;
+    error?: string;
+}
