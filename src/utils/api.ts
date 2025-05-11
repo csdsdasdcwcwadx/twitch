@@ -14,10 +14,7 @@ const apollo = new ApolloClient({
     cache: new InMemoryCache(),
 });
 
-const safeGraphQLRequest = async <T>(
-    query: DocumentNode,
-    variables?: Record<string, unknown>
-  ): Promise<I_Request<T>> => {
+const safeGraphQLRequest = async <T>(query: DocumentNode, variables?: Record<string, unknown>): Promise<I_Request<T>> => {
     const headers: Record<string, string> = {};
     
     if (isServerSide) {
@@ -154,6 +151,7 @@ export const getUsers = async () => {
     return await safeGraphQLRequest<I_Header>(GET_USER);
 };
 
+// back & front check page
 export const getchecks = async (year?: string, month?: string) => {
     const GET_USER_CHECKS = gql`
         query GetAllChecks($year: String, $month: String) {
@@ -179,6 +177,7 @@ export const getchecks = async (year?: string, month?: string) => {
     return await safeGraphQLRequest<I_CheckPage>(GET_USER_CHECKS, { year, month });
 };
 
+// front pack page
 export const getpacks = async (page = 1, pageSize = 10) => {
     const GET_USER_ITEMS = gql`
         query GetAllItems($page: Int, $pageSize: Int) {
@@ -201,6 +200,7 @@ export const getpacks = async (page = 1, pageSize = 10) => {
     return await safeGraphQLRequest<I_PackPage>(GET_USER_ITEMS, { page, pageSize });
 };
 
+// back & front exchange page
 export const getRedemption = async (page = 1, pageSize = 10) => {
     const GET_REDEMPTION = gql`
         query GetAllRedemptions($page: Int, $pageSize: Int) {
@@ -233,6 +233,7 @@ export const getRedemption = async (page = 1, pageSize = 10) => {
     return await safeGraphQLRequest<I_ExchangePage>(GET_REDEMPTION, { page, pageSize });
 };
 
+// back pack page
 export const getbackpacks = async (page = 1, pageSize = 10) => {
     const GET_USER_ITEMS = gql`
         query GetAllItems($page: Int, $pageSize: Int) {
