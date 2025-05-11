@@ -15,7 +15,7 @@ import minusIcon from "@/icon/minus.png";
 import CustomDialog from "@/components/common/CustomDialog";
 
 interface I_props {
-    selectedItem: I_Item | null;
+    selectedItem: I_Item;
     setSelectedItem: (flag: I_Item | null) => void;
     setItems: (data: I_Item[]) => void;
     page: number;
@@ -103,12 +103,12 @@ function UserItemDialog ({ selectedItem, setSelectedItem, setItems, page, allUse
                                                 </i>
                                             </div>
                                             <Button onClick={async () => {
-                                                const result = await addUserItem(user.id, selectedItem?.id || "", value);
+                                                const result = await addUserItem(user.id, selectedItem.id || "", value - selectedItem.amount);
                                                 if (result.status) {
                                                     const result = await getbackpacks(page, pagesize);
                                                     if (result.payload) setItems(result.payload.getItems);
                                                     setSelectedItem(null);
-                                                }
+                                                }                                              
                                             }} className="m-auto block bg-coverground text-topcovercolor rounded p-[10px] mt-3">送出</Button>
                                         </div>
                                         <div className="mr-5">{`數量 : ${currentUserItem.length && currentUserItem[0].amount}`}</div>
