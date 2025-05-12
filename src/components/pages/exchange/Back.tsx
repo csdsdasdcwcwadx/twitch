@@ -6,6 +6,7 @@ import { I_Redemption, I_ExchangePage } from "@/utils/interface";
 import { Button } from "@headlessui/react";
 import PageNumber from "@/components/common/PageNumber";
 import ImageHandler from "@/components/common/ImageHandler";
+import { addressFilter, addressParser } from "@/utils/util";
 
 interface I_props {
     exchangeData: I_ExchangePage;
@@ -40,13 +41,12 @@ export default function Exchange ({ exchangeData }: I_props) {
                     redemptions.map((redemption, index: number) => {
                         const date = new Date(Number(redemption.created_at));
                         const formattedDate = date.toISOString().split("T")[0];
+                        const address = addressFilter(redemption.user.address);
                         const className = [
                             "table-row",
                             "mobile:block",
                         ]
-                        if (index) {
-                            className.push("mobile:mt-5");
-                        }
+                        if (index) className.push("mobile:mt-5");
 
                         return (
                             <div key={redemption.id} className={className.join(" ")}>
@@ -59,7 +59,12 @@ export default function Exchange ({ exchangeData }: I_props) {
                                 </div>
                                 <div className="p-[10px] table-cell mobile:flex mobile:justify-between align-middle text-center">
                                     <span className="pc:hidden font-bold mr-5">用戶名稱</span>
-                                    <span>{redemption.user.name}</span>
+                                    <div className="flex flex-col">
+                                        <span>{redemption.user.name}</span>
+                                        <span className="mt-2">{redemption.user.realname}</span>
+                                        <span className="mt-2">{`(${addressParser(address.type)}) ${address.value.join(" ")}`}</span>
+                                        <span className="mt-2">{redemption.user.phone}</span>
+                                    </div>
                                 </div>
                                 <div className="p-[10px] table-cell mobile:flex mobile:justify-between align-middle text-center">
                                     <span className="pc:hidden font-bold mr-5">數量</span>

@@ -29,7 +29,13 @@ export enum E_Item_Types {
     WEAPONS = "Weapons",
     TOOLS = "Tools",
     CONSUMABLES = "Consumables",
-} 
+}
+
+export enum E_AddressType {
+    SEVEN = 0,
+    POST = 1,
+    PA = 2,
+}
 
 export type I_Item = {
     id: string;
