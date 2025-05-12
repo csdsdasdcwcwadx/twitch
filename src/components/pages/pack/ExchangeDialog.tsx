@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useUserStore } from "@/stores/userStore";
 import { Input, Button } from "@headlessui/react";
 import { getpacks, exchange } from "@/utils/api";
-import { domainEnv, pagesize } from "@/utils/util";
+import { domainEnv, pagesize, addressFilter } from "@/utils/util";
 import { I_Item } from "@/utils/interface";
 
 import plusIcon from "@/icon/plus.png";
@@ -66,25 +66,21 @@ function ExchangeDialog ({ openDialog, setOpenDialog, setItems, page, storeaddre
                 setPhone(userinfo.phone);
             }
             if (userinfo?.address) {
-                const address_type = userinfo.address.split(":::")[0];
-                const address_value = userinfo.address.split(":::")[1];
+                const filter = addressFilter(userinfo.address);
+                const address_type = filter.type;
+                const address_value = filter.value;
+                setAddressing(address_type);
 
-                switch (parseInt(address_type)) {
+                switch (address_type) {
                     case E_AddressType.PA:
-                        const postcal_PA = address_value.split("---")[0];
-                        const address_PA = address_value.split("---")[1];
-
-                        setAddressing(E_AddressType.PA);
-                        setPostcal(postcal_PA);
-                        setAddress(address_PA);
+                        setPostcal(address_value[0]);
+                        setAddress(address_value[1]);
                         break;
                     case E_AddressType.POST:
-                        setAddressing(E_AddressType.POST);
-                        setPostOffice(address_value);
+                        setPostOffice(address_value.join(""));
                         break;
                     case E_AddressType.SEVEN:
-                        setAddressing(E_AddressType.SEVEN);
-                        setSeven(address_value);
+                        setSeven(address_value.join(""));
                         break;
                 }
             }

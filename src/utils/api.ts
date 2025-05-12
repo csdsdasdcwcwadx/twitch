@@ -167,6 +167,9 @@ export const getchecks = async (year?: string, month?: string) => {
                         name
                         email
                         profile_image
+                        realname
+                        address
+                        phone
                     }
                     checked
                     created_at
@@ -225,6 +228,9 @@ export const getRedemption = async (page = 1, pageSize = 10) => {
                     name
                     email
                     profile_image
+                    realname
+                    address
+                    phone
                 }
             }
             getRedemptionPages(pageSize: $pageSize)
@@ -253,6 +259,9 @@ export const getbackpacks = async (page = 1, pageSize = 10) => {
                         name
                         email
                         profile_image
+                        realname
+                        address
+                        phone
                     }
                     amount
                     created_at
