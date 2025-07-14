@@ -69,7 +69,7 @@ export default function Pack({ packData }: I_props) {
                 </div>
             </div>
             <ItemDialog setOpenDialog={setOpenDialog} openDialog={openDialog} selectedItem={selectedItem} setItems={setItems} page={page}/>
-            <UserItemDialog selectedItem={openItemSettingDialog} setSelectedItem={setOpenItemSettingDialog} setItems={setItems} page={page} allUsers={packData.getAllUsers}/>
+            <UserItemDialog selectedItem={openItemSettingDialog!} setSelectedItem={setOpenItemSettingDialog} setItems={setItems} page={page} allUsers={packData.getAllUsers}/>
         </main>
     );
 };

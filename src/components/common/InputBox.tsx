@@ -85,9 +85,11 @@ function InputBar ({title, placeholder, type, value, unnecessary, maxlength, cla
         if(flag) setErrMsg(undefined);
     },[value, type, unnecessary, title])
 
+    const titleClassName = title ? "text-sm pl-1 text-coverground" : "";
+
     return (
         <div className={className}>
-            <span className='text-sm pl-1 text-coverground'>{title}</span>
+            <span className={titleClassName}>{title}</span>
             <Input className='w-[100%] pt-1 pb-1 pl-2 border border-solid border-slate-500 outline-none w-11/12 rounded text-sm' placeholder={placeholder} onChange={e=>onChange(e.target.value)} maxLength={maxlength} value={value}/>
             {errMsg && <span className='text-red-500 mb-0 text-xs ml-1 errormessage'>{errMsg}</span>}
         </div>

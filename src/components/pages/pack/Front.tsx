@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { I_Item, E_Item_Types, I_PackPage } from "@/utils/interface";
+import { I_Item, I_PackPage, E_Item_Types } from "@/utils/interface";
 import { getpacks } from "@/utils/api";
 import PageNumber from "@/components/common/PageNumber";
 
@@ -60,7 +60,7 @@ export default function Pack({ packData }: I_props) {
             <div className="flex-1 p-6">
                 <SearchBar setQuery={setQuery}/>
                 <div className="flex gap-6">
-                    <div className="flex-1">
+                    <div className="flex-1 max-w-[1500px] m-auto">
                         <ItemGrid items={filterItemCheck} setOpenDialog={setOpenDialog}/>
                     </div>
                 </div>

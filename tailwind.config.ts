@@ -15,6 +15,8 @@ export default {
         coverground: "var(--coverground)",
         hoverground: "var(--hoverground)",
         topcovercolor: "var(--topcovercolor)",
+        fontColor: "var(--font-color)",
+        covercolor: "var(--covercolor)",
       },
       keyframes: {
         moving: {

@@ -1,0 +1,72 @@
+.calendar-container {
+    margin: 30px 40px;
+    overflow: auto;
+}
+
+.calendar-container .fc-toolbar-title {
+    background-color: var(--coverground);
+    border-top: 3px solid #D0BBAF;
+    border-bottom: 3px solid #D0BBAF;
+    font-weight: bold;
+    padding: 0 200px;
+    color: #192a30;
+    font-size: 35px;
+}
+
+.calendar-container .fc-header-toolbar .fc-toolbar-chunk button {
+    box-shadow: none;
+}
+
+.calendar-container .fc-header-toolbar .fc-toolbar-chunk button:active:focus {
+    box-shadow: none;
+}
+
+.calendar-container .fc-media-screen {
+    width: 900px;
+    margin: 0 auto;
+}
+
+.calendar-container thead th[role="columnheader"] {
+    padding: 10px 0;
+}
+
+.calendar-container thead th[role="columnheader"] a {
+    border-radius: 50%;
+    padding: 8px;
+}
+
+.calendar-container thead th[role="columnheader"]:first-of-type a {
+    background-color: #E8EDF6;
+}
+
+.calendar-container thead th[role="columnheader"]:nth-of-type(2) a {
+    background-color: #E6D2C2;
+}
+
+.calendar-container thead th[role="columnheader"]:nth-of-type(3) a {
+    background-color: #D8DFED;
+}
+
+.calendar-container thead th[role="columnheader"]:nth-of-type(4) a {
+    background-color: #E5CFC1;
+}
+
+.calendar-container thead th[role="columnheader"]:nth-of-type(5) a {
+    background-color: #BFCFC6;
+}
+
+.calendar-container thead th[role="columnheader"]:nth-of-type(6) a {
+    background-color: #E4CDC0;
+}
+
+.calendar-container thead th[role="columnheader"]:nth-of-type(7) a {
+    background-color: #BECAC1;
+}
+
+.calendar-container tbody .fc-daygrid-day-frame .fc-daygrid-day-top {
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-weight: bold;
+    height: 60px;
+}

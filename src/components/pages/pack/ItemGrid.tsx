@@ -17,28 +17,34 @@ function ItemGrid ({ items, setOpenDialog, setOpenItemSettingDialog }: I_props) 
                 return (
                     <div
                         key={item.id}
-                        className="p-4 border rounded shadow cursor-pointer hover:bg-blue-50 min-h-[350px] pc:min-h-[250px] aspect-1 relative"
+                        className="cursor-pointer min-h-[350px] pc:min-h-[250px]"
                         onClick={() => setOpenDialog(item)}
                     >
-                        <figure className="relative h-16 cursor-pointer transform h-[50%] rounded">
-                            {
-                                item.image ? <ImageHandler item={item}/> : <></>
-                            }
-                        </figure>
-                        <h3 className="text-lg font-semibold mt-3 mobile:text-center mobile:text-3xl">{item.name}</h3>
-                        <p className="text-sm text-foreground text-lg mobile:text-center">{item.description}</p>
-                        {
-                            setOpenItemSettingDialog ? <Button 
-                                className="bg-coverground text-topcovercolor w-[100%] mt-auto absolute w-[calc(100%-2em)] bottom-[1em] rounded"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    setOpenItemSettingDialog(item);
-                                }}
-                            >設定道具</Button> : <div className="mobile:absolute bottom-[2rem]">
-                                <div>兌換數量 : {item.amount}</div>
-                                {item.userItems ? <div>持有數量 : {item.userItems[0]?.amount}</div> : null}
+                        <div className="aspect-1 bg-[#9C7358] p-4 rounded-[30px]">
+                            <div className="aspect-1 bg-[#eff5ae] p-5 relative rounded-[25px] shadow-[5px_5px_rgba(55,55,55,0.5)]">
+                                <figure className="relative h-16 cursor-pointer transform h-[50%] rounded-t-[25px]">
+                                    {
+                                        item.image ? <ImageHandler item={item} clasName="rounded-t-[25px]"/> : <></>
+                                    }
+                                </figure>
+                                <div className="bg-[#f2cd88] h-[50%] p-3">
+                                    <h3 className="text-lg font-semibold mobile:text-center mobile:text-3xl">{item.name}</h3>
+                                    <p className="text-sm text-foreground text-lg mobile:text-center">{item.description}</p>
+                                    {
+                                        setOpenItemSettingDialog ? <Button 
+                                            className="bg-coverground text-topcovercolor w-[100%] mt-auto absolute w-[calc(100%-2em)] bottom-[1em] rounded"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                setOpenItemSettingDialog(item);
+                                            }}
+                                        >設定道具</Button> : <div className="mobile:absolute bottom-[2rem]">
+                                            <div>兌換數量 : {item.amount}</div>
+                                            {item.userItems ? <div>持有數量 : {item.userItems[0]?.amount}</div> : null}
+                                        </div>
+                                    }
+                                </div>
                             </div>
-                        }
+                        </div>
                     </div>
                 )
             })}

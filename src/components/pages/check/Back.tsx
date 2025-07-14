@@ -2,12 +2,13 @@
 
 import { setCheckStatus, setcheck, getchecks } from "@/utils/api"
 import { useState, useMemo } from "react";
-import { Input, Button } from '@headlessui/react';
+import { Input } from '@headlessui/react';
 import { I_CheckPage, I_UserCheck } from "@/utils/interface";
 import Image from "next/image";
 import searchIcon from "@/icon/search.png";
 import { twitchIconDomain, setMonth } from "@/utils/util";
 import CustomDialog from "@/components/common/CustomDialog";
+import CustomButton from "@/components/common/CustomButton";
 import CalendarTool from "@/components/pages/check/CalendarTool";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
 
@@ -93,7 +94,7 @@ export default function Check({ checkData }: I_props) {
                         <>
                             {!checkItem && <InputBox title="" placeholder="" type={E_RegexType.NAME} maxlength={10} onChange={setPasscode}/>}
                             <div className="text-center mt-3">
-                                <Button className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground" onClick={async () => {
+                                <CustomButton onClick={async () => {
                                     if (!checkItem) {
                                         const result = await setcheck(passcode);
                                         if (result.status) {
@@ -109,18 +110,18 @@ export default function Check({ checkData }: I_props) {
                                             setOpenCheckDialog(false);
                                         }
                                     }
-                                }}>{!checkItem ? "設定簽到" : "結束簽到"}</Button>
+                                }} text={!checkItem ? "設定簽到" : "結束簽到"}/>
                             </div>
                         </>
                     )
                 }
-                <section className="mt-5">
+                <section>
                     <div className="flex relative">
                         <Image src={searchIcon} alt="search" className="h-5 w-5 absolute left-3"/>
                         <Input
                             placeholder="搜尋簽到用戶"
                             onChange={(event) => setQuery(event.target.value)}
-                            className="mb-2.5 ml-2.5 pl-7 border-b border-solid border-slate-500 outline-none w-11/12 pb-1"
+                            className="mb-2.5 ml-2.5 pl-7 border-b border-solid border-slate-500 outline-none w-11/12 pb-1 bg-white"
                         />
                     </div>
                     <div className="max-h-60 overflow-auto">

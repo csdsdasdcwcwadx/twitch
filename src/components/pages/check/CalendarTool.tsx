@@ -3,6 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventClickArg, DatesSetArg, EventInput } from '@fullcalendar/core';
+import "./index.css";
 
 interface I_props {
     onEventClick?: (arg: EventClickArg) => void;
@@ -12,13 +13,18 @@ interface I_props {
 
 function CalendarTool ({ events, onEventClick, onDatesSet }: I_props) {
     return (
-        <section className="calendar-container w-9/12 m-auto mt-3">
+        <section className="calendar-container">
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 events={events}
                 eventClick={onEventClick}
                 datesSet={onDatesSet}
+                headerToolbar={{
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                }}
             />
         </section>
 

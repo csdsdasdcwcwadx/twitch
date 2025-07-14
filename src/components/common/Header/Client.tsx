@@ -117,8 +117,8 @@ function MobileDialog({ menuOpen, setMenuOpen, userinfo, handleItemsClick }: I_M
                     displayItems.map((item, index) => {
                         return (
                             <Fragment key={item.text}>
-                                <li className="list-none py-3 px-10 text-topcovercolor cursor-pointer hover:bg-hoverground" onClick={async () => handleItemsClick(item)}>
-                                    {item.text}
+                                <li className="list-none py-3 px-10 text-topcovercolor cursor-pointer hover:bg-hoverground hover:text-coverground" onClick={async () => handleItemsClick(item)}>
+                                    <span>{item.text}</span>
                                 </li>
                                 {
                                     displayItems.length - 1 !== index && <i className="w-[95%] m-auto h-px border-topcovercolor border-b block"/>
@@ -134,21 +134,21 @@ function MobileDialog({ menuOpen, setMenuOpen, userinfo, handleItemsClick }: I_M
 }
 
 function MenuAllItems({ handleItemsClick }: I_MenuAllItemsProps) {
-    return <MenuItems anchor="bottom end" className="mobile:hidden text-center bg-coverground mt-1 rounded-lg p-2 z-10 w-32">
+    return <MenuItems anchor="bottom end" className="mobile:hidden text-center bg-coverground mt-1 rounded-lg p-2 z-10 w-32 border divide-solid">
         {
             displayItems.map((item, ind) => {
                 return (
                     <Fragment key={item.text}>
                         <MenuItem>
                             <li 
-                                className="list-none py-2.5 px-3.5 text-topcovercolor cursor-pointer hover:bg-hoverground rounded-lg"
+                                className="list-none py-2.5 px-3.5 text-topcovercolor cursor-pointer hover:bg-hoverground rounded-lg hover:text-coverground"
                                 onClick={() => handleItemsClick(item)}
                             >
                                 {item.text}
                             </li>
                         </MenuItem>
                         {
-                            displayItems.length - 1 !== ind && <i className="my-2 h-px bg-topcovercolor border-b block"/>
+                            displayItems.length - 1 !== ind && <i className="my-2 h-px border-b block border-hoverground"/>
                         }
                     </Fragment>
                 )

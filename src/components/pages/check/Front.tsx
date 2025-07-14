@@ -39,6 +39,7 @@ export default function Check ({ checkData }: I_props) {
 
     return (
         <main>
+            <h2 className="text-center text-fontColor mt-10 text-7xl tracking-[]">天天打卡送</h2>
             <CalendarTool
                 onEventClick={info => {
                     const checks = info.event.extendedProps as I_Check;
