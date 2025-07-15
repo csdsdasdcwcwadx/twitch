@@ -48,7 +48,7 @@ export const getServerCookies = async () => {
         .join("; ");
 };
 
-export const pagesize = 12;
+export const pagesize = 6;
 
 export const addressParser = (address_type: E_AddressType) => {
     switch (address_type) {

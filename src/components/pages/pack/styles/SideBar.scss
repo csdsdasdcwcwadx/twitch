@@ -1,0 +1,50 @@
+.sidebar {
+    figure {
+        width: 95%;
+
+        > div {
+            width: 100%;
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            max-width: 600px;
+
+            &.side-head {
+                background-image: url(../../../../icon/frame-top.png);
+                background-position: top;
+                height: 90px;
+                max-width: 590px;
+                width: calc(100% - 5px);
+            }
+
+            &.side-body {
+                background-image: url(../../../../icon/frame-middle.png);
+                height: 80%;
+                background-repeat: repeat;
+            }
+
+            &.side-tail {
+                background-image: url(../../../../icon/frame-bottom.png);
+                background-position: bottom;
+                height: 30px;
+                max-width: 590px;
+                width: calc(100% - 5px);
+            }
+        }
+    }
+
+    i {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0);
+        display: block;
+        background-image: url(../../../../icon/sun.png);
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+        width: 200px;
+        height: 200px;
+    }
+
+    ul {
+        transform: translate(-50%, 30%);
+    }
+}
