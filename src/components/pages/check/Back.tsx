@@ -11,6 +11,7 @@ import CustomDialog from "@/components/common/CustomDialog";
 import CustomButton from "@/components/common/CustomButton";
 import CalendarTool from "@/components/pages/check/CalendarTool";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
+import Inform from "@/components/pages/check/Inform";
 
 interface I_props {
     checkData: I_CheckPage;

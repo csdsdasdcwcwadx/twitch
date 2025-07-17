@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventClickArg, DatesSetArg, EventInput } from '@fullcalendar/core';
-import "./index.css";
+import "./index.scss";
 
 interface I_props {
     onEventClick?: (arg: EventClickArg) => void;
