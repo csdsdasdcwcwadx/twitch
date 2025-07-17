@@ -33,18 +33,10 @@
     }
 
     i {
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%, 0);
-        display: block;
         background-image: url(../../../../icon/sun.png);
         background-size: 100% auto;
         background-repeat: no-repeat;
         width: 200px;
         height: 200px;
-    }
-
-    ul {
-        transform: translate(-50%, 30%);
     }
 }

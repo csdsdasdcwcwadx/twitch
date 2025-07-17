@@ -2,6 +2,7 @@ import { I_Item } from "@/utils/interface";
 import { Button } from "@headlessui/react";
 import ImageHandler from "@/components/common/ImageHandler";
 import { memo } from "react";
+import "./styles/ItemGrid.scss";
 
 interface I_props {
     items: I_Item[];
@@ -11,7 +12,7 @@ interface I_props {
 
 function ItemGrid ({ items, setOpenDialog, setOpenItemSettingDialog }: I_props) {
     return (
-        <div className="grid grid-cols-[1fr_1fr_1fr] gap-4 mobile:grid-cols-1">
+        <div className="itemgrid grid grid-cols-[1fr_1fr_1fr] gap-4 mobile:grid-cols-1 max-w-[1200px]">
             {items.map((item) => {
                 if (!item.userItems?.length && !setOpenItemSettingDialog) return;
                 return (
@@ -27,12 +28,12 @@ function ItemGrid ({ items, setOpenDialog, setOpenItemSettingDialog }: I_props) 
                                         item.image ? <ImageHandler item={item} clasName="rounded-t-[25px]"/> : <></>
                                     }
                                 </figure>
-                                <div className="bg-[#f2cd88] h-[50%] p-3">
+                                <div className="notebook mobile:h-[50%] pc:h-[200px] p-3 flex flex-col">
                                     <h3 className="text-lg font-semibold mobile:text-center mobile:text-3xl">{item.name}</h3>
-                                    <p className="text-sm text-foreground text-lg mobile:text-center">{item.description}</p>
+                                    <p className="text-sm text-foreground text-lg mobile:text-center overflow-hidden pc:h-[47%]">{item.description}</p>
                                     {
                                         setOpenItemSettingDialog ? <Button 
-                                            className="bg-coverground text-topcovercolor w-[100%] mt-auto absolute w-[calc(100%-2em)] bottom-[1em] rounded"
+                                            className="bg-coverground text-topcovercolor mt-auto bottom-[1em] rounded"
                                             onClick={(event) => {
                                                 event.stopPropagation();
                                                 setOpenItemSettingDialog(item);
