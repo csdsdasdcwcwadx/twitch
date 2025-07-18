@@ -71,24 +71,28 @@ export default function Check({ checkData }: I_props) {
 
     return (
         <main>
-            <CalendarTool
-                onEventClick={info => {
-                    const { show } = info.event.extendedProps;
-                    const userChecks = info.event.extendedProps.userChecks as I_UserCheck[];
-                    setOpenCheckDialog(true);
-                    setShowCheckInfo(show);
-                    setDisplayCheckUser(userChecks);
-                }}
-                events={CalendarEventsData}
-                onDatesSet={async (arg) => {
-                    const title = arg.view.title;
-                    const year = title.split(" ")[1];
-                    const month = setMonth(title.split(" ")[0]);
+            <div className="flex justify-center mobile:flex-col">
+                <Inform/>
+                <CalendarTool
+                    onEventClick={info => {
+                        const { show } = info.event.extendedProps;
+                        const userChecks = info.event.extendedProps.userChecks as I_UserCheck[];
+                        setOpenCheckDialog(true);
+                        setShowCheckInfo(show);
+                        setDisplayCheckUser(userChecks);
+                    }}
+                    events={CalendarEventsData}
+                    onDatesSet={async (arg) => {
+                        const title = arg.view.title;
+                        const year = title.split(" ")[1];
+                        const month = setMonth(title.split(" ")[0]);
 
-                    const result = await getchecks(year, month);
-                    if (result.payload) setCheckPageData(result.payload);
-                }}
-            />
+                        const result = await getchecks(year, month);
+                        if (result.payload) setCheckPageData(result.payload);
+                    }}
+                    className="m-10"
+                />
+            </div>
             <CustomDialog open={openCheckDialog} close={setOpenCheckDialog} title={!checkItem ? "請輸入設定的簽到驗證" : ""}>
                 {
                     showCheckInfo && (

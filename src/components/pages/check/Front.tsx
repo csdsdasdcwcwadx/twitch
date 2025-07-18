@@ -8,6 +8,7 @@ import CustomDialog from "@/components/common/CustomDialog";
 import { setMonth } from "@/utils/util";
 import CalendarTool from "./CalendarTool";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
+import Inform from "./Inform";
 
 interface I_props {
     checkData: I_CheckPage;
@@ -40,24 +41,27 @@ export default function Check ({ checkData }: I_props) {
     return (
         <main>
             <h2 className="text-center text-fontColor mt-10 text-7xl tracking-[]">天天打卡送</h2>
-            <CalendarTool
-                onEventClick={info => {
-                    const checks = info.event.extendedProps as I_Check;
-                    if (!checks) return;
-                    if(checks.userChecks[0] && checks.userChecks[0].checked) return;
-                    if (!checks.streaming) return;
-                    setCheckInput(checks); // 根據需要處理點擊事件
-                }}
-                onDatesSet={async (arg) => {
-                    const title = arg.view.title;
-                    const year = title.split(" ")[1];
-                    const month = setMonth(title.split(" ")[0]);
+            <div>
+                <CalendarTool
+                    onEventClick={info => {
+                        const checks = info.event.extendedProps as I_Check;
+                        if (!checks) return;
+                        if(checks.userChecks[0] && checks.userChecks[0].checked) return;
+                        if (!checks.streaming) return;
+                        setCheckInput(checks); // 根據需要處理點擊事件
+                    }}
+                    onDatesSet={async (arg) => {
+                        const title = arg.view.title;
+                        const year = title.split(" ")[1];
+                        const month = setMonth(title.split(" ")[0]);
 
-                    const result = await getchecks(year, month);
-                    if (result.payload) setCheckPageData(result.payload);
-                }}
-                events={CalendarEventsData}
-            />
+                        const result = await getchecks(year, month);
+                        if (result.payload) setCheckPageData(result.payload);
+                    }}
+                    events={CalendarEventsData}
+                />
+                <Inform/>
+            </div>
             <CustomDialog open={Boolean(checkInput)} close={() => setCheckInput(null)} title="請輸入簽到驗證">
                 <InputBox title="" placeholder="" type={E_RegexType.NAME} maxlength={10} onChange={setPasscode}/>
                 <div className="text-center mt-3">
