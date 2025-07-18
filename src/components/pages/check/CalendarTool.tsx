@@ -9,11 +9,12 @@ interface I_props {
     onEventClick?: (arg: EventClickArg) => void;
     onDatesSet?: (arg: DatesSetArg) => void;
     events: EventInput[];
+    className?: string;
 }
 
-function CalendarTool ({ events, onEventClick, onDatesSet }: I_props) {
+function CalendarTool ({ events, onEventClick, onDatesSet, className }: I_props) {
     return (
-        <section className="calendar-container">
+        <section className={"calendar-container" + " " + `${className}`}>
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
