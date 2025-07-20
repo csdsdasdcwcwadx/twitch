@@ -40,8 +40,8 @@ export default function Check ({ checkData }: I_props) {
 
     return (
         <main>
-            <h2 className="text-center text-fontColor mt-10 text-7xl tracking-[]">天天打卡送</h2>
-            <div>
+            <div className="flex justify-center mobile:flex-col">
+                <Inform/>
                 <CalendarTool
                     onEventClick={info => {
                         const checks = info.event.extendedProps as I_Check;
@@ -59,8 +59,8 @@ export default function Check ({ checkData }: I_props) {
                         if (result.payload) setCheckPageData(result.payload);
                     }}
                     events={CalendarEventsData}
-                />
-                <Inform/>
+                    className="m-10"
+                />              
             </div>
             <CustomDialog open={Boolean(checkInput)} close={() => setCheckInput(null)} title="請輸入簽到驗證">
                 <InputBox title="" placeholder="" type={E_RegexType.NAME} maxlength={10} onChange={setPasscode}/>

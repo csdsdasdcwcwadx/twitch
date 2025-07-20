@@ -102,7 +102,7 @@ function ExchangeDialog ({ openDialog, setOpenDialog, setItems, page, storeaddre
         <CustomDialog open={Boolean(openDialog)} close={() => setOpenDialog(null)} title={`${openDialog.name}兌換數量`}>
             <section id="pack_itemdialog">
                 <CheckBox title="與上次相同資料" value={isSame} onChange={setIsSame}/>
-                <div className="">
+                <div>
                     <div>
                         <InputBox title="姓名" placeholder="請輸入姓名" type={E_RegexType.NAME} maxlength={10} value={name} onChange={setName}/>
                     </div>
@@ -147,6 +147,10 @@ function ExchangeDialog ({ openDialog, setOpenDialog, setItems, page, storeaddre
                             <Image src={plusIcon} alt="arrow-down" className="absolute"/>
                         </i>
                     </div>
+                </div>
+                <div className="flex justify-center mt-3">
+                    <div className="mr-5">兌換數量 : {openDialog.amount}</div>
+                    {openDialog.userItems ? <div>持有數量 : {openDialog.userItems[0]?.amount}</div> : null}
                 </div>
                 <Button onClick={async () => {
                     const errormessage = document.querySelector("#pack_itemdialog .errormessage");
