@@ -1,5 +1,5 @@
+import CustomButton from "@/components/common/CustomButton";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
-import { Button } from "@headlessui/react";
 import { memo } from "react";
 
 interface I_SearchBarProps {
@@ -19,9 +19,11 @@ const SearchBar = ({ setQuery, setOpenDialog }: I_SearchBarProps) => {
                 onChange={value => setQuery(value)}
             />
             {
-                setOpenDialog && <Button 
-                    className="pc:w-[10%] bg-coverground text-topcovercolor rounded-md w-7 mobile:m-auto mobile:mt-3 mobile:h-[50px] mobile:w-[110px] ml-3"
-                    onClick={() => setOpenDialog(true)}>新增物品</Button>
+                setOpenDialog && <CustomButton 
+                    className="pc:w-[10%] w-7 mobile:m-auto mobile:mt-3 mobile:h-[50px] mobile:w-[110px] ml-3 px-0 py-0"
+                    onClick={() => setOpenDialog(true)}
+                    text="新增物品"
+                />
             }
         </div>
     );

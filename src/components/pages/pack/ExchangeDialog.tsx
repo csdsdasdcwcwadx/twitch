@@ -2,7 +2,7 @@ import { memo, useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 
 import { useUserStore } from "@/stores/userStore";
-import { Input, Button } from "@headlessui/react";
+import { Input } from "@headlessui/react";
 import { getpacks, exchange } from "@/utils/api";
 import { domainEnv, pagesize, addressFilter } from "@/utils/util";
 import { I_Item } from "@/utils/interface";
@@ -15,6 +15,7 @@ import CustomDialog from "@/components/common/CustomDialog";
 import RadioSelector from "@/components/common/RadioSelector";
 import CheckBox from "@/components/common/CheckBox";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
+import CustomButton from "@/components/common/CustomButton";
 
 enum E_AddressType {
     SEVEN = 0,
@@ -67,21 +68,24 @@ function ExchangeDialog ({ openDialog, setOpenDialog, setItems, page, storeaddre
             }
             if (userinfo?.address) {
                 const filter = addressFilter(userinfo.address);
-                const address_type = filter.type;
-                const address_value = filter.value;
-                setAddressing(address_type);
 
-                switch (address_type) {
-                    case E_AddressType.PA:
-                        setPostcal(address_value[0]);
-                        setAddress(address_value[1]);
-                        break;
-                    case E_AddressType.POST:
-                        setPostOffice(address_value.join(""));
-                        break;
-                    case E_AddressType.SEVEN:
-                        setSeven(address_value.join(""));
-                        break;
+                if (filter) {
+                    const address_type = filter.type;
+                    const address_value = filter.value;
+                    setAddressing(address_type);
+
+                    switch (address_type) {
+                        case E_AddressType.PA:
+                            setPostcal(address_value[0]);
+                            setAddress(address_value[1]);
+                            break;
+                        case E_AddressType.POST:
+                            setPostOffice(address_value.join(""));
+                            break;
+                        case E_AddressType.SEVEN:
+                            setSeven(address_value.join(""));
+                            break;
+                    }
                 }
             }
         }
@@ -152,32 +156,36 @@ function ExchangeDialog ({ openDialog, setOpenDialog, setItems, page, storeaddre
                     <div className="mr-5">兌換數量 : {openDialog.amount}</div>
                     {openDialog.userItems ? <div>持有數量 : {openDialog.userItems[0]?.amount}</div> : null}
                 </div>
-                <Button onClick={async () => {
-                    const errormessage = document.querySelector("#pack_itemdialog .errormessage");
+                <CustomButton
+                    onClick={async () => {
+                        const errormessage = document.querySelector("#pack_itemdialog .errormessage");
 
-                    if (!errormessage) {
-                        const addressPost = 
-                            addressing === E_AddressType.PA ? `${E_AddressType.PA}:::${postcal}---${address}` : 
-                            addressing === E_AddressType.POST ? `${E_AddressType.POST}:::${postOffice}` : 
-                            addressing === E_AddressType.SEVEN ? `${E_AddressType.SEVEN}:::${seven}` : 
-                            "";
+                        if (!errormessage) {
+                            const addressPost = 
+                                addressing === E_AddressType.PA ? `${E_AddressType.PA}:::${postcal}---${address}` : 
+                                addressing === E_AddressType.POST ? `${E_AddressType.POST}:::${postOffice}` : 
+                                addressing === E_AddressType.SEVEN ? `${E_AddressType.SEVEN}:::${seven}` : 
+                                "";
 
-                        const result = await exchange(
-                            openDialog.id,
-                            value*openDialog.amount,
-                            name,
-                            addressPost,
-                            phone
-                        );
+                            const result = await exchange(
+                                openDialog.id,
+                                value*openDialog.amount,
+                                name,
+                                addressPost,
+                                phone
+                            );
 
-                        if (result.status) {
-                            const result = await getpacks(page, pagesize);
-                            if (result.payload) setItems(result.payload.getItems);
-                        }
-                        alert(result.message);
-                        setOpenDialog(null);
-                    } else alert(errormessage.textContent);
-                }} className="mt-3 m-auto block bg-coverground text-topcovercolor rounded p-4">送出</Button>
+                            if (result.status) {
+                                const result = await getpacks(page, pagesize);
+                                if (result.payload) setItems(result.payload.getItems);
+                            }
+                            alert(result.message);
+                            setOpenDialog(null);
+                        } else alert(errormessage.textContent);
+                    }}
+                    text="送出"
+                    className="mt-3 m-auto block"
+                />
             </section>
         </CustomDialog>
     )

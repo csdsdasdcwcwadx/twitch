@@ -2,7 +2,7 @@ import { memo, useState } from "react";
 import { I_Item } from "@/utils/interface";
 import BubbleBox from "@/components/common/BubbleBox";
 import ImageHandler from "@/components/common/ImageHandler";
-import { Button } from "@headlessui/react";
+import CustomButton from "@/components/common/CustomButton";
 
 interface I_props {
     item: I_Item;
@@ -36,18 +36,19 @@ function Item ({item, setOpenDialog, setOpenItemSettingDialog}: I_props) {
                 <h3 className="text-lg font-semibold text-center mobile:text-3xl">{item.name}</h3>
                 {/* <p className="text-sm text-foreground text-lg mobile:text-center overflow-hidden pc:h-[47%]">{item.description}</p> */}
                 {
-                    setOpenItemSettingDialog ? <Button 
-                        className="bg-coverground text-topcovercolor mt-auto bottom-[1em] rounded"
+                    setOpenItemSettingDialog ? <CustomButton 
+                        className="mt-auto bottom-[1em]"
                         onClick={(event) => {
                             event.stopPropagation();
                             setOpenItemSettingDialog(item);
                         }}
-                    >設定道具</Button> : null
+                        text="設定道具"
+                    /> : null
                 }
             </div>
             <BubbleBox left={position.left} top={position.top} show={position.display} className="w-[110px]">
                 <div>兌換數量 : {item.amount}</div>
-                {item.userItems ? <div>持有數量 : {item.userItems[0]?.amount}</div> : null}
+                {item.userItems ? <div>持有數量 : {item.userItems[0]?.amount || 0}</div> : null}
             </BubbleBox>
         </div>
     )
