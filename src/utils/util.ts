@@ -61,7 +61,8 @@ export const addressParser = (address_type: E_AddressType) => {
     }    
 };
 
-export const addressFilter = (address: string) => {
+export const addressFilter = (address?: string) => {
+    if (!address) return null;
     const address_type = parseInt(address.split(":::")[0]) as unknown as E_AddressType;
     const address_value = address.split(":::")[1];
     const returnAddress: {

@@ -1,6 +1,5 @@
 import { memo, useState, useEffect } from "react";
 
-import { Button } from "@headlessui/react";
 import { pagesize, ImagePath, ItemTypes } from "@/utils/util";
 import { E_Item_Types } from "@/utils/interface";
 import { getbackpacks, setItem, deleteItem } from "@/utils/api";
@@ -10,6 +9,7 @@ import CustomDialog from "@/components/common/CustomDialog";
 import DropSelection from "@/components/common/DropSelection";
 import Inputfile from "@/components/common/Inputfile";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
+import CustomButton from "@/components/common/CustomButton";
 
 interface I_props {
     openDialog: boolean;
@@ -91,8 +91,7 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setItems, page }
                 />
             </section>
             <div className="flex justify-center mt-3">
-                <Button 
-                    className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground block"
+                <CustomButton
                     onClick={async () => {
                         const result = await setItem(name, selected, description, amount, image, selectedItem?.id ,selectedItem?.image);
                         if (result.status) {
@@ -101,10 +100,11 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setItems, page }
                             setOpenDialog(false);
                         }
                     }}
-                >{selectedItem ? "更新" : "新增"}</Button>
+                    text={selectedItem ? "更新" : "新增"}
+                />
                 {
-                    selectedItem ? <Button 
-                        className="text-topcovercolor rounded-md py-2.5 px-5 bg-coverground block ml-5"
+                    selectedItem ? <CustomButton 
+                        className="ml-5"
                         onClick={async () => {
                             const result = await deleteItem(selectedItem.image, selectedItem.id);
                             if (result.status) {
@@ -113,7 +113,8 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setItems, page }
                                 setOpenDialog(false);
                             }
                         }}
-                    >刪除</Button> : ""
+                        text="刪除"
+                    /> : ""
                 }
             </div>
         </CustomDialog>

@@ -3,9 +3,9 @@
 import { useCallback, useState } from "react";
 import { getRedemption, updateRedemptions } from "@/utils/api";
 import { I_Redemption, I_ExchangePage } from "@/utils/interface";
-import { Button } from "@headlessui/react";
 import PageNumber from "@/components/common/PageNumber";
 import ImageHandler from "@/components/common/ImageHandler";
+import CustomButton from "@/components/common/CustomButton";
 import { addressFilter, addressParser } from "@/utils/util";
 
 interface I_props {
@@ -62,7 +62,7 @@ export default function Exchange ({ exchangeData }: I_props) {
                                     <div className="flex flex-col">
                                         <span>{redemption.user.name}</span>
                                         <span className="mt-2">{redemption.user.realname}</span>
-                                        <span className="mt-2">{`(${addressParser(address.type)}) ${address.value.join(" ")}`}</span>
+                                        <span className="mt-2">{address ? `(${addressParser(address.type)}) ${address.value.join(" ")}` : ""}</span>
                                         <span className="mt-2">{redemption.user.phone}</span>
                                     </div>
                                 </div>
@@ -82,8 +82,7 @@ export default function Exchange ({ exchangeData }: I_props) {
                                     {
                                         redemption.status ? 
                                             <span>已兌換</span> : 
-                                            <Button 
-                                                className="text-topcovercolor rounded-md py-2.5 px-3 bg-coverground"
+                                            <CustomButton
                                                 onClick={async () => {
                                                     if (!confirm("是否要兌換禮品")) return;
                                                     const result = await updateRedemptions(redemption.id, true);
@@ -93,7 +92,8 @@ export default function Exchange ({ exchangeData }: I_props) {
                                                     }
                                                     alert(result.message);
                                                 }}
-                                            >尚未兌換</Button>
+                                                text="尚未兌換"
+                                            />
                                     }
                                 </div>
                             </div>

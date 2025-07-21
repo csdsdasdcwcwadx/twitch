@@ -2,12 +2,12 @@
 
 import { getchecks, setUserCheck } from "@/utils/api"
 import { useMemo, useState } from "react";
-import { Button } from '@headlessui/react';
 import { I_CheckPage, I_Check } from "@/utils/interface";
 import CustomDialog from "@/components/common/CustomDialog";
 import { setMonth } from "@/utils/util";
 import CalendarTool from "./CalendarTool";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
+import CustomButton from "@/components/common/CustomButton";
 import Inform from "./Inform";
 
 interface I_props {
@@ -65,16 +65,23 @@ export default function Check ({ checkData }: I_props) {
             <CustomDialog open={Boolean(checkInput)} close={() => setCheckInput(null)} title="請輸入簽到驗證">
                 <InputBox title="" placeholder="" type={E_RegexType.NAME} maxlength={10} onChange={setPasscode}/>
                 <div className="text-center mt-3">
-                    <Button className="mr-3" onClick={async () => {
-                        const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcode);
-                        alert(setCheckResult.message);
-                        if (setCheckResult.status) {
-                            const result = await getchecks();
-                            if (result.payload) setCheckPageData(result.payload);
-                            setCheckInput(null);
-                        };
-                    }}>簽到</Button>
-                    <Button onClick={() => setCheckInput(null)}>取消</Button>
+                    <CustomButton
+                        className="mr-3"
+                        text="簽到"
+                        onClick={async () => {
+                            const setCheckResult = await setUserCheck(checkInput?.id || "", true, passcode);
+                            alert(setCheckResult.message);
+                            if (setCheckResult.status) {
+                                const result = await getchecks();
+                                if (result.payload) setCheckPageData(result.payload);
+                                setCheckInput(null);
+                            };
+                        }}
+                    />
+                    <CustomButton 
+                        onClick={() => setCheckInput(null)}
+                        text="取消"
+                    />
                 </div>
             </CustomDialog>
         </main>

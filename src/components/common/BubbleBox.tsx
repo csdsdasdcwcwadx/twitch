@@ -28,7 +28,7 @@ function BubbleBox({top, left, show, children, className}: I_props) {
             }
 
             if (top + rect.height > screenHeight) {
-                setAdjustTop(top - rect.height - 3);
+                setAdjustTop(top - rect.height);
             } else {
                 setAdjustTop(top + 3);
             }

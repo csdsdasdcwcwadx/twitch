@@ -31,11 +31,11 @@ export default function Check({ checkData }: I_props) {
 
     const CalendarEventsData = useMemo(() => {
         const today = new Date().toISOString().split("T")[0];
-        let hasToday = false;
+        let isTodayChecking = false;
 
         const returnData = checkPageData.getChecks.map((check) => {
             const date = new Date(Number(check.created_at)).toISOString().split("T")[0];
-            if (today === date) hasToday = true;
+            if (today === date && check.streaming) isTodayChecking = true;
             const className = ['cursor-pointer'];
             if (!check.streaming) {
                 className.push('bg-rose-700');
@@ -52,7 +52,7 @@ export default function Check({ checkData }: I_props) {
                 className: className.join(' '),
             };
         });
-        if (!hasToday) returnData.push({
+        if (!isTodayChecking) returnData.push({
             title: '設定開放簽到',
             start: today,
             extendedProps: {
@@ -60,7 +60,7 @@ export default function Check({ checkData }: I_props) {
                 userChecks: [],
             },
             className: 'cursor-pointer',
-        })
+        });
         return returnData;
     }, [checkPageData])
 
@@ -75,7 +75,7 @@ export default function Check({ checkData }: I_props) {
                 <Inform/>
                 <CalendarTool
                     onEventClick={info => {
-                        const { show } = info.event.extendedProps;
+                        const { show, ise } = info.event.extendedProps;
                         const userChecks = info.event.extendedProps.userChecks as I_UserCheck[];
                         setOpenCheckDialog(true);
                         setShowCheckInfo(show);
@@ -99,23 +99,26 @@ export default function Check({ checkData }: I_props) {
                         <>
                             {!checkItem && <InputBox title="" placeholder="" type={E_RegexType.NAME} maxlength={10} onChange={setPasscode}/>}
                             <div className="text-center mt-3">
-                                <CustomButton onClick={async () => {
-                                    if (!checkItem) {
-                                        const result = await setcheck(passcode);
-                                        if (result.status) {
-                                            const checkResult = await getchecks();
-                                            if (checkResult.payload) setCheckPageData(checkResult.payload);
-                                            setOpenCheckDialog(false);
+                                <CustomButton 
+                                    onClick={async () => {
+                                        if (!checkItem) {
+                                            const result = await setcheck(passcode);
+                                            if (result.status) {
+                                                const checkResult = await getchecks();
+                                                if (checkResult.payload) setCheckPageData(checkResult.payload);
+                                                setOpenCheckDialog(false);
+                                            }
+                                        } else {
+                                            const result = await setCheckStatus(checkItem.id, false);
+                                            if (result.status) {
+                                                const checkResult = await getchecks();
+                                                if (checkResult.payload) setCheckPageData(checkResult.payload);
+                                                setOpenCheckDialog(false);
+                                            }
                                         }
-                                    } else {
-                                        const result = await setCheckStatus(checkItem.id, false);
-                                        if (result.status) {
-                                            const checkResult = await getchecks();
-                                            if (checkResult.payload) setCheckPageData(checkResult.payload);
-                                            setOpenCheckDialog(false);
-                                        }
-                                    }
-                                }} text={!checkItem ? "設定簽到" : "結束簽到"}/>
+                                    }}
+                                    text={!checkItem ? "設定簽到" : "結束簽到"}
+                                />
                             </div>
                         </>
                     )

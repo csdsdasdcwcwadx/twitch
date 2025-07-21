@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, Fragment, memo } from "react";
 import Image from "next/image";
 
-import { Input, Button } from "@headlessui/react";
+import { Input } from "@headlessui/react";
 import { twitchIconDomain, pagesize } from "@/utils/util";
 import { I_Item, I_User } from "@/utils/interface";
 import { getbackpacks, addUserItem } from "@/utils/api";
@@ -13,6 +13,7 @@ import plusIcon from "@/icon/plus.png";
 import minusIcon from "@/icon/minus.png";
 
 import CustomDialog from "@/components/common/CustomDialog";
+import CustomButton from "@/components/common/CustomButton";
 
 interface I_props {
     selectedItem: I_Item;
@@ -102,14 +103,18 @@ function UserItemDialog ({ selectedItem, setSelectedItem, setItems, page, allUse
                                                     <Image src={plusIcon} alt="arrow-down" className="absolute"/>
                                                 </i>
                                             </div>
-                                            <Button onClick={async () => {
-                                                const result = await addUserItem(user.id, selectedItem.id || "", value - selectedItem.amount);
-                                                if (result.status) {
-                                                    const result = await getbackpacks(page, pagesize);
-                                                    if (result.payload) setItems(result.payload.getItems);
-                                                    setSelectedItem(null);
-                                                }                                              
-                                            }} className="m-auto block bg-coverground text-topcovercolor rounded p-[10px] mt-3">送出</Button>
+                                            <CustomButton
+                                                className="m-auto block text-center mt-3"
+                                                onClick={async () => {
+                                                    const result = await addUserItem(user.id, selectedItem.id || "", value - selectedItem.amount);
+                                                    if (result.status) {
+                                                        const result = await getbackpacks(page, pagesize);
+                                                        if (result.payload) setItems(result.payload.getItems);
+                                                        setSelectedItem(null);
+                                                    }  
+                                                }}
+                                                text="送出"
+                                            />
                                         </div>
                                         <div className="mr-5">{`數量 : ${currentUserItem.length && currentUserItem[0].amount}`}</div>
                                     </div> : <></>
