@@ -1,7 +1,7 @@
 import { getchecks } from "@/utils/api";
-import CheckBack from "@/components/pages/check/Back";
+import SharedCheckPage from "@/components/pages/check/SharedCheckPage";
 
 export default async function CheckPage() {    
     const result = await getchecks(); // Server Side fetch
-    if (result.payload) return <CheckBack checkData={result.payload}/>;
+    if (result.payload) return <SharedCheckPage checkData={result.payload} isAdmin={true}/>;
 }

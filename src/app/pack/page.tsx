@@ -1,7 +1,7 @@
 import { getpacks } from "@/utils/api";
-import PackFront from "@/components/pages/pack/Front";
+import SharedPackPage from "@/components/pages/pack/SharedPackPage";
 
 export default async function PackPage() {    
     const result = await getpacks();
-    if (result.payload) return <PackFront packData={result.payload}/>;
+    if (result.payload) return <SharedPackPage packData={result.payload} isAdmin={false}/>;
 }

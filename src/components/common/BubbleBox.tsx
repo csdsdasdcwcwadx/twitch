@@ -21,8 +21,8 @@ function BubbleBox({top, left, show, children, className}: I_props) {
             const screenHeight = window.innerHeight
 
             // 如果超出螢幕右邊，就往左移動 bubble 寬度
-            if (left + rect.width > screenWidth) {
-                setAdjustLeft(left - rect.width - 3);
+            if (left + rect.width + 10 > screenWidth) {
+                setAdjustLeft(left - rect.width);
             } else {
                 setAdjustLeft(left + 3);
             }
