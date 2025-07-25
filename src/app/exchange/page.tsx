@@ -1,7 +1,7 @@
 import { getRedemption } from "@/utils/api";
-import ExchangeFront from "@/components/pages/exchange/Front";
+import SharedExchangePage from "@/components/pages/exchange/SharedExchangePage";
 
 export default async function ExchangePage() {    
     const result = await getRedemption(); // Server Side fetch
-    if (result.payload) return <ExchangeFront exchangeData={result.payload}/>;
+    if (result.payload) return <SharedExchangePage exchangeData={result.payload} isAdmin={false}/>;
 }

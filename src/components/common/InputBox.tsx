@@ -23,7 +23,7 @@ interface I_props {
 }
 
 function InputBar ({title, placeholder, type, value, unnecessary, maxlength, className, onChange}: I_props) {
-    const [errMsg, setErrMsg] = useState<string | undefined>();
+    const [errMsg, setErrMsg] = useState<string | null>();
 
     useEffect(() => {
         let flag = true;
@@ -82,7 +82,7 @@ function InputBar ({title, placeholder, type, value, unnecessary, maxlength, cla
                     setErrMsg(`${title}必填`);
                 }
         }
-        if(flag) setErrMsg(undefined);
+        if(flag) setErrMsg(null);
     },[value, type, unnecessary, title])
 
     const titleClassName = title ? "text-sm pl-1 text-coverground" : "";
