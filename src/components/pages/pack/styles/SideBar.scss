@@ -18,7 +18,7 @@
 
             &.side-body {
                 background-image: url(../../../../icon/frame-middle.png);
-                height: 80%;
+                height: calc(100% - 90px - 30px);
                 background-repeat: repeat;
             }
 

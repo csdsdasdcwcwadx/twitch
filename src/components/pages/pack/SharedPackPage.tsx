@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import Image from "next/image";
-
-import fireworkIcon from "@/icon/firework.png";
 
 import { I_Item, E_Item_Types, I_BackPackPage, I_PackPage } from "@/utils/interface";
 import { getbackpacks, getpacks } from "@/utils/api";
 import { pagesize } from "@/utils/util";
 
+import CommonPage from "@/components/common/CommonPage";
 import PageNumber from "@/components/common/PageNumber";
 import SideBar from "./SideBar";
 import SearchBar from "./SearchBar";
@@ -73,27 +71,19 @@ export default function SharedTemplate({ packData, isAdmin }: I_props) {
     }, [query, currentType, items]);
 
     return (
-        <main className="pc:flex h-screen mobile:w-[100%]">
-            <Image
-                src={fireworkIcon}
-                alt="firework"
-                className="w-[150px] h-[150px] fixed z-[-1] opacity-[.8] top-[10%] left-[15%]"
-            />
-            <Image
-                src={fireworkIcon}
-                alt="firework"
-                className="w-[150px] h-[150px] fixed z-[-1] opacity-[.8] right-[20%] top-[60%]"
-            />
-            <SideBar setCurrentType={setCurrentType}/>
-            <div className="flex-1 p-6">
-                <SearchBar setQuery={setQuery} setOpenDialog={isAdmin ? setOpenDialog : undefined}/>
-                <div className="flex gap-6">
-                    <div className="flex-1">
-                        <ItemGrid items={filterItemCheck} setOpenDialog={isAdmin ? setSelectedItem : setOpenExchangeDialog} setOpenItemSettingDialog={isAdmin ? setOpenItemSettingDialog : undefined}/>
+        <CommonPage className="pc:flex">
+            <div className="pc:flex w-[100%]">
+                <SideBar setCurrentType={setCurrentType}/>
+                <div className="flex-1 p-6 pc:flex flex-col">
+                    <SearchBar setQuery={setQuery} setOpenDialog={isAdmin ? setOpenDialog : undefined}/>
+                    <div className="flex gap-6 mb-5">
+                        <div className="flex-1 h-[780px]">
+                            <ItemGrid items={filterItemCheck} setOpenDialog={isAdmin ? setSelectedItem : setOpenExchangeDialog} setOpenItemSettingDialog={isAdmin ? setOpenItemSettingDialog : undefined}/>
+                        </div>
                     </div>
-                </div>
-                <div className="mt-8">
-                    <PageNumber maxpage={packData.getItemPages} serial={page} setSerial={pageChange}/>
+                    <div className="mt-auto">
+                        <PageNumber maxpage={packData.getItemPages} serial={page} setSerial={pageChange}/>
+                    </div>
                 </div>
             </div>
             {
@@ -114,6 +104,6 @@ export default function SharedTemplate({ packData, isAdmin }: I_props) {
                     />
                 </> : <ExchangeDialog setOpenDialog={setOpenExchangeDialog} openDialog={openExchangeDialog} setItems={setItems} page={page} storeaddress={params}/>
             }
-        </main>
+        </CommonPage>
     )
 }

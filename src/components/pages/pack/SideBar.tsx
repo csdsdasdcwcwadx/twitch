@@ -9,7 +9,7 @@ interface I_props {
 
 const Sidebar = ({ setCurrentType }: I_props) => {
     return (
-        <div className="sidebar pc:w-[30%] relative">
+        <div className="sidebar pc:w-[300px] relative pc:h-full">
             <figure className="absolute w-full h-full right-[0] mobile:hidden">
                 <div className="side-head"></div>
                 <div className="side-body"></div>

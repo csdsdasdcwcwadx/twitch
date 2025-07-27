@@ -20,7 +20,7 @@ const SearchBar = ({ setQuery, setOpenDialog }: I_SearchBarProps) => {
             />
             {
                 setOpenDialog && <CustomButton 
-                    className="pc:w-[10%] w-7 mobile:m-auto mobile:mt-3 mobile:h-[50px] mobile:w-[110px] ml-3 px-0 py-0"
+                    className="pc:w-[10%] w-7 mobile:m-auto mobile:mt-3 mobile:h-[50px] mobile:w-[110px] ml-3 py-1 px-1"
                     onClick={() => setOpenDialog(true)}
                     text="新增物品"
                 />

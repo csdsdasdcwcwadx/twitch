@@ -117,7 +117,7 @@ function MobileDialog({ menuOpen, setMenuOpen, userinfo, handleItemsClick }: I_M
                     displayItems.map((item, index) => {
                         return (
                             <Fragment key={item.text}>
-                                <li className="list-none py-3 px-10 text-topcovercolor cursor-pointer hover:bg-hoverground hover:text-coverground" onClick={async () => handleItemsClick(item)}>
+                                <li className="list-none py-3 px-10 text-topcovercolor cursor-pointer hover:bg-topcovercolor hover:text-coverground" onClick={async () => handleItemsClick(item)}>
                                     <span>{item.text}</span>
                                 </li>
                                 {
@@ -141,14 +141,14 @@ function MenuAllItems({ handleItemsClick }: I_MenuAllItemsProps) {
                     <Fragment key={item.text}>
                         <MenuItem>
                             <li 
-                                className="list-none py-2.5 px-3.5 text-topcovercolor cursor-pointer hover:bg-hoverground rounded-lg hover:text-coverground"
+                                className="list-none py-2.5 px-3.5 text-topcovercolor cursor-pointer hover:bg-topcovercolor rounded-lg hover:text-coverground"
                                 onClick={() => handleItemsClick(item)}
                             >
                                 {item.text}
                             </li>
                         </MenuItem>
                         {
-                            displayItems.length - 1 !== ind && <i className="my-2 h-px border-b block border-hoverground"/>
+                            displayItems.length - 1 !== ind && <i className="my-2 h-px border-b block border-topcovercolor"/>
                         }
                     </Fragment>
                 )

@@ -11,7 +11,7 @@ interface I_props {
 
 function ItemGrid ({ items, setOpenDialog, setOpenItemSettingDialog }: I_props) {
     return (
-        <div className="itemgrid grid grid-cols-[1fr_1fr_1fr] gap-4 mobile:grid-cols-1 max-w-[1200px]">
+        <div className="itemgrid grid grid-cols-[1fr_1fr_1fr] gap-4 mobile:grid-cols-1">
             {items.map((item) => {
                 if (!item.userItems?.length && !setOpenItemSettingDialog) return;
                 return <Item key={item.id} item={item} setOpenDialog={setOpenDialog} setOpenItemSettingDialog={setOpenItemSettingDialog}/>

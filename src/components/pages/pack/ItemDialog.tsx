@@ -71,7 +71,7 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setItems, page }
                     onChange={setAmount}
                 />
                 <aside className="mt-2">
-                    <span className="text-sm pl-1">選擇圖片</span>
+                    <span className="text-sm pl-1 text-[#111827]">選擇圖片</span>
                     <Inputfile 
                         accept=".jpg, .jpeg" 
                         onChange={(e) => {
@@ -98,7 +98,7 @@ function ItemDialog ({ openDialog, setOpenDialog, selectedItem, setItems, page }
                             const result = await getbackpacks(page, pagesize);
                             if (result.payload) setItems(result.payload.getItems);
                             setOpenDialog(false);
-                        }
+                        } else alert(result.message);
                     }}
                     text={selectedItem ? "更新" : "新增"}
                 />

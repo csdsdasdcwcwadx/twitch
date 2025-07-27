@@ -9,6 +9,7 @@ import { addressFilter, addressParser } from "@/utils/util";
 import PageNumber from "@/components/common/PageNumber";
 import ImageHandler from "@/components/common/ImageHandler";
 import CustomButton from "@/components/common/CustomButton";
+import CommonPage from "@/components/common/CommonPage";
 
 interface I_props {
     exchangeData: I_ExchangePage;
@@ -26,9 +27,9 @@ export default function SharedTemplate({ exchangeData, isAdmin }: I_props) {
     }, []);
 
     return (
-        <main>
-            <h1 className="font-bold text-2xl block text-center w-[90%] m-auto my-8">禮品兌換紀錄</h1>
-            <div className="m-auto w-[90%] table mobile:block">
+        <CommonPage>
+            <h1 className="font-bold text-2xl block text-center w-[100%] m-auto my-8">禮品兌換紀錄</h1>
+            <div className="m-auto w-[100%] table mobile:block">
                 <div className="border-b border-solid border-foreground table-header-group mobile:hidden">
                     <div className="table-row">
                         <div className="table-cell p-[10px] text-center cursor-pointer font-bold w-[20%]">物品</div>
@@ -48,15 +49,17 @@ export default function SharedTemplate({ exchangeData, isAdmin }: I_props) {
                         const className = [
                             "table-row",
                             "mobile:block",
+                            "mobile:shadow-[0_0_4px_0_rgba(0,0,0,0.5)]",
+                            "mobile:m-5",
                         ]
                         if (index) className.push("mobile:mt-5");
 
                         return (
                             <div key={redemption.id} className={className.join(" ")}>
-                                <div className="p-[10px] table-cell mobile:block align-middle">
-                                    <figure className="relative rounded aspect-[1.5] mobile:aspect-[3]">
+                                <div className="pc:p-[10px] table-cell mobile:block align-middle">
+                                    <figure className="relative aspect-[1.5] mobile:aspect-[3]">
                                     {
-                                        redemption.item.image ? <ImageHandler item={redemption.item}/> : <></>
+                                        redemption.item.image ? <ImageHandler clasName="rounded-none" item={redemption.item}/> : <></>
                                     }
                                     </figure>
                                 </div>
@@ -110,9 +113,9 @@ export default function SharedTemplate({ exchangeData, isAdmin }: I_props) {
                 }
                 </div>
             </div>
-            <div className="mt-8">
+            <div className="my-8">
                 <PageNumber maxpage={exchangeData.getRedemptionPages} serial={page} setSerial={pageChange}/>
             </div>
-        </main>
+        </CommonPage>
     )
 }

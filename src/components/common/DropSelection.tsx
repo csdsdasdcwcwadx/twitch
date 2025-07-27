@@ -15,7 +15,7 @@ interface I_props<T> {
 export default function DropSelection<T extends string | number> ({ selections, setSelected, selected, className, disableOptions = [] }: I_props<T>) {
     return (
         <div className={className + ' relative'}>
-            <span className="text-sm pl-1">選擇種類</span>
+            <span className="text-sm pl-1 text-[#111827]">選擇種類</span>
             <Listbox value={selected} onChange={setSelected}>
                 <i className="absolute block w-[15px] h-[15px] right-[10px] top-[32px]">
                     <Image src={arrowdownIcon} alt="arrow-down" className="absolute"/>

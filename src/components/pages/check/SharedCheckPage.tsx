@@ -4,15 +4,14 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import { Input } from '@headlessui/react';
 
-import fireworkIcon from "@/icon/firework.png";
 import searchIcon from "@/icon/search.png";
-
 import { twitchIconDomain, setMonth } from "@/utils/util";
 import { I_CheckPage, I_UserCheck, I_Check } from "@/utils/interface";
 import { setCheckStatus, setcheck, getchecks, setUserCheck } from "@/utils/api";
 
 import CustomDialog from "@/components/common/CustomDialog";
 import CustomButton from "@/components/common/CustomButton";
+import CommonPage from "@/components/common/CommonPage";
 import CalendarTool from "@/components/pages/check/CalendarTool";
 import InputBox, { E_RegexType } from "@/components/common/InputBox";
 import Inform from "@/components/pages/check/Inform";
@@ -95,17 +94,7 @@ export default function SharedTemplate({ checkData, isAdmin = false }: I_props) 
     }, [displayCheckUser, query])
 
     return (
-        <main>
-            <Image
-                src={fireworkIcon}
-                alt="firework"
-                className="w-[150px] h-[150px] fixed z-[-1] opacity-[.8] left-[20%]"
-            />
-            <Image
-                src={fireworkIcon}
-                alt="firework"
-                className="w-[150px] h-[150px] fixed z-[-1] opacity-[.8] right-[20%] top-[60%]"
-            />
+        <CommonPage>
             <div className="flex justify-center mobile:flex-col">
                 <Inform/>
                 <CalendarTool
@@ -136,7 +125,7 @@ export default function SharedTemplate({ checkData, isAdmin = false }: I_props) 
                         if (result.payload) setCheckPageData(result.payload);
                     }}
                     events={CalendarEventsData}
-                    className="m-10"
+                    className="m-10 flex-[1]"
                 />
             </div>
             {
@@ -215,6 +204,6 @@ export default function SharedTemplate({ checkData, isAdmin = false }: I_props) 
                     </div>
                 </CustomDialog>
             }
-        </main>
+        </CommonPage>
     )
 }
