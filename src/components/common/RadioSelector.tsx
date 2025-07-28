@@ -10,7 +10,7 @@ interface I_props {
     seleted: string | number;
 }
 
-export default function RadioSelector ({ className, options, onChange, seleted }: I_props) {
+export default function RadioSelector ({ options, onChange, seleted, className = "" }: I_props) {
 
     return (
         <RadioGroup value={seleted} onChange={onChange} className={`flex gap-4 ${className}`}>

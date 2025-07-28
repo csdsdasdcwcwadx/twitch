@@ -12,7 +12,7 @@ interface I_props {
     className?: string;
 }
 
-function CalendarTool ({ events, onEventClick, onDatesSet, className }: I_props) {
+function CalendarTool ({ events, onEventClick, onDatesSet, className = "" }: I_props) {
     return (
         <section className={"calendar-container" + " " + `${className}`}>
             <FullCalendar

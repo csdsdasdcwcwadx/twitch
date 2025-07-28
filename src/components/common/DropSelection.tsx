@@ -8,11 +8,11 @@ interface I_props<T> {
     selections: Array<T>;
     setSelected: (select: T) => void;
     selected: T;
-    className: string;
+    className?: string;
     disableOptions?: Array<T>;
 }
 
-export default function DropSelection<T extends string | number> ({ selections, setSelected, selected, className, disableOptions = [] }: I_props<T>) {
+export default function DropSelection<T extends string | number> ({ selections, setSelected, selected, disableOptions = [], className = "" }: I_props<T>) {
     return (
         <div className={className + ' relative'}>
             <span className="text-sm pl-1 text-[#111827]">選擇種類</span>

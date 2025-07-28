@@ -5,13 +5,14 @@ interface I_props {
     serial: number;
     setSerial: (num: number) => void;
     typeIn?: boolean;
+    className?: string;
 }
 
-function PageNumber ({setSerial, maxpage, serial, typeIn}: I_props) {
+function PageNumber ({setSerial, maxpage, serial, typeIn, className = ""}: I_props) {
     const page = useRef<HTMLInputElement>(null);
 
     return (
-        <div className='flex justify-center items-center'>
+        <div className={'flex justify-center items-center ' + className}>
             <div className="flex justify-center items-center text-xl">
                 <Nums num={serial-2} click={setSerial} maxpage={maxpage} serial={serial}/>
                 <Nums num={serial-1} click={setSerial} maxpage={maxpage} serial={serial}/>

@@ -113,9 +113,7 @@ export default function SharedTemplate({ exchangeData, isAdmin }: I_props) {
                 }
                 </div>
             </div>
-            <div className="my-8">
-                <PageNumber maxpage={exchangeData.getRedemptionPages} serial={page} setSerial={pageChange}/>
-            </div>
+            <PageNumber maxpage={exchangeData.getRedemptionPages} serial={page} setSerial={pageChange} className="my-8"/>
         </CommonPage>
     )
 }

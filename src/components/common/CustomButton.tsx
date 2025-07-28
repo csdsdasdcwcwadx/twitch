@@ -9,7 +9,7 @@ interface I_props {
     className?: string;
 }
 
-function CustomButton ({ text, onClick, className }: I_props) {
+function CustomButton ({ text, onClick, className = "" }: I_props) {
     return <Button onClick={onClick} className={"text-topcovercolor rounded-md py-2.5 px-5 bg-coverground hover:bg-hoverground active:bg-[#CBAA98] " + className}>{text}</Button>
 }
 

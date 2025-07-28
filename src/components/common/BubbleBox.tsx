@@ -8,7 +8,7 @@ interface I_props {
     className?: string;
 }
 
-function BubbleBox({top, left, show, children, className}: I_props) {
+function BubbleBox({top, left, show, children, className = ""}: I_props) {
     const boxRef = useRef<HTMLDivElement>(null);
     const [adjustLeft, setAdjustLeft] = useState(left);
     const [adjustTop, setAdjustTop] = useState(top);

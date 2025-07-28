@@ -17,7 +17,7 @@ function CustomDialog ({open, close, title, children}: I_props) {
         <Dialog open={open} onClose={() => close(false)}>
             <div className="fixed inset-0 flex w-screen mr-3 items-center justify-center p-4 bg-black bg-opacity-60 z-10 text-[#111827]">
                 <DialogPanel 
-                    className="max-w-lg border bg-[white] p-12 w-[500px] relative mobile:w-[80%]"
+                    className="max-w-lg border bg-[white] p-12 w-[500px] relative mobile:w-[80%] overflow-y-auto"
                     style={{
                         maxHeight: "calc(100vh - 80px)"
                     }}

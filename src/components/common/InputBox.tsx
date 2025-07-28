@@ -22,7 +22,7 @@ interface I_props {
     onChange: (value: string) => void;
 }
 
-function InputBar ({title, placeholder, type, value, unnecessary, maxlength, className, onChange}: I_props) {
+function InputBar ({title, placeholder, type, value, unnecessary, maxlength, onChange, className = ""}: I_props) {
     const [errMsg, setErrMsg] = useState<string | null>();
 
     useEffect(() => {

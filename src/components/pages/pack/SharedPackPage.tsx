@@ -77,13 +77,11 @@ export default function SharedTemplate({ packData, isAdmin }: I_props) {
                 <div className="flex-1 p-6 pc:flex flex-col">
                     <SearchBar setQuery={setQuery} setOpenDialog={isAdmin ? setOpenDialog : undefined}/>
                     <div className="flex gap-6 mb-5">
-                        <div className="flex-1 h-[780px]">
+                        <div className="flex-1 pc:h-[780px]">
                             <ItemGrid items={filterItemCheck} setOpenDialog={isAdmin ? setSelectedItem : setOpenExchangeDialog} setOpenItemSettingDialog={isAdmin ? setOpenItemSettingDialog : undefined}/>
                         </div>
                     </div>
-                    <div className="mt-auto">
-                        <PageNumber maxpage={packData.getItemPages} serial={page} setSerial={pageChange}/>
-                    </div>
+                    <PageNumber maxpage={packData.getItemPages} serial={page} setSerial={pageChange} className="mt-auto"/>
                 </div>
             </div>
             {
