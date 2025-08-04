@@ -1,5 +1,5 @@
 import SharedGamePage from "@/components/pages/game/SharedGamePage";
 
-export default function Game () {
+export default function GamePage () {
     return <SharedGamePage/>
 }

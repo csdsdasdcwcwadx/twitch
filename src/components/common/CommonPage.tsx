@@ -10,7 +10,7 @@ interface I_props {
 }
 
 function CommonPage ({ children, className = "" }: I_props) {
-    const defaultClass = "w-[150px] h-[150px] fixed z-[-1] opacity-[.8]";
+    const defaultClass = "w-[150px] h-[150px] fixed z-[-1] opacity-[.6]";
 
     return (
         <main className={`m-auto pc:max-w-[1500px] ${className}`}>
