@@ -130,6 +130,11 @@ export const updateRedemptions = async (redemptionId: string, status: boolean) =
     return response.data;
 };
 
+export const createOrder = async () => {
+    const response = await api.get("/payment");
+    return response.data
+}
+
 // -----------------------------------------graphQL-----------------------------------------
 
 export const getUsers = async () => {
