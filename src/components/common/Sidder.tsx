@@ -25,17 +25,17 @@ function Sidder () {
     const handleClick = async (alt: string) => {
         switch(alt) {
             case "ecpay":
-                break;
             case "opay":
-                const formHtml = await createOrder();
-                const container = document.createElement('div');
-                container.innerHTML = formHtml;
-                document.body.appendChild(container);
+                const formHtml = await createOrder(alt);
+                console.log(formHtml)
+                // const container = document.createElement('div');
+                // container.innerHTML = formHtml;
+                // document.body.appendChild(container);
 
-                const script = container.querySelector('script');
-                if (script) {
-                    eval(script.innerText);
-                }
+                // const script = container.querySelector('script');
+                // if (script) {
+                //     eval(script.innerText);
+                // }
                 break;
         }
     };
