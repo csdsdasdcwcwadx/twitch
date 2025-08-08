@@ -3,12 +3,11 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { Input } from '@headlessui/react';
-// import QRCode from 'qrcode';
 
 import searchIcon from "@/icon/search.png";
 import { twitchIconDomain, setMonth } from "@/utils/util";
 import { I_CheckPage, I_UserCheck, I_Check } from "@/utils/interface";
-import { setCheckStatus, setcheck, getchecks, setUserCheck, createOrder } from "@/utils/api";
+import { setCheckStatus, setcheck, getchecks, setUserCheck } from "@/utils/api";
 
 import CustomDialog from "@/components/common/CustomDialog";
 import CustomButton from "@/components/common/CustomButton";
@@ -96,16 +95,6 @@ export default function SharedTemplate({ checkData, isAdmin = false }: I_props) 
 
     return (
         <CommonPage>
-            <button onClick={async () => {
-                const formHtml = await createOrder();
-                const container = document.createElement('div');
-                container.innerHTML = formHtml;
-                document.body.appendChild(container);
-                const form = document.getElementById('_form_aiochk') as HTMLFormElement;
-                form.submit();
-            }}>
-                點我
-            </button>
             <div className="flex justify-center mobile:flex-col">
                 <Inform/>
                 <CalendarTool
