@@ -10,7 +10,7 @@ export default function SharedTemplate () {
     const [socket, setSocket] = useState<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(domainEnv);
+        const ws = new WebSocket(`${domainEnv}/socket/game`);
         ws.onopen = () => console.log("✅ 連線成功");
         ws.onclose = () => console.log("關閉連線");
         ws.onmessage = (event) => {

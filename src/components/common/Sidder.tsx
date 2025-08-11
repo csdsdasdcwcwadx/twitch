@@ -26,16 +26,25 @@ function Sidder () {
         switch(alt) {
             case "ecpay":
             case "opay":
+                // const formHtml = 
+                //     `<form id="autoForm" action="https://payment-stage.opay.tw/Broadcaster/Donate/740F06A8DEBBE6566C8824D938FA403B" method="post" accept-charset="utf-8">` +
+                //         `<input type="hidden" name="DonateNickName" value="測試用" />` +
+                //         `<input type="hidden" name="DonateAmount" value="50" />` +
+                //         `<input type="hidden" name="DonateMsg" value="測試用" />` +
+                //         `<input type="hidden" name="ReturnURL" value="https://9d93f2b19c5e.ngrok-free.app/payment/paymentresult" />` +
+                //     `</form>` + 
+                //     `<script>` +
+                //         `document.getElementById('autoForm').submit();` +
+                //     `</script>`;
                 const formHtml = await createOrder(alt);
-                console.log(formHtml)
-                // const container = document.createElement('div');
-                // container.innerHTML = formHtml;
-                // document.body.appendChild(container);
+                const container = document.createElement('div');
+                container.innerHTML = formHtml;
+                document.body.appendChild(container);
 
-                // const script = container.querySelector('script');
-                // if (script) {
-                //     eval(script.innerText);
-                // }
+                const script = container.querySelector('script');
+                if (script) {
+                    eval(script.innerText);
+                }
                 break;
         }
     };

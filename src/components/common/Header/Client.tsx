@@ -66,6 +66,8 @@ function Client ({userinfo}: I_props) {
         setUser(userinfo);
     }, [setUser, userinfo])
 
+    if (pathname.includes('/alert')) return <></>;
+
     return (
         <>
             <header className="h-20 flex items-center justify-between mx-2.5 mobile:justify-center">
