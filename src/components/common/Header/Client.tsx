@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import Image from "next/image";
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation';
 import twitchIcon from "@/icon/twitch.png";
 import { I_User } from "@/utils/interface";
 import { Menu, MenuButton, MenuItem, MenuItems, Dialog, DialogPanel } from '@headlessui/react'
