@@ -130,9 +130,13 @@ export const updateRedemptions = async (redemptionId: string, status: boolean) =
     return response.data;
 };
 
-export const createOrder = async (type: string) => {
+export const createOrder = async (type: string, name: string, amount: string, backURL: string, message: string) => {
     const response = await api.post("/payment/createorder", {
         type,
+        name,
+        amount,
+        backURL,
+        message,
     });
     return response.data;
 }

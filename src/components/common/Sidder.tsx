@@ -22,7 +22,7 @@ const displayImages = [
 function Sidder () {
     const [openDialog, setOpenDialog] = useState(false);
     
-    const handleClick = async (alt: string) => {
+    const handleClick = async (alt: string, name: string, amount: string, backURL: string, message: string) => {
         switch(alt) {
             case "ecpay":
             case "opay":
@@ -36,7 +36,7 @@ function Sidder () {
                 //     `<script>` +
                 //         `document.getElementById('autoForm').submit();` +
                 //     `</script>`;
-                const formHtml = await createOrder(alt);
+                const formHtml = await createOrder(alt, name, amount, backURL, message);
                 const container = document.createElement('div');
                 container.innerHTML = formHtml;
                 document.body.appendChild(container);
@@ -58,7 +58,7 @@ function Sidder () {
                 <div className="flex justify-between">
                     {
                         displayImages.map(image => (
-                            <figure key={image.alt} className="cursor-pointer" onClick={() => handleClick(image.alt)}>
+                            <figure key={image.alt} className="cursor-pointer" onClick={() => handleClick(image.alt, "金幣1000顆", "100", window.location.href, "donate_message")}>
                                 <Image src={image.src} alt={image.alt}/>
                             </figure>
                         ))

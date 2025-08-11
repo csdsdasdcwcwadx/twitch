@@ -3,7 +3,7 @@
 import { memo, useEffect, useState } from "react"
 import { domainEnv } from "@/utils/util";
 import Image from "next/image";
-import D01icon from "@/icon/D01.gif";
+import headIcon from "@/icon/head.gif";
 
 interface I_WSMessage {
     DonateNickName: string;
@@ -26,7 +26,7 @@ function Display() {
             setMessage(message)
             timer = setTimeout(() => {
                 setMessage(null);
-            }, 5000)
+            }, 10000)
         };
 
         return () => {
@@ -38,7 +38,7 @@ function Display() {
         <div id="divAlert" className="font-[Open_Sans] relative text-center">
             <div id="wrap" className={`table m-auto${message ? '' : ' hidden'}`}>
                 <div className="table-row">
-                    <Image src={D01icon} alt="donate" className="m-auto"/>
+                    <Image src={headIcon} alt="donate" className="m-auto"/>
                 </div>
                 <div className="table-row">
                     <div className="table-cell p-5 text-center">
@@ -47,7 +47,7 @@ function Display() {
                             <span className="highlight">
                             {
                                 message?.DonateNickName.split('').map((word, index) => {
-                                    return <span key={index} className="animated-letter wiggle">{word}</span>
+                                    return <span key={index} className="animated-letter wiggle text-[#32C3A6]">{word}</span>
                                 })
                             }
                             </span>
@@ -55,12 +55,12 @@ function Display() {
                             <span className="highlight">
                             {
                                 message?.DonateAmount.split('').map((word, index) => {
-                                    return <span key={index} className="animated-letter wiggle">{word}</span>
+                                    return <span key={index} className="animated-letter wiggle text-[#32C3A6]">{word}</span>
                                 })
                             }
                             </span> 元!!
                         </div>
-                        <div id="divUserMsg" className="text-[28px] font-semibold text-[#d0d426] text-center break-words">
+                        <div id="divUserMsg" className="text-[32px] font-semibold text-[#d0d426] text-center break-words text-[#d0d426]">
                             {message?.DonateMsg}
                         </div>
                     </div>
