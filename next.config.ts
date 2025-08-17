@@ -6,11 +6,7 @@ const nextConfig: NextConfig = {
       {
         source: '/api/:path*',
         destination: 'http://localhost:4000/:path*' // Proxy to Backend
-      },
-      {
-        source: '/opay/:path*',
-        destination: 'https://payment-stage.opay.tw/:path*' // Proxy to Backend
-      },
+      }
     ]
   },
   images: {

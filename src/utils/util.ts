@@ -1,4 +1,5 @@
 import { E_Item_Types, E_AddressType } from "./interface";
+import { io } from "socket.io-client";
 
 export const redirectPath = process.env.NEXT_PUBLIC_ENV === "prod" ? "/twitch" : "/api";
 export const domainEnv = `${process.env.NEXT_PUBLIC_SERVER_HOST}${redirectPath}`;
@@ -86,4 +87,27 @@ export const addressFilter = (address?: string) => {
             break;
     }
     return returnAddress;
-}
+};
+
+export const initSocket = () => {
+    const socket = io("https://socket.opay.tw/web/live/C4DB659FF82BAB591BA43075C2A5B0D7", {
+        path: "/socket.io",
+        transports: ["websocket", "polling"], // 支援 fallback
+        reconnection: true, // 自動重連
+    });
+
+        // 當前端 socket.io 連上 server
+    socket.on("connect", () => {
+        console.log("✅ Connected:", socket?.id);
+
+        // 加入 namespace
+        const ns = "/web/live/C4DB659FF82BAB591BA43075C2A5B0D7";
+        socket?.emit("join", { namespace: ns }); 
+        // ⚠️ 注意：emit 的 event name / payload 要符合 server 實作，這裡我舉例
+    });
+
+    socket.on("disconnect", () => {
+        console.log("❌ Disconnected");
+    });
+    return socket;
+};

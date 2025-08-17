@@ -22,7 +22,7 @@ const safeGraphQLRequest = async <T>(query: DocumentNode, variables?: Record<str
             const allCookies = await getServerCookies();
             headers.cookie = allCookies;
         } catch (err) {
-            console.log(err);
+            console.error(err);
             return { error: cookiesError };
         }
     }
@@ -139,7 +139,7 @@ export const createOrder = async (type: string, name: string, amount: string, ba
         message,
     });
     return response.data;
-}
+};
 
 // -----------------------------------------graphQL-----------------------------------------
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useEffect, useState } from "react"
-import { domainEnv } from "@/utils/util";
+import { domainEnv, initSocket } from "@/utils/util";
 import Image from "next/image";
 import headIcon from "@/icon/head.gif";
 
@@ -29,7 +29,13 @@ function Display() {
             }, 10000)
         };
 
+        const opaySocket = initSocket();
+        opaySocket.on("notify", (message) => {
+            console.log(message);
+        });
+
         return () => {
+            opaySocket.disconnect();
             ws.close();
         }
     }, [])
