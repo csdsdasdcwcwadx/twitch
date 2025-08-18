@@ -1,32 +1,28 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { domainEnv } from "@/utils/util";
 import { E_WS_Type, I_WS_Data } from "@/utils/interface";
-import CommonPage from "@/components/common/CommonPage"
+import CommonPage from "@/components/common/CommonPage";
+import { io, Socket } from "socket.io-client";
 
 export default function SharedTemplate () {
     const [value, setValue] = useState("");
-    const [socket, setSocket] = useState<WebSocket | null>(null);
+    const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(`${domainEnv}/socket/game`);
-        ws.onopen = () => console.log("✅ 連線成功");
-        ws.onclose = () => console.log("關閉連線");
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data) as I_WS_Data;
+        const gameSocket = io(`http://localhost:4000/socket/game`); // 需要再修改
 
+        gameSocket.on("notify", (message: I_WS_Data) => {
             switch (message.type) {
                 case E_WS_Type.ACTION:
                     break;
                 case E_WS_Type.MESSAGE:
                     break;
             }
-        };
-        setSocket(ws);
-
+        });
+        setSocket(gameSocket);
         return () => {
-            ws.close();
+            gameSocket.disconnect();
         }
     }, [])
 
@@ -39,17 +35,13 @@ export default function SharedTemplate () {
             />
             <button
                 onClick={() => {
-                    if (socket?.readyState === WebSocket.OPEN) {
-                        socket.send(value);
-                    } else {
-                        console.warn("⚠️ WebSocket 尚未連線");
-                    }
+                    socket?.emit(value);
                 }}
             >
                 點我
             </button>
             <button
-                onClick={() => socket?.close(1000, 'this connection is closed')}
+                onClick={() => socket?.disconnect()}
             >
                 斷線
             </button>

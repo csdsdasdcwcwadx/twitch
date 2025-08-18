@@ -89,8 +89,8 @@ export const addressFilter = (address?: string) => {
     return returnAddress;
 };
 
-export const initSocket = () => {
-    const socket = io("https://socket.opay.tw/web/live/C4DB659FF82BAB591BA43075C2A5B0D7", {
+export const initOpaySocket = (uri: string, namespace: string) => {
+    const socket = io(uri, {
         path: "/socket.io",
         transports: ["websocket", "polling"], // 支援 fallback
         reconnection: true, // 自動重連
@@ -101,13 +101,8 @@ export const initSocket = () => {
         console.log("✅ Connected:", socket?.id);
 
         // 加入 namespace
-        const ns = "/web/live/C4DB659FF82BAB591BA43075C2A5B0D7";
+        const ns = namespace;
         socket?.emit("join", { namespace: ns }); 
-        // ⚠️ 注意：emit 的 event name / payload 要符合 server 實作，這裡我舉例
-    });
-
-    socket.on("disconnect", () => {
-        console.log("❌ Disconnected");
     });
     return socket;
 };

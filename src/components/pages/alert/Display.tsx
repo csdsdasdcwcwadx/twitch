@@ -1,9 +1,10 @@
 'use client';
 
 import { memo, useEffect, useState } from "react"
-import { domainEnv, initSocket } from "@/utils/util";
+import { initOpaySocket } from "@/utils/util";
 import Image from "next/image";
 import headIcon from "@/icon/head.gif";
+import { io } from "socket.io-client";
 
 interface I_WSMessage {
     DonateNickName: string;
@@ -16,27 +17,30 @@ function Display() {
     const [message, setMessage] = useState<I_WSMessage | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(`${domainEnv}/socket/alert`);
-        ws.onopen = () => console.log("連線成功");
-        ws.onclose = () => console.log("關閉連線");
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data) as I_WSMessage;
+        const alertSocket = io(`http://localhost:4000/socket/alert`); // 需要再修改
+        
+        alertSocket.on("connect", () => {
+            console.log("Alert connected:", alertSocket.id);
+        });
+        alertSocket.on("notify", (data) => {
+        //     const message = JSON.parse(event.data) as I_WSMessage;
             if (timer) clearTimeout(timer);
 
-            setMessage(message)
+        //     setMessage(message)
             timer = setTimeout(() => {
                 setMessage(null);
             }, 10000)
-        };
+            console.log("🚨 Alert:", data);
+        });
 
-        const opaySocket = initSocket();
+        const opaySocket = initOpaySocket("https://socket.opay.tw/web/live/C4DB659FF82BAB591BA43075C2A5B0D7", "/web/live/C4DB659FF82BAB591BA43075C2A5B0D7");
         opaySocket.on("notify", (message) => {
             console.log(message);
         });
 
         return () => {
             opaySocket.disconnect();
-            ws.close();
+            alertSocket.disconnect();
         }
     }, [])
     
