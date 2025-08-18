@@ -10,7 +10,10 @@ export default function SharedTemplate () {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const gameSocket = io(`http://localhost:4000/socket/game`); // 需要再修改
+        const gameSocket = io(`http://localhost:4000/socket/game`, {
+            withCredentials: true,
+            transports: ['websocket'],
+        }); // 需要再修改
 
         gameSocket.on("notify", (message: I_WS_Data) => {
             switch (message.type) {

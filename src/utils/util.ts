@@ -96,9 +96,9 @@ export const initOpaySocket = (uri: string, namespace: string) => {
         reconnection: true, // 自動重連
     });
 
-        // 當前端 socket.io 連上 server
+    // 當前端 socket.io 連上 server
     socket.on("connect", () => {
-        console.log("✅ Connected:", socket?.id);
+        // console.log("✅ Connected:", socket?.id);
 
         // 加入 namespace
         const ns = namespace;

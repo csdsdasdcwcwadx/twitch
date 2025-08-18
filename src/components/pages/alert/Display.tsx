@@ -18,9 +18,12 @@ function Display() {
 
     useEffect(() => {
         const alertSocket = io(`http://localhost:4000/socket/alert`); // 需要再修改
-        
-        alertSocket.on("connect", () => {
-            console.log("Alert connected:", alertSocket.id);
+        const opaySocket = initOpaySocket(
+            "https://socket.opay.tw/web/live/C4DB659FF82BAB591BA43075C2A5B0D7",
+            "/web/live/C4DB659FF82BAB591BA43075C2A5B0D7",
+        );
+        opaySocket.on("notify", (message) => {
+            console.log(message);
         });
         alertSocket.on("notify", (data) => {
         //     const message = JSON.parse(event.data) as I_WSMessage;
@@ -31,11 +34,6 @@ function Display() {
                 setMessage(null);
             }, 10000)
             console.log("🚨 Alert:", data);
-        });
-
-        const opaySocket = initOpaySocket("https://socket.opay.tw/web/live/C4DB659FF82BAB591BA43075C2A5B0D7", "/web/live/C4DB659FF82BAB591BA43075C2A5B0D7");
-        opaySocket.on("notify", (message) => {
-            console.log(message);
         });
 
         return () => {
