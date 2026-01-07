@@ -42,3 +42,17 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 - 正在簽到
 2. 紅底
 - 簽到時間已結束
+
+## docker setup
+1. bundle project as docker image
+```docker build -t csdsdasdcwcwadx/twitch-frontend:latest .```
+
+2. test the image after bundle
+```docker run -it -p 3000:3000 csdsdasdcwcwadx/twitch-frontend:latest```
+    - to include .env file to image: ```docker run -d -p 3000:3000 --env-file .env csdsdasdcwcwadx/docker-test:latest```
+
+3. push image to remote
+```docker push csdsdasdcwcwadx/twitch-frontend:latest```
+
+4. fetch image from remote
+```docker pull csdsdasdcwcwadx/twitch-frontend:latest```
