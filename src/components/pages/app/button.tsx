@@ -2,6 +2,7 @@
 import { domainEnv } from "@/utils/util";
 
 function LoginButton () {
+    console.log(process.env.NEXT_PUBLIC_ENV)
 
     return (
         <button
