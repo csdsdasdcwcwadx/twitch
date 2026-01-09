@@ -108,12 +108,12 @@ export default function SharedTemplate({ checkData, isAdmin = false }: I_props) 
                         }
 
                         if (!isAdmin) {
-                            const checks = info.event.extendedProps as I_Check;
-                            if (!checks) return;
-                            if (!checks.userChecks) return;
-                            if(checks.userChecks[0] && checks.userChecks[0].checked) return;
-                            if (!checks.streaming) return;
-                            setCheckInput(checks); // 根據需要處理點擊事件
+                            const check = info.event.extendedProps.check as I_Check;
+                            if (!check) return;
+                            if (!check.userChecks) return;
+                            if(check.userChecks[0] && check.userChecks[0].checked) return;
+                            if (!check.streaming) return;
+                            setCheckInput(check); // 根據需要處理點擊事件
                         }
                     }}
                     onDatesSet={async (arg) => {

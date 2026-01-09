@@ -29,7 +29,7 @@ function Item ({item, setOpenDialog, setOpenItemSettingDialog}: I_props) {
         >
             <figure className="relative h-16 cursor-pointer transform rounded-t-[6px] pc:h-[250px] mobile:h-[100%]">
                 {
-                    item.image ? <ImageHandler item={item} clasName="object-cover  border-[3px] border-solid border-[#cab886]"/> : <></>
+                    item.image ? <ImageHandler item={item} clasName="object-cover border-[3px] border-solid border-[#cab886]"/> : <></>
                 }
             </figure>
             <div className="flex flex-col mt-5">
