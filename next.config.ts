@@ -14,14 +14,8 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'static-cdn.jtvnw.net',
-        port: '', // 如果有特定端口可以填入，否則保持空字串
         pathname: '/**', // 表示允許這個域名下的所有圖片
-      },
-      {
-        protocol: 'https',
-        hostname: 'anguprojecy.site',
-        pathname: '/twitch/item/images/**',
-      },
+      }
     ],
   }
 };
