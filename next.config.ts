@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'ec2-54-253-97-210.ap-southeast-2.compute.amazonaws.com',
+        hostname: 'anguprojecy.site',
         pathname: '/twitch/item/images/**',
       },
     ],

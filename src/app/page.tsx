@@ -12,6 +12,7 @@ export default function Home() {
             className="w-full h-full object-contain"
             src={headSrc} 
             alt="logo"
+            unoptimized
           />
         </div>
       </figure>
