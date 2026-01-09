@@ -49,7 +49,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 2. test the image after bundle
 ```docker run -it -p 3000:3000 csdsdasdcwcwadx/twitch-frontend:latest```
-    - to include .env file to image: ```docker run -d -p 3000:3000 --env-file .env csdsdasdcwcwadx/docker-test:latest```
+    - to include .env file to image: ```docker run -d -p 3000:3000 --env-file .env csdsdasdcwcwadx/twitch-frontend:latest```
 
 3. push image to remote
 ```docker push csdsdasdcwcwadx/twitch-frontend:latest```
