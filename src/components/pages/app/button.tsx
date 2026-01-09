@@ -2,8 +2,6 @@
 import { domainEnv } from "@/utils/util";
 
 function LoginButton () {
-    console.log(process.env.NEXT_PUBLIC_ENV)
-
     return (
         <button
             className="bg-[#f1b600] py-5 px-10 pl-10 font-bold text-background tracking-widest text-[17px] rounded-[20px] mx-auto block"
