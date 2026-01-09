@@ -59,7 +59,7 @@ export default function SharedTemplate({ exchangeData, isAdmin }: I_props) {
                                 <div className="pc:p-[10px] table-cell mobile:block align-middle">
                                     <figure className="relative aspect-[1.5] mobile:aspect-[3]">
                                     {
-                                        redemption.item.image ? <ImageHandler clasName="rounded-none" item={redemption.item}/> : <></>
+                                        redemption.item.image ? <ImageHandler className="rounded-none" item={redemption.item}/> : <></>
                                     }
                                     </figure>
                                 </div>
