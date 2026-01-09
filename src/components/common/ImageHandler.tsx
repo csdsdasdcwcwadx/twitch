@@ -1,6 +1,5 @@
 'use client';
 
-import Image from "next/image";
 import { ImagePath } from "@/utils/util";
 import { I_Item } from "@/utils/interface";
 
