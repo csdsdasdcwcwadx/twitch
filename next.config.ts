@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'static-cdn.jtvnw.net',
         pathname: '/**', // 表示允許這個域名下的所有圖片
+      },
+      {
+        protocol: 'https',
+        hostname: 'anguprojecy.site',
+        pathname: '/twitch/item/images/**',
       }
     ],
   }
