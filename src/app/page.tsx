@@ -3,7 +3,6 @@ import headSrc from '@/icon/head.gif';
 import LoginButton from "@/components/pages/app/button";
 
 export default function Home() {
-  console.log("@@@")
   return (
     <main>
       <figure className="m-auto relative pc:h-[80vh] aspect-[1]">
