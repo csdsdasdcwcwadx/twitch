@@ -79,7 +79,7 @@ function Client ({userinfo}: I_props) {
                             </figure>
                             <div className="flex items-center pc:mr-7">
                                 <Menu>
-                                    <figcaption className="mr-3 mobile:hidden">{userinfo.name}，您好</figcaption>
+                                    <figcaption className="mr-3 mobile:hidden">hello, {userinfo.name}</figcaption>
                                     <MenuButton>
                                         <figure className="h-16 relative w-16 cursor-pointer" onClick={() => setMenuOpen(true)}>
                                             <Image 
@@ -114,7 +114,7 @@ function MobileDialog({ menuOpen, setMenuOpen, userinfo, handleItemsClick }: I_M
                             <figure className="h-16 relative w-16 cursor-pointer">
                                 <Image src={twitchIcon} alt="twitch" sizes="100" fill/>
                             </figure>
-                            <h2 className="text-topcovercolor p-5 text-2xl">{userinfo.name}，您好</h2>
+                            <h2 className="text-topcovercolor p-5 text-2xl">hello, {userinfo.name}</h2>
                         </div>
                     )
                 }
